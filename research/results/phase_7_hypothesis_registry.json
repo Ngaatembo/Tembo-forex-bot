@@ -1,0 +1,170 @@
+[
+  {
+    "id": "momentum_rsi_trend_v1",
+    "name": "RSI + SMA50 Trend Momentum",
+    "description": "Enter long when RSI14>60 while price trends above a rising SMA50; mirror for short.",
+    "hypothesis_type": "momentum",
+    "market": "EUR/USD",
+    "timeframe": "1h",
+    "entry_long": {
+      "conditions": [
+        {
+          "field": "rsi_14",
+          "operator": ">",
+          "value": 60.0,
+          "compare_field": null
+        },
+        {
+          "field": "close",
+          "operator": ">",
+          "value": null,
+          "compare_field": "sma_50"
+        },
+        {
+          "field": "sma_50_slope",
+          "operator": ">",
+          "value": 0.0,
+          "compare_field": null
+        }
+      ]
+    },
+    "entry_short": {
+      "conditions": [
+        {
+          "field": "rsi_14",
+          "operator": "<",
+          "value": 40.0,
+          "compare_field": null
+        },
+        {
+          "field": "close",
+          "operator": "<",
+          "value": null,
+          "compare_field": "sma_50"
+        },
+        {
+          "field": "sma_50_slope",
+          "operator": "<",
+          "value": 0.0,
+          "compare_field": null
+        }
+      ]
+    },
+    "risk_conditions": {
+      "exit_config": "baseline_reverse_only"
+    },
+    "rationale": "Momentum persisting in the direction of an already-established trend is a common, economically-motivated (not data-mined) hypothesis distinct from the SMA10/50 crossover control.",
+    "data_requirements": [
+      "rsi_14",
+      "sma_50",
+      "sma_50_slope"
+    ],
+    "status": "draft",
+    "created_at": "2026-08-30T10:36:54.377369+00:00",
+    "version": 1
+  },
+  {
+    "id": "mean_reversion_range_extreme_v1",
+    "name": "Range-Extreme Mean Reversion",
+    "description": "Enter long when price is near the recent 20-candle low with RSI14<30; mirror for short near the high.",
+    "hypothesis_type": "mean_reversion",
+    "market": "EUR/USD",
+    "timeframe": "1h",
+    "entry_long": {
+      "conditions": [
+        {
+          "field": "distance_from_low",
+          "operator": "<",
+          "value": 0.001,
+          "compare_field": null
+        },
+        {
+          "field": "rsi_14",
+          "operator": "<",
+          "value": 30.0,
+          "compare_field": null
+        }
+      ]
+    },
+    "entry_short": {
+      "conditions": [
+        {
+          "field": "distance_from_high",
+          "operator": "<",
+          "value": 0.001,
+          "compare_field": null
+        },
+        {
+          "field": "rsi_14",
+          "operator": ">",
+          "value": 70.0,
+          "compare_field": null
+        }
+      ]
+    },
+    "risk_conditions": {
+      "exit_config": "baseline_reverse_only"
+    },
+    "rationale": "A classic mean-reversion premise: extreme short-term moves against a recent range may revert, distinct in mechanism from both the crossover baseline and the momentum hypothesis.",
+    "data_requirements": [
+      "distance_from_low",
+      "distance_from_high",
+      "rsi_14"
+    ],
+    "status": "draft",
+    "created_at": "2026-08-30T10:36:54.377392+00:00",
+    "version": 1
+  },
+  {
+    "id": "breakout_range_expansion_v1",
+    "name": "Range Breakout with Volatility Expansion",
+    "description": "Enter long when close exceeds the recent 20-candle high with above-median volatility; mirror for short.",
+    "hypothesis_type": "breakout",
+    "market": "EUR/USD",
+    "timeframe": "1h",
+    "entry_long": {
+      "conditions": [
+        {
+          "field": "close",
+          "operator": ">",
+          "value": null,
+          "compare_field": "recent_high"
+        },
+        {
+          "field": "atr_percent",
+          "operator": ">",
+          "value": 0.0008,
+          "compare_field": null
+        }
+      ]
+    },
+    "entry_short": {
+      "conditions": [
+        {
+          "field": "close",
+          "operator": "<",
+          "value": null,
+          "compare_field": "recent_low"
+        },
+        {
+          "field": "atr_percent",
+          "operator": ">",
+          "value": 0.0008,
+          "compare_field": null
+        }
+      ]
+    },
+    "risk_conditions": {
+      "exit_config": "baseline_reverse_only"
+    },
+    "rationale": "Breakouts accompanied by genuine volatility expansion are a structurally different premise from both momentum-persistence and mean-reversion, testing whether range breaks with confirming volatility continue rather than immediately fail.",
+    "data_requirements": [
+      "recent_high",
+      "recent_low",
+      "atr_percent"
+    ],
+    "status": "draft",
+    "created_at": "2026-08-30T10:36:54.377408+00:00",
+    "version": 1
+  }
+]

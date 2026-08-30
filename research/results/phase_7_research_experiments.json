@@ -1,0 +1,518 @@
+[
+  {
+    "experiment_id": "exp_ea2ba84f75",
+    "hypothesis_id": "momentum_rsi_trend_v1",
+    "hypothesis_version": 1,
+    "strategy_version": "hypothesis_momentum_rsi_trend_v1_v1",
+    "dataset": {
+      "dataset_id": "EURUSD_1H_2012_2022_v1",
+      "source": "https://github.com/ejtraderLabs/historical-data",
+      "license": "Apache-2.0",
+      "symbol": "EUR/USD",
+      "timeframe": "1h",
+      "period_start": "2012-11-16T00:00:00+00:00",
+      "period_end": "2022-03-04T23:00:00+00:00",
+      "candle_count": 57600,
+      "import_version": "ejtrader_v1",
+      "sha256": "1b29ca23bdc7b2645ae48a0ccb06108263b69e586bdc7d0ba40e66d1e5966eb9"
+    },
+    "symbol": "EUR/USD",
+    "timeframe": "1h",
+    "periods": {
+      "development": {
+        "label": "development",
+        "start": "2012-11-16T00:00:00+00:00",
+        "end": "2019-05-24T15:00:00+00:00"
+      },
+      "validation": {
+        "label": "validation",
+        "start": "2019-05-24T15:00:00+00:00",
+        "end": "2020-10-14T11:00:00+00:00"
+      },
+      "out_of_sample": {
+        "label": "out_of_sample",
+        "start": "2020-10-14T11:00:00+00:00",
+        "end": "2022-03-05T00:00:00+00:00"
+      }
+    },
+    "transaction_cost_model": {
+      "spread": 0.0001,
+      "cost_note": "half-spread each side, see portfolio.py"
+    },
+    "slippage_model": {
+      "slippage": 2e-05
+    },
+    "risk_configuration": {
+      "initial_balance": 10000.0,
+      "position_size": 10000.0
+    },
+    "metrics": {
+      "development": {
+        "initial_balance": 10000.0,
+        "final_balance": 5456.899999999829,
+        "net_pnl": -4543.100000000171,
+        "total_return": -0.45431000000001714,
+        "trade_count": 577,
+        "winning_trades": 195,
+        "losing_trades": 381,
+        "win_rate": 0.3379549393414211,
+        "average_win": 89.34461538461514,
+        "average_loss": -57.651706036745736,
+        "largest_win": 609.2999999999993,
+        "largest_loss": -358.5000000000016,
+        "average_trade": -7.873656845754197,
+        "expectancy": -7.873656845754197,
+        "max_consecutive_wins": 6,
+        "max_consecutive_losses": 22,
+        "profit_factor": 0.7931692260064671,
+        "max_drawdown": 5545.200000000161,
+        "max_drawdown_percent": 0.5367898318538822
+      },
+      "validation": {
+        "initial_balance": 10000.0,
+        "final_balance": 12224.999999999982,
+        "net_pnl": 2224.9999999999814,
+        "total_return": 0.22249999999999814,
+        "trade_count": 105,
+        "winning_trades": 53,
+        "losing_trades": 52,
+        "win_rate": 0.5047619047619047,
+        "average_win": 82.84150943396227,
+        "average_loss": -41.646153846154206,
+        "largest_win": 502.80000000000103,
+        "largest_loss": -86.20000000000073,
+        "average_trade": 21.190476190476012,
+        "expectancy": 21.190476190476012,
+        "max_consecutive_wins": 11,
+        "max_consecutive_losses": 5,
+        "profit_factor": 2.0274288880679547,
+        "max_drawdown": 643.3000000000011,
+        "max_drawdown_percent": 0.062471473658655075
+      },
+      "out_of_sample": {
+        "initial_balance": 10000.0,
+        "final_balance": 9923.999999999978,
+        "net_pnl": -76.00000000002267,
+        "total_return": -0.007600000000002266,
+        "trade_count": 124,
+        "winning_trades": 43,
+        "losing_trades": 81,
+        "win_rate": 0.3467741935483871,
+        "average_win": 74.18139534883696,
+        "average_loss": -40.318518518518665,
+        "largest_win": 397.599999999998,
+        "largest_loss": -111.49999999999993,
+        "average_trade": -0.6129032258066344,
+        "expectancy": -0.6129032258066344,
+        "max_consecutive_wins": 5,
+        "max_consecutive_losses": 8,
+        "profit_factor": 0.9767285198113717,
+        "max_drawdown": 1292.3000000000175,
+        "max_drawdown_percent": 0.12343120212420651
+      }
+    },
+    "baseline_comparison": {
+      "development": {
+        "period_label": "development",
+        "baseline_trade_count": 1076,
+        "candidate_trade_count": 577,
+        "baseline_return": -0.5775800000000315,
+        "candidate_return": -0.45431000000001714,
+        "baseline_profit_factor": 0.802654821901417,
+        "candidate_profit_factor": 0.7931692260064671,
+        "baseline_max_drawdown_percent": 0.6132188648121993,
+        "candidate_max_drawdown_percent": 0.5367898318538822,
+        "baseline_win_rate": 0.3187732342007435,
+        "candidate_win_rate": 0.3379549393414211
+      },
+      "validation": {
+        "period_label": "validation",
+        "baseline_trade_count": 200,
+        "candidate_trade_count": 105,
+        "baseline_return": 0.17320999999999454,
+        "candidate_return": 0.22249999999999814,
+        "baseline_profit_factor": 1.4863809951701474,
+        "candidate_profit_factor": 2.0274288880679547,
+        "baseline_max_drawdown_percent": 0.0480823774865643,
+        "candidate_max_drawdown_percent": 0.062471473658655075,
+        "baseline_win_rate": 0.35,
+        "candidate_win_rate": 0.5047619047619047
+      },
+      "out_of_sample": {
+        "period_label": "out_of_sample",
+        "baseline_trade_count": 262,
+        "candidate_trade_count": 124,
+        "baseline_return": -0.033150000000008895,
+        "candidate_return": -0.007600000000002266,
+        "baseline_profit_factor": 0.9291908749145411,
+        "candidate_profit_factor": 0.9767285198113717,
+        "baseline_max_drawdown_percent": 0.12234292003637626,
+        "candidate_max_drawdown_percent": 0.12343120212420651,
+        "baseline_win_rate": 0.30916030534351147,
+        "candidate_win_rate": 0.3467741935483871
+      }
+    },
+    "overfitting_diagnostics": {
+      "low_trade_count_development": false,
+      "low_trade_count_validation": false,
+      "low_trade_count_out_of_sample": false,
+      "development_return": -0.45431000000001714,
+      "validation_return": 0.22249999999999814,
+      "out_of_sample_return": -0.007600000000002266,
+      "development_to_oos_pf_degradation": -0.23142513323305347,
+      "strong_dev_then_oos_failure": false,
+      "any_flag_raised": false
+    },
+    "verdict": "REJECTED",
+    "created_at": "2026-08-30T10:37:13.173100+00:00",
+    "reproducibility_metadata": {
+      "dataset_sha256": "1b29ca23bdc7b2645ae48a0ccb06108263b69e586bdc7d0ba40e66d1e5966eb9",
+      "dataset_id": "EURUSD_1H_2012_2022_v1",
+      "candle_count": 57600
+    }
+  },
+  {
+    "experiment_id": "exp_b7b128f5b9",
+    "hypothesis_id": "mean_reversion_range_extreme_v1",
+    "hypothesis_version": 1,
+    "strategy_version": "hypothesis_mean_reversion_range_extreme_v1_v1",
+    "dataset": {
+      "dataset_id": "EURUSD_1H_2012_2022_v1",
+      "source": "https://github.com/ejtraderLabs/historical-data",
+      "license": "Apache-2.0",
+      "symbol": "EUR/USD",
+      "timeframe": "1h",
+      "period_start": "2012-11-16T00:00:00+00:00",
+      "period_end": "2022-03-04T23:00:00+00:00",
+      "candle_count": 57600,
+      "import_version": "ejtrader_v1",
+      "sha256": "1b29ca23bdc7b2645ae48a0ccb06108263b69e586bdc7d0ba40e66d1e5966eb9"
+    },
+    "symbol": "EUR/USD",
+    "timeframe": "1h",
+    "periods": {
+      "development": {
+        "label": "development",
+        "start": "2012-11-16T00:00:00+00:00",
+        "end": "2019-05-24T15:00:00+00:00"
+      },
+      "validation": {
+        "label": "validation",
+        "start": "2019-05-24T15:00:00+00:00",
+        "end": "2020-10-14T11:00:00+00:00"
+      },
+      "out_of_sample": {
+        "label": "out_of_sample",
+        "start": "2020-10-14T11:00:00+00:00",
+        "end": "2022-03-05T00:00:00+00:00"
+      }
+    },
+    "transaction_cost_model": {
+      "spread": 0.0001,
+      "cost_note": "half-spread each side, see portfolio.py"
+    },
+    "slippage_model": {
+      "slippage": 2e-05
+    },
+    "risk_configuration": {
+      "initial_balance": 10000.0,
+      "position_size": 10000.0
+    },
+    "metrics": {
+      "development": {
+        "initial_balance": 10000.0,
+        "final_balance": 14218.299999999934,
+        "net_pnl": 4218.299999999933,
+        "total_return": 0.42182999999999327,
+        "trade_count": 303,
+        "winning_trades": 199,
+        "losing_trades": 104,
+        "win_rate": 0.6567656765676567,
+        "average_win": 82.37738693467308,
+        "average_loss": -117.06538461538472,
+        "largest_win": 428.69999999999965,
+        "largest_loss": -763.0999999999988,
+        "average_trade": 13.921782178217601,
+        "expectancy": 13.921782178217601,
+        "max_consecutive_wins": 9,
+        "max_consecutive_losses": 5,
+        "profit_factor": 1.3464779708906864,
+        "max_drawdown": 1661.6000000000095,
+        "max_drawdown_percent": 0.11369919255508518
+      },
+      "validation": {
+        "initial_balance": 10000.0,
+        "final_balance": 8694.499999999976,
+        "net_pnl": -1305.5000000000239,
+        "total_return": -0.1305500000000024,
+        "trade_count": 61,
+        "winning_trades": 34,
+        "losing_trades": 27,
+        "win_rate": 0.5573770491803278,
+        "average_win": 34.16764705882298,
+        "average_loss": -91.37777777777795,
+        "largest_win": 82.69999999999999,
+        "largest_loss": -487.40000000000003,
+        "average_trade": -21.401639344262687,
+        "expectancy": -21.401639344262687,
+        "max_consecutive_wins": 4,
+        "max_consecutive_losses": 7,
+        "profit_factor": 0.47085765239947264,
+        "max_drawdown": 1584.4000000000142,
+        "max_drawdown_percent": 0.15782920099216174
+      },
+      "out_of_sample": {
+        "initial_balance": 10000.0,
+        "final_balance": 9831.499999999993,
+        "net_pnl": -168.50000000000693,
+        "total_return": -0.016850000000000694,
+        "trade_count": 67,
+        "winning_trades": 40,
+        "losing_trades": 27,
+        "win_rate": 0.5970149253731343,
+        "average_win": 57.76499999999985,
+        "average_loss": -91.81851851851854,
+        "largest_win": 124.90000000000111,
+        "largest_loss": -392.9000000000005,
+        "average_trade": -2.5149253731344317,
+        "expectancy": -2.5149253731344317,
+        "max_consecutive_wins": 7,
+        "max_consecutive_losses": 4,
+        "profit_factor": 0.9320317857286892,
+        "max_drawdown": 741.5,
+        "max_drawdown_percent": 0.07026904087260602
+      }
+    },
+    "baseline_comparison": {
+      "development": {
+        "period_label": "development",
+        "baseline_trade_count": 1076,
+        "candidate_trade_count": 303,
+        "baseline_return": -0.5775800000000315,
+        "candidate_return": 0.42182999999999327,
+        "baseline_profit_factor": 0.802654821901417,
+        "candidate_profit_factor": 1.3464779708906864,
+        "baseline_max_drawdown_percent": 0.6132188648121993,
+        "candidate_max_drawdown_percent": 0.11369919255508518,
+        "baseline_win_rate": 0.3187732342007435,
+        "candidate_win_rate": 0.6567656765676567
+      },
+      "validation": {
+        "period_label": "validation",
+        "baseline_trade_count": 200,
+        "candidate_trade_count": 61,
+        "baseline_return": 0.17320999999999454,
+        "candidate_return": -0.1305500000000024,
+        "baseline_profit_factor": 1.4863809951701474,
+        "candidate_profit_factor": 0.47085765239947264,
+        "baseline_max_drawdown_percent": 0.0480823774865643,
+        "candidate_max_drawdown_percent": 0.15782920099216174,
+        "baseline_win_rate": 0.35,
+        "candidate_win_rate": 0.5573770491803278
+      },
+      "out_of_sample": {
+        "period_label": "out_of_sample",
+        "baseline_trade_count": 262,
+        "candidate_trade_count": 67,
+        "baseline_return": -0.033150000000008895,
+        "candidate_return": -0.016850000000000694,
+        "baseline_profit_factor": 0.9291908749145411,
+        "candidate_profit_factor": 0.9320317857286892,
+        "baseline_max_drawdown_percent": 0.12234292003637626,
+        "candidate_max_drawdown_percent": 0.07026904087260602,
+        "baseline_win_rate": 0.30916030534351147,
+        "candidate_win_rate": 0.5970149253731343
+      }
+    },
+    "overfitting_diagnostics": {
+      "low_trade_count_development": false,
+      "low_trade_count_validation": false,
+      "low_trade_count_out_of_sample": false,
+      "development_return": 0.42182999999999327,
+      "validation_return": -0.1305500000000024,
+      "out_of_sample_return": -0.016850000000000694,
+      "development_to_oos_pf_degradation": 0.3078001973458532,
+      "strong_dev_then_oos_failure": true,
+      "any_flag_raised": true
+    },
+    "verdict": "OUT_OF_SAMPLE_FAILED",
+    "created_at": "2026-08-30T10:37:13.901455+00:00",
+    "reproducibility_metadata": {
+      "dataset_sha256": "1b29ca23bdc7b2645ae48a0ccb06108263b69e586bdc7d0ba40e66d1e5966eb9",
+      "dataset_id": "EURUSD_1H_2012_2022_v1",
+      "candle_count": 57600
+    }
+  },
+  {
+    "experiment_id": "exp_d96c1b3ec4",
+    "hypothesis_id": "breakout_range_expansion_v1",
+    "hypothesis_version": 1,
+    "strategy_version": "hypothesis_breakout_range_expansion_v1_v1",
+    "dataset": {
+      "dataset_id": "EURUSD_1H_2012_2022_v1",
+      "source": "https://github.com/ejtraderLabs/historical-data",
+      "license": "Apache-2.0",
+      "symbol": "EUR/USD",
+      "timeframe": "1h",
+      "period_start": "2012-11-16T00:00:00+00:00",
+      "period_end": "2022-03-04T23:00:00+00:00",
+      "candle_count": 57600,
+      "import_version": "ejtrader_v1",
+      "sha256": "1b29ca23bdc7b2645ae48a0ccb06108263b69e586bdc7d0ba40e66d1e5966eb9"
+    },
+    "symbol": "EUR/USD",
+    "timeframe": "1h",
+    "periods": {
+      "development": {
+        "label": "development",
+        "start": "2012-11-16T00:00:00+00:00",
+        "end": "2019-05-24T15:00:00+00:00"
+      },
+      "validation": {
+        "label": "validation",
+        "start": "2019-05-24T15:00:00+00:00",
+        "end": "2020-10-14T11:00:00+00:00"
+      },
+      "out_of_sample": {
+        "label": "out_of_sample",
+        "start": "2020-10-14T11:00:00+00:00",
+        "end": "2022-03-05T00:00:00+00:00"
+      }
+    },
+    "transaction_cost_model": {
+      "spread": 0.0001,
+      "cost_note": "half-spread each side, see portfolio.py"
+    },
+    "slippage_model": {
+      "slippage": 2e-05
+    },
+    "risk_configuration": {
+      "initial_balance": 10000.0,
+      "position_size": 10000.0
+    },
+    "metrics": {
+      "development": {
+        "initial_balance": 10000.0,
+        "final_balance": 10000.0,
+        "net_pnl": 0,
+        "total_return": 0.0,
+        "trade_count": 0,
+        "winning_trades": null,
+        "losing_trades": null,
+        "win_rate": null,
+        "average_win": null,
+        "average_loss": null,
+        "largest_win": null,
+        "largest_loss": null,
+        "average_trade": null,
+        "expectancy": null,
+        "max_consecutive_wins": null,
+        "max_consecutive_losses": null,
+        "profit_factor": null,
+        "max_drawdown": 0.0,
+        "max_drawdown_percent": 0.0
+      },
+      "validation": {
+        "initial_balance": 10000.0,
+        "final_balance": 10000.0,
+        "net_pnl": 0,
+        "total_return": 0.0,
+        "trade_count": 0,
+        "winning_trades": null,
+        "losing_trades": null,
+        "win_rate": null,
+        "average_win": null,
+        "average_loss": null,
+        "largest_win": null,
+        "largest_loss": null,
+        "average_trade": null,
+        "expectancy": null,
+        "max_consecutive_wins": null,
+        "max_consecutive_losses": null,
+        "profit_factor": null,
+        "max_drawdown": 0.0,
+        "max_drawdown_percent": 0.0
+      },
+      "out_of_sample": {
+        "initial_balance": 10000.0,
+        "final_balance": 10000.0,
+        "net_pnl": 0,
+        "total_return": 0.0,
+        "trade_count": 0,
+        "winning_trades": null,
+        "losing_trades": null,
+        "win_rate": null,
+        "average_win": null,
+        "average_loss": null,
+        "largest_win": null,
+        "largest_loss": null,
+        "average_trade": null,
+        "expectancy": null,
+        "max_consecutive_wins": null,
+        "max_consecutive_losses": null,
+        "profit_factor": null,
+        "max_drawdown": 0.0,
+        "max_drawdown_percent": 0.0
+      }
+    },
+    "baseline_comparison": {
+      "development": {
+        "period_label": "development",
+        "baseline_trade_count": 1076,
+        "candidate_trade_count": 0,
+        "baseline_return": -0.5775800000000315,
+        "candidate_return": 0.0,
+        "baseline_profit_factor": 0.802654821901417,
+        "candidate_profit_factor": null,
+        "baseline_max_drawdown_percent": 0.6132188648121993,
+        "candidate_max_drawdown_percent": 0.0,
+        "baseline_win_rate": 0.3187732342007435,
+        "candidate_win_rate": null
+      },
+      "validation": {
+        "period_label": "validation",
+        "baseline_trade_count": 200,
+        "candidate_trade_count": 0,
+        "baseline_return": 0.17320999999999454,
+        "candidate_return": 0.0,
+        "baseline_profit_factor": 1.4863809951701474,
+        "candidate_profit_factor": null,
+        "baseline_max_drawdown_percent": 0.0480823774865643,
+        "candidate_max_drawdown_percent": 0.0,
+        "baseline_win_rate": 0.35,
+        "candidate_win_rate": null
+      },
+      "out_of_sample": {
+        "period_label": "out_of_sample",
+        "baseline_trade_count": 262,
+        "candidate_trade_count": 0,
+        "baseline_return": -0.033150000000008895,
+        "candidate_return": 0.0,
+        "baseline_profit_factor": 0.9291908749145411,
+        "candidate_profit_factor": null,
+        "baseline_max_drawdown_percent": 0.12234292003637626,
+        "candidate_max_drawdown_percent": 0.0,
+        "baseline_win_rate": 0.30916030534351147,
+        "candidate_win_rate": null
+      }
+    },
+    "overfitting_diagnostics": {
+      "low_trade_count_development": true,
+      "low_trade_count_validation": true,
+      "low_trade_count_out_of_sample": true,
+      "development_return": 0.0,
+      "validation_return": 0.0,
+      "out_of_sample_return": 0.0,
+      "development_to_oos_pf_degradation": null,
+      "strong_dev_then_oos_failure": false,
+      "any_flag_raised": true
+    },
+    "verdict": "INCONCLUSIVE",
+    "created_at": "2026-08-30T10:37:14.692470+00:00",
+    "reproducibility_metadata": {
+      "dataset_sha256": "1b29ca23bdc7b2645ae48a0ccb06108263b69e586bdc7d0ba40e66d1e5966eb9",
+      "dataset_id": "EURUSD_1H_2012_2022_v1",
+      "candle_count": 57600
+    }
+  }
+]
