@@ -75,3 +75,17 @@ def test_research_api_has_only_get_endpoints():
     for route in router.routes:
         methods = getattr(route, "methods", set())
         assert methods <= {"GET", "HEAD"}, f"{route.path} exposes non-GET method(s): {methods}"
+
+
+def test_breakout_strategy_has_no_execution_or_code_execution_dependency():
+    """
+    Phase 9 extension: strategy_engine/breakout.py lives outside
+    app/research/ and app/backtesting/ (it's signal-generation code,
+    same category as crossover.py), so it isn't covered by the scans
+    above — this closes that gap explicitly rather than relying on
+    breakout.py happening to be clean by accident.
+    """
+    breakout_path = Path(__file__).resolve().parent.parent / "app" / "strategy_engine" / "breakout.py"
+    content = breakout_path.read_text()
+    for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
+        assert token not in content, f"breakout.py references '{token}' — a real safety regression."

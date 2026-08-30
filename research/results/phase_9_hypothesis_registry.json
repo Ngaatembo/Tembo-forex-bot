@@ -1,0 +1,92 @@
+[
+  {
+    "id": "breakout_lookback_20_023a2976",
+    "name": "Market-Structure Breakout (lookback=20)",
+    "description": "LONG when close breaks above the prior 20-candle high (lagged, excluding the signal candle itself). SHORT is the mirror at the prior 20-candle low. Exit: ATR stop (2.0x, frozen at entry) OR max holding (100 candles), OR an opposite-direction breakout, whichever comes first.",
+    "hypothesis_type": "breakout",
+    "market": "EUR/USD",
+    "timeframe": "1h",
+    "entry_long": {
+      "conditions": []
+    },
+    "entry_short": {
+      "conditions": []
+    },
+    "risk_conditions": {
+      "exit_config": "atr_stop_and_max_hold",
+      "atr_stop_multiple": 2.0,
+      "max_holding_candles": 100,
+      "lookback": 20
+    },
+    "rationale": "Structurally distinct from every prior hypothesis: entry is driven by a LAGGED price-structure threshold (breaking a prior range), not a moving-average relationship, an oscillator level, or a volatility compression. This tests whether directional persistence exists after a decisive break of recent structure.",
+    "data_requirements": [
+      "high",
+      "low",
+      "close",
+      "atr_14"
+    ],
+    "status": "registered",
+    "created_at": "2026-08-30T11:19:55.822163+00:00",
+    "version": 1
+  },
+  {
+    "id": "breakout_lookback_40_d9b96638",
+    "name": "Market-Structure Breakout (lookback=40)",
+    "description": "LONG when close breaks above the prior 40-candle high (lagged, excluding the signal candle itself). SHORT is the mirror at the prior 40-candle low. Exit: ATR stop (2.0x, frozen at entry) OR max holding (100 candles), OR an opposite-direction breakout, whichever comes first.",
+    "hypothesis_type": "breakout",
+    "market": "EUR/USD",
+    "timeframe": "1h",
+    "entry_long": {
+      "conditions": []
+    },
+    "entry_short": {
+      "conditions": []
+    },
+    "risk_conditions": {
+      "exit_config": "atr_stop_and_max_hold",
+      "atr_stop_multiple": 2.0,
+      "max_holding_candles": 100,
+      "lookback": 40
+    },
+    "rationale": "Structurally distinct from every prior hypothesis: entry is driven by a LAGGED price-structure threshold (breaking a prior range), not a moving-average relationship, an oscillator level, or a volatility compression. This tests whether directional persistence exists after a decisive break of recent structure.",
+    "data_requirements": [
+      "high",
+      "low",
+      "close",
+      "atr_14"
+    ],
+    "status": "registered",
+    "created_at": "2026-08-30T11:19:56.494085+00:00",
+    "version": 1
+  },
+  {
+    "id": "breakout_lookback_60_4262a46a",
+    "name": "Market-Structure Breakout (lookback=60)",
+    "description": "LONG when close breaks above the prior 60-candle high (lagged, excluding the signal candle itself). SHORT is the mirror at the prior 60-candle low. Exit: ATR stop (2.0x, frozen at entry) OR max holding (100 candles), OR an opposite-direction breakout, whichever comes first.",
+    "hypothesis_type": "breakout",
+    "market": "EUR/USD",
+    "timeframe": "1h",
+    "entry_long": {
+      "conditions": []
+    },
+    "entry_short": {
+      "conditions": []
+    },
+    "risk_conditions": {
+      "exit_config": "atr_stop_and_max_hold",
+      "atr_stop_multiple": 2.0,
+      "max_holding_candles": 100,
+      "lookback": 60
+    },
+    "rationale": "Structurally distinct from every prior hypothesis: entry is driven by a LAGGED price-structure threshold (breaking a prior range), not a moving-average relationship, an oscillator level, or a volatility compression. This tests whether directional persistence exists after a decisive break of recent structure.",
+    "data_requirements": [
+      "high",
+      "low",
+      "close",
+      "atr_14"
+    ],
+    "status": "registered",
+    "created_at": "2026-08-30T11:19:56.971609+00:00",
+    "version": 1
+  }
+]
