@@ -1,0 +1,2744 @@
+{
+  "metadata": {
+    "generated_at": "2026-08-30T12:16:46.278580+00:00",
+    "strategy_version": "breakout_atr_stop_and_max_hold_v1 (Phase 9, unmodified)",
+    "regime_filters": {
+      "A_trending_only": [
+        "TRENDING_DOWN",
+        "TRENDING_UP"
+      ],
+      "B_high_vol_only": [
+        "HIGH_VOLATILITY"
+      ],
+      "C_trending_or_high_vol": [
+        "HIGH_VOLATILITY",
+        "TRENDING_DOWN",
+        "TRENDING_UP"
+      ]
+    },
+    "lookback_neighborhood": [
+      20,
+      40,
+      60
+    ],
+    "exit_config": {
+      "atr_stop_multiple": 2.0,
+      "max_holding_candles": 100
+    },
+    "account_config": {
+      "initial_balance": 10000.0,
+      "position_size": 10000.0
+    },
+    "dataset_id": "EURUSD_1H_2012_2022_v1",
+    "dataset_sha256": "1b29ca23bdc7b2645ae48a0ccb06108263b69e586bdc7d0ba40e66d1e5966eb9",
+    "note": "OOS period previously seen -- research evidence, not fresh confirmation."
+  },
+  "results": {
+    "20": {
+      "UNFILTERED": {
+        "LOW": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 6822.069879624495,
+              "net_pnl": -3177.930120375505,
+              "total_return": -0.3177930120375505,
+              "trade_count": 1139,
+              "winning_trades": 312,
+              "losing_trades": 827,
+              "win_rate": 0.2739244951712028,
+              "average_win": 73.27724358974353,
+              "average_loss": -31.487823603839768,
+              "largest_win": 457.9,
+              "largest_loss": -98.8351574249502,
+              "average_trade": -2.79010546126032,
+              "expectancy": -2.79010546126032,
+              "max_consecutive_wins": 5,
+              "max_consecutive_losses": 14,
+              "profit_factor": 0.8779616885863604,
+              "max_drawdown": 4264.220800587116,
+              "max_drawdown_percent": 0.4036939300490316
+            },
+            "original_signal_count": 2832
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 11239.821726723694,
+              "net_pnl": 1239.8217267236932,
+              "total_return": 0.12398217267236933,
+              "trade_count": 219,
+              "winning_trades": 81,
+              "losing_trades": 138,
+              "win_rate": 0.3698630136986301,
+              "average_win": 58.97777777777752,
+              "average_loss": -25.633175893306422,
+              "largest_win": 314.2999999999985,
+              "largest_loss": -84.87652933653055,
+              "average_trade": 5.661286423395859,
+              "expectancy": 5.661286423395859,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 9,
+              "profit_factor": 1.350491700616282,
+              "max_drawdown": 673.8306342290052,
+              "max_drawdown_percent": 0.05746975851617009
+            },
+            "original_signal_count": 607
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9226.919706675984,
+              "net_pnl": -773.0802933240155,
+              "total_return": -0.07730802933240155,
+              "trade_count": 261,
+              "winning_trades": 66,
+              "losing_trades": 195,
+              "win_rate": 0.25287356321839083,
+              "average_win": 57.72575757575753,
+              "average_loss": -23.502463042687243,
+              "largest_win": 246.5000000000006,
+              "largest_loss": -64.71383182349743,
+              "average_trade": -2.961993461011554,
+              "expectancy": -2.961993461011554,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 17,
+              "profit_factor": 0.8313149427131172,
+              "max_drawdown": 1339.4482502632127,
+              "max_drawdown_percent": 0.12981413248062473
+            },
+            "original_signal_count": 661
+          }
+        },
+        "BASE": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 6268.71987962438,
+              "net_pnl": -3731.28012037562,
+              "total_return": -0.37312801203756196,
+              "trade_count": 1139,
+              "winning_trades": 306,
+              "losing_trades": 833,
+              "win_rate": 0.26865671641791045,
+              "average_win": 74.00816993464034,
+              "average_loss": -31.666002545468857,
+              "largest_win": 457.1999999999998,
+              "largest_loss": -99.18515742495026,
+              "average_trade": -3.275926356782809,
+              "expectancy": -3.275926356782809,
+              "max_consecutive_wins": 5,
+              "max_consecutive_losses": 14,
+              "profit_factor": 0.8585445741321733,
+              "max_drawdown": 4675.120800587198,
+              "max_drawdown_percent": 0.442784576061558
+            },
+            "original_signal_count": 2832
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 11130.621726723672,
+              "net_pnl": 1130.6217267236707,
+              "total_return": 0.11306217267236707,
+              "trade_count": 219,
+              "winning_trades": 81,
+              "losing_trades": 138,
+              "win_rate": 0.3698630136986301,
+              "average_win": 58.277777777777374,
+              "average_loss": -26.013610675915196,
+              "largest_win": 313.5999999999983,
+              "largest_loss": -85.22652933653063,
+              "average_trade": 5.162656286409455,
+              "expectancy": 5.162656286409455,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 9,
+              "profit_factor": 1.3149470930923266,
+              "max_drawdown": 700.080634229018,
+              "max_drawdown_percent": 0.06011050637692945
+            },
+            "original_signal_count": 607
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9100.919706675959,
+              "net_pnl": -899.0802933240416,
+              "total_return": -0.08990802933240416,
+              "trade_count": 261,
+              "winning_trades": 65,
+              "losing_trades": 196,
+              "win_rate": 0.24904214559386972,
+              "average_win": 57.90615384615368,
+              "average_loss": -23.790715782265462,
+              "largest_win": 245.80000000000047,
+              "largest_loss": -65.06383182349751,
+              "average_trade": -3.4447520817013086,
+              "expectancy": -3.4447520817013086,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 17,
+              "profit_factor": 0.8071876274898157,
+              "max_drawdown": 1432.280821014132,
+              "max_drawdown_percent": 0.13922669941341673
+            },
+            "original_signal_count": 661
+          }
+        },
+        "HIGH": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 5003.919879623116,
+              "net_pnl": -4996.080120376884,
+              "total_return": -0.4996080120376884,
+              "trade_count": 1139,
+              "winning_trades": 301,
+              "losing_trades": 837,
+              "win_rate": 0.2642669007901668,
+              "average_win": 73.618604651161,
+              "average_loss": -32.44358437320949,
+              "largest_win": 455.5999999999982,
+              "largest_loss": -99.98515742495107,
+              "average_trade": -4.386374117977949,
+              "expectancy": -4.386374117977949,
+              "max_consecutive_wins": 5,
+              "max_consecutive_losses": 14,
+              "profit_factor": 0.8160180967299981,
+              "max_drawdown": 5620.676503126494,
+              "max_drawdown_percent": 0.5328638093400004
+            },
+            "original_signal_count": 2832
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10881.02172672342,
+              "net_pnl": 881.021726723421,
+              "total_return": 0.0881021726723421,
+              "trade_count": 219,
+              "winning_trades": 79,
+              "losing_trades": 140,
+              "win_rate": 0.3607305936073059,
+              "average_win": 58.12025316455496,
+              "average_loss": -26.503416237688718,
+              "largest_win": 311.9999999999967,
+              "largest_loss": -86.02652933653144,
+              "average_trade": 4.022930259011055,
+              "expectancy": 4.022930259011055,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 9,
+              "profit_factor": 1.2374415538473058,
+              "max_drawdown": 760.0806342290725,
+              "max_drawdown_percent": 0.06628209261775266
+            },
+            "original_signal_count": 607
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 8812.91970667567,
+              "net_pnl": -1187.0802933243297,
+              "total_return": -0.11870802933243296,
+              "trade_count": 261,
+              "winning_trades": 63,
+              "losing_trades": 197,
+              "win_rate": 0.2413793103448276,
+              "average_win": 58.098412698410904,
+              "average_loss": -24.60548372245795,
+              "largest_win": 244.19999999999885,
+              "largest_loss": -65.86383182349832,
+              "average_trade": -4.548200357564482,
+              "expectancy": -4.548200357564482,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 17,
+              "profit_factor": 0.7551038476237483,
+              "max_drawdown": 1648.2808210143467,
+              "max_drawdown_percent": 0.1613272717905018
+            },
+            "original_signal_count": 661
+          }
+        },
+        "verdict_base_cost": "REJECTED"
+      },
+      "A_trending_only": {
+        "LOW": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9066.667238738832,
+              "net_pnl": -933.3327612611674,
+              "total_return": -0.09333327612611675,
+              "trade_count": 446,
+              "winning_trades": 102,
+              "losing_trades": 344,
+              "win_rate": 0.22869955156950672,
+              "average_win": 84.7372549019607,
+              "average_loss": -27.838758026921973,
+              "largest_win": 393.3999999999993,
+              "largest_loss": -50.345784878285116,
+              "average_trade": -2.0926743526035145,
+              "expectancy": -2.0926743526035145,
+              "max_consecutive_wins": 5,
+              "max_consecutive_losses": 21,
+              "profit_factor": 0.902539595015362,
+              "max_drawdown": 1420.477719830962,
+              "max_drawdown_percent": 0.13836618886522023
+            },
+            "original_signal_count": 2832
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10422.842391750655,
+              "net_pnl": 422.84239175065517,
+              "total_return": 0.04228423917506552,
+              "trade_count": 112,
+              "winning_trades": 32,
+              "losing_trades": 80,
+              "win_rate": 0.2857142857142857,
+              "average_win": 73.92499999999968,
+              "average_loss": -24.284470103116682,
+              "largest_win": 225.40000000000003,
+              "largest_loss": -34.57865184525622,
+              "average_trade": 3.775378497773707,
+              "expectancy": 3.775378497773707,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 9,
+              "profit_factor": 1.2176506168114758,
+              "max_drawdown": 506.1675103196849,
+              "max_drawdown_percent": 0.04727574365853359
+            },
+            "original_signal_count": 607
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9618.115997334957,
+              "net_pnl": -381.8840026650428,
+              "total_return": -0.038188400266504274,
+              "trade_count": 135,
+              "winning_trades": 34,
+              "losing_trades": 100,
+              "win_rate": 0.2518518518518518,
+              "average_win": 61.82647058823542,
+              "average_loss": -24.83984002665047,
+              "largest_win": 201.19999999999916,
+              "largest_loss": -47.60967679547478,
+              "average_trade": -2.828770390111428,
+              "expectancy": -2.828770390111428,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 9,
+              "profit_factor": 0.8462614886990728,
+              "max_drawdown": 764.6947162413726,
+              "max_drawdown_percent": 0.07545019965227405
+            },
+            "original_signal_count": 661
+          }
+        },
+        "BASE": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 8867.86723873879,
+              "net_pnl": -1132.1327612612088,
+              "total_return": -0.11321327612612088,
+              "trade_count": 446,
+              "winning_trades": 102,
+              "losing_trades": 344,
+              "win_rate": 0.22869955156950672,
+              "average_win": 84.03725490196055,
+              "average_loss": -28.209106864131353,
+              "largest_win": 392.69999999999914,
+              "largest_loss": -50.69578487828519,
+              "average_trade": -2.5384142629175086,
+              "expectancy": -2.5384142629175086,
+              "max_consecutive_wins": 5,
+              "max_consecutive_losses": 21,
+              "profit_factor": 0.8833325839003371,
+              "max_drawdown": 1594.4277198310137,
+              "max_drawdown_percent": 0.1553633144237664
+            },
+            "original_signal_count": 2832
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10371.392391750645,
+              "net_pnl": 371.39239175064455,
+              "total_return": 0.037139239175064453,
+              "trade_count": 112,
+              "winning_trades": 32,
+              "losing_trades": 80,
+              "win_rate": 0.2857142857142857,
+              "average_win": 73.22499999999954,
+              "average_loss": -24.64759510311676,
+              "largest_win": 224.6999999999999,
+              "largest_loss": -34.92865184525628,
+              "average_trade": 3.316003497773612,
+              "expectancy": 3.316003497773612,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 9,
+              "profit_factor": 1.1883512317311644,
+              "max_drawdown": 522.2675103196871,
+              "max_drawdown_percent": 0.04892661894740344
+            },
+            "original_signal_count": 607
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9556.165997334945,
+              "net_pnl": -443.83400266505555,
+              "total_return": -0.04438340026650556,
+              "trade_count": 135,
+              "winning_trades": 34,
+              "losing_trades": 101,
+              "win_rate": 0.2518518518518518,
+              "average_win": 61.126470588235286,
+              "average_loss": -24.971623788762923,
+              "largest_win": 200.499999999999,
+              "largest_loss": -47.95967679547486,
+              "average_trade": -3.2876592790004113,
+              "expectancy": -3.2876592790004113,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 9,
+              "profit_factor": 0.8240244165472291,
+              "max_drawdown": 799.344716241385,
+              "max_drawdown_percent": 0.07904371208279799
+            },
+            "original_signal_count": 661
+          }
+        },
+        "HIGH": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 8413.467238738336,
+              "net_pnl": -1586.532761261663,
+              "total_return": -0.15865327612616628,
+              "trade_count": 446,
+              "winning_trades": 101,
+              "losing_trades": 345,
+              "win_rate": 0.226457399103139,
+              "average_win": 83.26336633663183,
+              "average_loss": -28.974297858728924,
+              "largest_win": 391.0999999999976,
+              "largest_loss": -51.49578487828599,
+              "average_trade": -3.5572483436360156,
+              "expectancy": -3.5572483436360156,
+              "max_consecutive_wins": 5,
+              "max_consecutive_losses": 21,
+              "profit_factor": 0.8412853451276643,
+              "max_drawdown": 1992.027719831407,
+              "max_drawdown_percent": 0.1942574561283577
+            },
+            "original_signal_count": 2832
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10253.792391750527,
+              "net_pnl": 253.7923917505269,
+              "total_return": 0.02537923917505269,
+              "trade_count": 112,
+              "winning_trades": 31,
+              "losing_trades": 81,
+              "win_rate": 0.2767857142857143,
+              "average_win": 73.94516129032051,
+              "average_loss": -25.166760595671718,
+              "largest_win": 223.0999999999983,
+              "largest_loss": -35.72865184525709,
+              "average_trade": 2.2660034977725614,
+              "expectancy": 2.2660034977725614,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 9,
+              "profit_factor": 1.124499114314552,
+              "max_drawdown": 559.0675103197264,
+              "max_drawdown_percent": 0.05273770805413912
+            },
+            "original_signal_count": 607
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9414.565997334803,
+              "net_pnl": -585.4340026651972,
+              "total_return": -0.058543400266519725,
+              "trade_count": 135,
+              "winning_trades": 34,
+              "losing_trades": 101,
+              "win_rate": 0.2518518518518518,
+              "average_win": 59.52647058823368,
+              "average_loss": -25.834990125397447,
+              "largest_win": 198.89999999999742,
+              "largest_loss": -48.759676795475656,
+              "average_trade": -4.33654816789035,
+              "expectancy": -4.33654816789035,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 9,
+              "profit_factor": 0.7756385337916718,
+              "max_drawdown": 894.4896886248571,
+              "max_drawdown_percent": 0.08876162554936007
+            },
+            "original_signal_count": 661
+          }
+        },
+        "verdict_base_cost": "REJECTED"
+      },
+      "B_high_vol_only": {
+        "LOW": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 7256.044051853607,
+              "net_pnl": -2743.9559481463925,
+              "total_return": -0.27439559481463927,
+              "trade_count": 500,
+              "winning_trades": 134,
+              "losing_trades": 366,
+              "win_rate": 0.268,
+              "average_win": 93.4014925373133,
+              "average_loss": -41.69332226269501,
+              "largest_win": 397.7999999999993,
+              "largest_loss": -98.8351574249502,
+              "average_trade": -5.487911896292785,
+              "expectancy": -5.487911896292785,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 13,
+              "profit_factor": 0.8201834972020174,
+              "max_drawdown": 3486.1991741340507,
+              "max_drawdown_percent": 0.32910824954050033
+            },
+            "original_signal_count": 2832
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10740.263235198567,
+              "net_pnl": 740.2632351985661,
+              "total_return": 0.07402632351985661,
+              "trade_count": 52,
+              "winning_trades": 20,
+              "losing_trades": 32,
+              "win_rate": 0.38461538461538464,
+              "average_win": 104.4149999999996,
+              "average_loss": -42.126148900044555,
+              "largest_win": 314.2999999999985,
+              "largest_loss": -84.87652933653055,
+              "average_trade": 14.235831446126271,
+              "expectancy": 14.235831446126271,
+              "max_consecutive_wins": 5,
+              "max_consecutive_losses": 6,
+              "profit_factor": 1.5491417256024258,
+              "max_drawdown": 316.01721532380543,
+              "max_drawdown_percent": 0.02944231697638783
+            },
+            "original_signal_count": 607
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10012.001512040459,
+              "net_pnl": 12.00151204045817,
+              "total_return": 0.001200151204045817,
+              "trade_count": 27,
+              "winning_trades": 7,
+              "losing_trades": 20,
+              "win_rate": 0.25925925925925924,
+              "average_win": 116.22857142857156,
+              "average_loss": -40.07992439797714,
+              "largest_win": 246.5000000000006,
+              "largest_loss": -64.71383182349743,
+              "average_trade": 0.4445004459428952,
+              "expectancy": 0.4445004459428952,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 11,
+              "profit_factor": 1.0149719743995622,
+              "max_drawdown": 470.90812555840057,
+              "max_drawdown_percent": 0.04600325135765679
+            },
+            "original_signal_count": 661
+          }
+        },
+        "BASE": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 7017.344051853558,
+              "net_pnl": -2982.655948146442,
+              "total_return": -0.2982655948146442,
+              "trade_count": 500,
+              "winning_trades": 133,
+              "losing_trades": 367,
+              "win_rate": 0.266,
+              "average_win": 93.40225563909748,
+              "average_loss": -41.9759017660665,
+              "largest_win": 397.0999999999991,
+              "largest_loss": -99.18515742495026,
+              "average_trade": -5.965311896292884,
+              "expectancy": -5.965311896292884,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 13,
+              "profit_factor": 0.8063858646945198,
+              "max_drawdown": 3639.149174134104,
+              "max_drawdown_percent": 0.34629327354914546
+            },
+            "original_signal_count": 2832
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10714.363235198562,
+              "net_pnl": 714.3632351985607,
+              "total_return": 0.07143632351985607,
+              "trade_count": 52,
+              "winning_trades": 20,
+              "losing_trades": 32,
+              "win_rate": 0.38461538461538464,
+              "average_win": 103.71499999999943,
+              "average_loss": -42.49802390004463,
+              "largest_win": 313.5999999999983,
+              "largest_loss": -85.22652933653063,
+              "average_trade": 13.737754523049244,
+              "expectancy": 13.737754523049244,
+              "max_consecutive_wins": 5,
+              "max_consecutive_losses": 6,
+              "profit_factor": 1.5252915089054666,
+              "max_drawdown": 319.1672153238087,
+              "max_drawdown_percent": 0.029754226947366832
+            },
+            "original_signal_count": 607
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9999.401512040455,
+              "net_pnl": -0.5984879595444035,
+              "total_return": -5.9848795954440345e-05,
+              "trade_count": 27,
+              "winning_trades": 7,
+              "losing_trades": 20,
+              "win_rate": 0.25925925925925924,
+              "average_win": 115.52857142857142,
+              "average_loss": -40.464924397977214,
+              "largest_win": 245.80000000000047,
+              "largest_loss": -65.06383182349751,
+              "average_trade": -0.022166220723866797,
+              "expectancy": -0.022166220723866797,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 11,
+              "profit_factor": 0.9992604855088097,
+              "max_drawdown": 476.85812555839766,
+              "max_drawdown_percent": 0.04661160323685311
+            },
+            "original_signal_count": 661
+          }
+        },
+        "HIGH": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 6471.744051853012,
+              "net_pnl": -3528.255948146988,
+              "total_return": -0.3528255948146988,
+              "trade_count": 500,
+              "winning_trades": 132,
+              "losing_trades": 368,
+              "win_rate": 0.264,
+              "average_win": 92.50530303030115,
+              "average_loss": -42.76890203300745,
+              "largest_win": 395.4999999999975,
+              "largest_loss": -99.98515742495107,
+              "average_trade": -7.056511896293976,
+              "expectancy": -7.056511896293976,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 13,
+              "profit_factor": 0.7758265567442267,
+              "max_drawdown": 4032.4140116406206,
+              "max_drawdown_percent": 0.3892092560701795
+            },
+            "original_signal_count": 2832
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10655.1632351985,
+              "net_pnl": 655.1632351985015,
+              "total_return": 0.06551632351985015,
+              "trade_count": 52,
+              "winning_trades": 20,
+              "losing_trades": 32,
+              "win_rate": 0.38461538461538464,
+              "average_win": 102.11499999999785,
+              "average_loss": -43.34802390004548,
+              "largest_win": 311.9999999999967,
+              "largest_loss": -86.02652933653144,
+              "average_trade": 12.599292984586567,
+              "expectancy": 12.599292984586567,
+              "max_consecutive_wins": 5,
+              "max_consecutive_losses": 6,
+              "profit_factor": 1.4723133665138468,
+              "max_drawdown": 326.3672153238185,
+              "max_drawdown_percent": 0.030468618306720142
+            },
+            "original_signal_count": 607
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9970.601512040426,
+              "net_pnl": -29.398487959573256,
+              "total_return": -0.0029398487959573258,
+              "trade_count": 27,
+              "winning_trades": 7,
+              "losing_trades": 20,
+              "win_rate": 0.25925925925925924,
+              "average_win": 113.92857142856982,
+              "average_loss": -41.3449243979781,
+              "largest_win": 244.19999999999885,
+              "largest_loss": -65.86383182349832,
+              "average_trade": -1.088832887391602,
+              "expectancy": -1.088832887391602,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 11,
+              "profit_factor": 0.9644472829644225,
+              "max_drawdown": 490.4581255584126,
+              "max_drawdown_percent": 0.04800478258049945
+            },
+            "original_signal_count": 661
+          }
+        },
+        "verdict_base_cost": "REJECTED"
+      },
+      "C_trending_or_high_vol": {
+        "LOW": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 6219.982786577935,
+              "net_pnl": -3780.0172134220643,
+              "total_return": -0.37800172134220644,
+              "trade_count": 815,
+              "winning_trades": 207,
+              "losing_trades": 608,
+              "win_rate": 0.25398773006134967,
+              "average_win": 83.16521739130427,
+              "average_loss": -34.53160725891784,
+              "largest_win": 393.3999999999993,
+              "largest_loss": -98.8351574249502,
+              "average_trade": -4.63805793057922,
+              "expectancy": -4.63805793057922,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 17,
+              "profit_factor": 0.8199581754741011,
+              "max_drawdown": 4188.456520605313,
+              "max_drawdown_percent": 0.40655175125659826
+            },
+            "original_signal_count": 2832
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10884.713419264404,
+              "net_pnl": 884.7134192644047,
+              "total_return": 0.08847134192644047,
+              "trade_count": 146,
+              "winning_trades": 49,
+              "losing_trades": 97,
+              "win_rate": 0.3356164383561644,
+              "average_win": 75.17959183673436,
+              "average_loss": -28.85656268799566,
+              "largest_win": 314.2999999999985,
+              "largest_loss": -84.87652933653055,
+              "average_trade": 6.059680953865786,
+              "expectancy": 6.059680953865786,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 10,
+              "profit_factor": 1.3160721877463,
+              "max_drawdown": 545.158978148409,
+              "max_drawdown_percent": 0.049077286208286594
+            },
+            "original_signal_count": 607
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9764.145243063078,
+              "net_pnl": -235.85475693692183,
+              "total_return": -0.02358547569369218,
+              "trade_count": 148,
+              "winning_trades": 40,
+              "losing_trades": 107,
+              "win_rate": 0.2702702702702703,
+              "average_win": 64.33250000000024,
+              "average_loss": -26.253782775111507,
+              "largest_win": 246.5000000000006,
+              "largest_loss": -64.71383182349743,
+              "average_trade": -1.5936132225467692,
+              "expectancy": -1.5936132225467692,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 10,
+              "profit_factor": 0.9160406679786858,
+              "max_drawdown": 994.061987292389,
+              "max_drawdown_percent": 0.09456713029656687
+            },
+            "original_signal_count": 661
+          }
+        },
+        "BASE": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 5833.582786577856,
+              "net_pnl": -4166.417213422144,
+              "total_return": -0.41664172134221444,
+              "trade_count": 815,
+              "winning_trades": 204,
+              "losing_trades": 611,
+              "win_rate": 0.25030674846625767,
+              "average_win": 83.68431372548997,
+              "average_loss": -34.759438974504256,
+              "largest_win": 392.69999999999914,
+              "largest_loss": -99.18515742495026,
+              "average_trade": -5.112168360027171,
+              "expectancy": -5.112168360027171,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 17,
+              "profit_factor": 0.8038226840314908,
+              "max_drawdown": 4546.506520605415,
+              "max_drawdown_percent": 0.4417710603679004
+            },
+            "original_signal_count": 2832
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10814.71341926439,
+              "net_pnl": 814.71341926439,
+              "total_return": 0.081471341926439,
+              "trade_count": 146,
+              "winning_trades": 49,
+              "losing_trades": 97,
+              "win_rate": 0.3356164383561644,
+              "average_win": 74.47959183673422,
+              "average_loss": -29.22460392510914,
+              "largest_win": 313.5999999999983,
+              "largest_loss": -85.22652933653063,
+              "average_trade": 5.580228899071165,
+              "expectancy": 5.580228899071165,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 10,
+              "profit_factor": 1.2873985028717696,
+              "max_drawdown": 553.2089781484101,
+              "max_drawdown_percent": 0.05001313914896834
+            },
+            "original_signal_count": 607
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9694.495243063064,
+              "net_pnl": -305.50475693693625,
+              "total_return": -0.030550475693693624,
+              "trade_count": 148,
+              "winning_trades": 40,
+              "losing_trades": 108,
+              "win_rate": 0.2702702702702703,
+              "average_win": 63.63250000000009,
+              "average_loss": -26.396340342008703,
+              "largest_win": 245.80000000000047,
+              "largest_loss": -65.06383182349751,
+              "average_trade": -2.064221330654975,
+              "expectancy": -2.064221330654975,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 10,
+              "profit_factor": 0.8928356085440284,
+              "max_drawdown": 1038.1619872923966,
+              "max_drawdown_percent": 0.09899648335893367
+            },
+            "original_signal_count": 661
+          }
+        },
+        "HIGH": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 4950.382786576973,
+              "net_pnl": -5049.617213423027,
+              "total_return": -0.5049617213423028,
+              "trade_count": 815,
+              "winning_trades": 201,
+              "losing_trades": 614,
+              "win_rate": 0.24662576687116564,
+              "average_win": 83.32089552238624,
+              "average_loss": -35.50019090133984,
+              "largest_win": 391.0999999999976,
+              "largest_loss": -99.98515742495107,
+              "average_trade": -6.195849341623346,
+              "expectancy": -6.195849341623346,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 17,
+              "profit_factor": 0.7683355480460748,
+              "max_drawdown": 5373.0163517482415,
+              "max_drawdown_percent": 0.5233417816948698
+            },
+            "original_signal_count": 2832
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10654.71341926423,
+              "net_pnl": 654.7134192642301,
+              "total_return": 0.06547134192642301,
+              "trade_count": 146,
+              "winning_trades": 48,
+              "losing_trades": 98,
+              "win_rate": 0.3287671232876712,
+              "average_win": 74.40416666666458,
+              "average_loss": -29.762107966690515,
+              "largest_win": 311.9999999999967,
+              "largest_loss": -86.02652933653144,
+              "average_trade": 4.484338488111165,
+              "expectancy": 4.484338488111165,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 10,
+              "profit_factor": 1.2244716396984596,
+              "max_drawdown": 571.6089781484297,
+              "max_drawdown_percent": 0.05218232396679093
+            },
+            "original_signal_count": 607
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9535.295243062905,
+              "net_pnl": -464.7047569370955,
+              "total_return": -0.04647047569370955,
+              "trade_count": 148,
+              "winning_trades": 40,
+              "losing_trades": 108,
+              "win_rate": 0.2702702702702703,
+              "average_win": 62.03249999999849,
+              "average_loss": -27.277821823491063,
+              "largest_win": 244.19999999999885,
+              "largest_loss": -65.86383182349832,
+              "average_trade": -3.1398970063317266,
+              "expectancy": -3.1398970063317266,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 10,
+              "profit_factor": 0.8422593324593782,
+              "max_drawdown": 1138.9619872924995,
+              "max_drawdown_percent": 0.10919997485514184
+            },
+            "original_signal_count": 661
+          }
+        },
+        "verdict_base_cost": "REJECTED"
+      }
+    },
+    "40": {
+      "UNFILTERED": {
+        "LOW": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 8176.043403943328,
+              "net_pnl": -1823.9565960566729,
+              "total_return": -0.18239565960566728,
+              "trade_count": 757,
+              "winning_trades": 179,
+              "losing_trades": 578,
+              "win_rate": 0.23645970937912814,
+              "average_win": 97.46480446927359,
+              "average_loss": -33.339371273454404,
+              "largest_win": 457.9,
+              "largest_loss": -93.04101226901062,
+              "average_trade": -2.4094538917525403,
+              "expectancy": -2.4094538917525403,
+              "max_consecutive_wins": 5,
+              "max_consecutive_losses": 16,
+              "profit_factor": 0.9053481175949594,
+              "max_drawdown": 2517.870361131875,
+              "max_drawdown_percent": 0.23719478361650662
+            },
+            "original_signal_count": 1965
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10932.186164885292,
+              "net_pnl": 932.1861648852913,
+              "total_return": 0.09321861648852912,
+              "trade_count": 149,
+              "winning_trades": 47,
+              "losing_trades": 102,
+              "win_rate": 0.31543624161073824,
+              "average_win": 76.07234042553158,
+              "average_loss": -25.91386112857542,
+              "largest_win": 268.6999999999995,
+              "largest_loss": -77.66403427841517,
+              "average_trade": 6.256282985807324,
+              "expectancy": 6.256282985807324,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 8,
+              "profit_factor": 1.3526714912359115,
+              "max_drawdown": 584.8118862284919,
+              "max_drawdown_percent": 0.051609418065591446
+            },
+            "original_signal_count": 430
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10119.74341195721,
+              "net_pnl": 119.74341195720939,
+              "total_return": 0.011974341195720939,
+              "trade_count": 161,
+              "winning_trades": 43,
+              "losing_trades": 118,
+              "win_rate": 0.2670807453416149,
+              "average_win": 71.79534883720927,
+              "average_loss": -25.1479371868033,
+              "largest_win": 260.40000000000066,
+              "largest_loss": -57.997903135968976,
+              "average_trade": 0.7437479003553378,
+              "expectancy": 0.7437479003553378,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 15,
+              "profit_factor": 1.0403522034457755,
+              "max_drawdown": 863.9050620338348,
+              "max_drawdown_percent": 0.08445160717223224
+            },
+            "original_signal_count": 451
+          }
+        },
+        "BASE": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 7832.343403943256,
+              "net_pnl": -2167.656596056744,
+              "total_return": -0.2167656596056744,
+              "trade_count": 757,
+              "winning_trades": 179,
+              "losing_trades": 578,
+              "win_rate": 0.23645970937912814,
+              "average_win": 96.76480446927344,
+              "average_loss": -33.71722594473476,
+              "largest_win": 457.1999999999998,
+              "largest_loss": -93.3910122690107,
+              "average_trade": -2.8634829538398203,
+              "expectancy": -2.8634829538398203,
+              "max_consecutive_wins": 5,
+              "max_consecutive_losses": 16,
+              "profit_factor": 0.8887728506022172,
+              "max_drawdown": 2832.520361131985,
+              "max_drawdown_percent": 0.2670828096997175
+            },
+            "original_signal_count": 1965
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10860.086164885277,
+              "net_pnl": 860.0861648852764,
+              "total_return": 0.08600861648852764,
+              "trade_count": 149,
+              "winning_trades": 47,
+              "losing_trades": 102,
+              "win_rate": 0.31543624161073824,
+              "average_win": 75.37234042553143,
+              "average_loss": -26.298174854065692,
+              "largest_win": 267.9999999999994,
+              "largest_loss": -78.01403427841524,
+              "average_trade": 5.772390368357559,
+              "expectancy": 5.772390368357559,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 8,
+              "profit_factor": 1.3206388789179873,
+              "max_drawdown": 600.211886228497,
+              "max_drawdown_percent": 0.05321831553720169
+            },
+            "original_signal_count": 430
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10044.493411957194,
+              "net_pnl": 44.49341195719386,
+              "total_return": 0.004449341195719386,
+              "trade_count": 161,
+              "winning_trades": 42,
+              "losing_trades": 118,
+              "win_rate": 0.2608695652173913,
+              "average_win": 72.78809523809507,
+              "average_loss": -25.530564305447445,
+              "largest_win": 259.7000000000005,
+              "largest_loss": -58.34790313596905,
+              "average_trade": 0.27635659600741524,
+              "expectancy": 0.27635659600741524,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 15,
+              "profit_factor": 1.0147690747719236,
+              "max_drawdown": 907.3050620338527,
+              "max_drawdown_percent": 0.08870937842475901
+            },
+            "original_signal_count": 451
+          }
+        },
+        "HIGH": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 7046.74340394247,
+              "net_pnl": -2953.25659605753,
+              "total_return": -0.29532565960575297,
+              "trade_count": 757,
+              "winning_trades": 179,
+              "losing_trades": 578,
+              "win_rate": 0.23645970937912814,
+              "average_win": 95.16480446927183,
+              "average_loss": -34.58089376480483,
+              "largest_win": 455.5999999999982,
+              "largest_loss": -94.1910122690115,
+              "average_trade": -3.9012636671829983,
+              "expectancy": -3.9012636671829983,
+              "max_consecutive_wins": 5,
+              "max_consecutive_losses": 16,
+              "profit_factor": 0.8522467200426038,
+              "max_drawdown": 3551.7203611326795,
+              "max_drawdown_percent": 0.3356061556299179
+            },
+            "original_signal_count": 1965
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10695.286164885112,
+              "net_pnl": 695.2861648851117,
+              "total_return": 0.06952861648851116,
+              "trade_count": 149,
+              "winning_trades": 47,
+              "losing_trades": 102,
+              "win_rate": 0.31543624161073824,
+              "average_win": 73.77234042552983,
+              "average_loss": -27.176606226615593,
+              "largest_win": 266.39999999999776,
+              "largest_loss": -78.81403427841605,
+              "average_trade": 4.666350099900079,
+              "expectancy": 4.666350099900079,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 8,
+              "profit_factor": 1.2508234829413538,
+              "max_drawdown": 635.4118862285304,
+              "max_drawdown_percent": 0.056953413204667014
+            },
+            "original_signal_count": 430
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9872.493411957023,
+              "net_pnl": -127.50658804297824,
+              "total_return": -0.012750658804297824,
+              "trade_count": 161,
+              "winning_trades": 41,
+              "losing_trades": 120,
+              "win_rate": 0.2546583850931677,
+              "average_win": 72.95121951219338,
+              "average_loss": -25.987554900357555,
+              "largest_win": 258.0999999999989,
+              "largest_loss": -59.14790313596985,
+              "average_trade": -0.7919663853601133,
+              "expectancy": -0.7919663853601133,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 15,
+              "profit_factor": 0.9591129329237691,
+              "max_drawdown": 1042.758532495016,
+              "max_drawdown_percent": 0.10199287542344201
+            },
+            "original_signal_count": 451
+          }
+        },
+        "verdict_base_cost": "REJECTED"
+      },
+      "A_trending_only": {
+        "LOW": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9083.217297279598,
+              "net_pnl": -916.7827027204023,
+              "total_return": -0.09167827027204023,
+              "trade_count": 367,
+              "winning_trades": 75,
+              "losing_trades": 292,
+              "win_rate": 0.20435967302452315,
+              "average_win": 98.3079999999999,
+              "average_loss": -28.390009255891766,
+              "largest_win": 393.3999999999993,
+              "largest_loss": -50.345784878285116,
+              "average_trade": -2.498045511499734,
+              "expectancy": -2.498045511499734,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 20,
+              "profit_factor": 0.8894094481675171,
+              "max_drawdown": 1241.7570138268293,
+              "max_drawdown_percent": 0.12126728349516065
+            },
+            "original_signal_count": 1965
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10390.410603025106,
+              "net_pnl": 390.4106030251064,
+              "total_return": 0.039041060302510644,
+              "trade_count": 92,
+              "winning_trades": 27,
+              "losing_trades": 65,
+              "win_rate": 0.29347826086956524,
+              "average_win": 75.62962962962936,
+              "average_loss": -25.409067645767482,
+              "largest_win": 225.40000000000003,
+              "largest_loss": -34.57865184525622,
+              "average_trade": 4.243593511142461,
+              "expectancy": 4.243593511142461,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 9,
+              "profit_factor": 1.2363847840996056,
+              "max_drawdown": 468.0826224910961,
+              "max_drawdown_percent": 0.043928837148238045
+            },
+            "original_signal_count": 430
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9667.48440602605,
+              "net_pnl": -332.51559397394993,
+              "total_return": -0.03325155939739499,
+              "trade_count": 109,
+              "winning_trades": 24,
+              "losing_trades": 84,
+              "win_rate": 0.22018348623853212,
+              "average_win": 76.18750000000007,
+              "average_loss": -25.72637611873752,
+              "largest_win": 236.80000000000146,
+              "largest_loss": -47.60967679547478,
+              "average_trade": -3.0506017795775224,
+              "expectancy": -3.0506017795775224,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 15,
+              "profit_factor": 0.8461299423746973,
+              "max_drawdown": 919.2545014483931,
+              "max_drawdown_percent": 0.09089482112526936
+            },
+            "original_signal_count": 451
+          }
+        },
+        "BASE": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 8924.317297279566,
+              "net_pnl": -1075.6827027204354,
+              "total_return": -0.10756827027204353,
+              "trade_count": 367,
+              "winning_trades": 75,
+              "losing_trades": 292,
+              "win_rate": 0.20435967302452315,
+              "average_win": 97.60799999999975,
+              "average_loss": -28.754392817535674,
+              "largest_win": 392.69999999999914,
+              "largest_loss": -50.69578487828519,
+              "average_trade": -2.93101553874778,
+              "expectancy": -2.93101553874778,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 20,
+              "profit_factor": 0.8718858403407603,
+              "max_drawdown": 1380.3970276086457,
+              "max_drawdown_percent": 0.13488902766875596
+            },
+            "original_signal_count": 1965
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10348.410603025099,
+              "net_pnl": 348.41060302509777,
+              "total_return": 0.034841060302509774,
+              "trade_count": 92,
+              "winning_trades": 27,
+              "losing_trades": 65,
+              "win_rate": 0.29347826086956524,
+              "average_win": 74.92962962962922,
+              "average_loss": -25.76445226115217,
+              "largest_win": 224.6999999999999,
+              "largest_loss": -34.92865184525628,
+              "average_trade": 3.7870717720119322,
+              "expectancy": 3.7870717720119322,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 9,
+              "profit_factor": 1.2080449088974088,
+              "max_drawdown": 481.5370540666627,
+              "max_drawdown_percent": 0.045297153995871656
+            },
+            "original_signal_count": 430
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9619.53440602604,
+              "net_pnl": -380.46559397395987,
+              "total_return": -0.038046559397395985,
+              "trade_count": 109,
+              "winning_trades": 24,
+              "losing_trades": 85,
+              "win_rate": 0.22018348623853212,
+              "average_win": 75.48749999999993,
+              "average_loss": -25.790183458517152,
+              "largest_win": 236.1000000000013,
+              "largest_loss": -47.95967679547486,
+              "average_trade": -3.4905100364583475,
+              "expectancy": -3.4905100364583475,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 15,
+              "profit_factor": 0.8264430410641325,
+              "max_drawdown": 962.3045014484051,
+              "max_drawdown_percent": 0.09516143522286524
+            },
+            "original_signal_count": 451
+          }
+        },
+        "HIGH": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 8561.117297279201,
+              "net_pnl": -1438.8827027207983,
+              "total_return": -0.14388827027207984,
+              "trade_count": 367,
+              "winning_trades": 75,
+              "losing_trades": 292,
+              "win_rate": 0.20435967302452315,
+              "average_win": 96.00799999999816,
+              "average_loss": -29.58726952986527,
+              "largest_win": 391.0999999999976,
+              "largest_loss": -51.49578487828599,
+              "average_trade": -3.9206613153155265,
+              "expectancy": -3.9206613153155265,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 20,
+              "profit_factor": 0.8334526785651555,
+              "max_drawdown": 1703.5970276089702,
+              "max_drawdown_percent": 0.16660158186159196
+            },
+            "original_signal_count": 1965
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10252.410603025002,
+              "net_pnl": 252.4106030250017,
+              "total_return": 0.02524106030250017,
+              "trade_count": 92,
+              "winning_trades": 27,
+              "losing_trades": 65,
+              "win_rate": 0.29347826086956524,
+              "average_win": 73.32962962962762,
+              "average_loss": -26.576759953460677,
+              "largest_win": 223.0999999999983,
+              "largest_loss": -35.72865184525709,
+              "average_trade": 2.7435935111413228,
+              "expectancy": 2.7435935111413228,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 9,
+              "profit_factor": 1.1461141257752465,
+              "max_drawdown": 514.3370540666965,
+              "max_drawdown_percent": 0.04864247875915647
+            },
+            "original_signal_count": 430
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9509.93440602593,
+              "net_pnl": -490.06559397406943,
+              "total_return": -0.049006559397406946,
+              "trade_count": 109,
+              "winning_trades": 24,
+              "losing_trades": 85,
+              "win_rate": 0.22018348623853212,
+              "average_win": 73.88749999999833,
+              "average_loss": -26.627830517341522,
+              "largest_win": 234.49999999999972,
+              "largest_loss": -48.759676795475656,
+              "average_trade": -4.496014623615316,
+              "expectancy": -4.496014623615316,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 15,
+              "profit_factor": 0.7834792597012091,
+              "max_drawdown": 1060.704501448503,
+              "max_drawdown_percent": 0.10491702396094126
+            },
+            "original_signal_count": 451
+          }
+        },
+        "verdict_base_cost": "REJECTED"
+      },
+      "B_high_vol_only": {
+        "LOW": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 8645.221391610597,
+              "net_pnl": -1354.778608389402,
+              "total_return": -0.1354778608389402,
+              "trade_count": 350,
+              "winning_trades": 95,
+              "losing_trades": 255,
+              "win_rate": 0.2714285714285714,
+              "average_win": 104.55894736842097,
+              "average_loss": -44.266190621134875,
+              "largest_win": 399.4999999999993,
+              "largest_loss": -93.04101226901062,
+              "average_trade": -3.8707960239697203,
+              "expectancy": -3.8707960239697203,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 20,
+              "profit_factor": 0.8799793428516763,
+              "max_drawdown": 2022.1735098616828,
+              "max_drawdown_percent": 0.1942796838765876
+            },
+            "original_signal_count": 1965
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10245.38177354855,
+              "net_pnl": 245.38177354854972,
+              "total_return": 0.024538177354854973,
+              "trade_count": 38,
+              "winning_trades": 13,
+              "losing_trades": 25,
+              "win_rate": 0.34210526315789475,
+              "average_win": 101.9923076923075,
+              "average_loss": -43.22072905805791,
+              "largest_win": 268.6999999999995,
+              "largest_loss": -77.66403427841517,
+              "average_trade": 6.457415093382887,
+              "expectancy": 6.457415093382887,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 6,
+              "profit_factor": 1.2270963761105753,
+              "max_drawdown": 416.7021974249292,
+              "max_drawdown_percent": 0.03944274945670361
+            },
+            "original_signal_count": 430
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10013.234126210493,
+              "net_pnl": 13.23412621049291,
+              "total_return": 0.001323412621049291,
+              "trade_count": 19,
+              "winning_trades": 5,
+              "losing_trades": 14,
+              "win_rate": 0.2631578947368421,
+              "average_win": 113.23999999999936,
+              "average_loss": -39.49756241353599,
+              "largest_win": 205.40000000000003,
+              "largest_loss": -57.997903135968976,
+              "average_trade": 0.6965329584469953,
+              "expectancy": 0.6965329584469953,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 6,
+              "profit_factor": 1.0239329890645852,
+              "max_drawdown": 308.3276009593337,
+              "max_drawdown_percent": 0.03070471499603864
+            },
+            "original_signal_count": 451
+          }
+        },
+        "BASE": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 8484.921391610565,
+              "net_pnl": -1515.0786083894352,
+              "total_return": -0.15150786083894352,
+              "trade_count": 350,
+              "winning_trades": 95,
+              "losing_trades": 255,
+              "win_rate": 0.2714285714285714,
+              "average_win": 103.85894736842083,
+              "average_loss": -44.634033758389855,
+              "largest_win": 398.79999999999916,
+              "largest_loss": -93.3910122690107,
+              "average_trade": -4.328796023969815,
+              "expectancy": -4.328796023969815,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 20,
+              "profit_factor": 0.8668844323830517,
+              "max_drawdown": 2148.173509861723,
+              "max_drawdown_percent": 0.20651703728773704
+            },
+            "original_signal_count": 1965
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10227.181773548546,
+              "net_pnl": 227.18177354854595,
+              "total_return": 0.022718177354854596,
+              "trade_count": 38,
+              "winning_trades": 12,
+              "losing_trades": 26,
+              "win_rate": 0.3157894736842105,
+              "average_win": 109.76666666666635,
+              "average_loss": -41.92377794044039,
+              "largest_win": 267.9999999999994,
+              "largest_loss": -78.01403427841524,
+              "average_trade": 5.978467724961735,
+              "expectancy": 5.978467724961735,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 8,
+              "profit_factor": 1.2084201603565248,
+              "max_drawdown": 422.30219742493136,
+              "max_drawdown_percent": 0.03998738700945948
+            },
+            "original_signal_count": 430
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10004.484126210491,
+              "net_pnl": 4.484126210491105,
+              "total_return": 0.00044841262104911055,
+              "trade_count": 19,
+              "winning_trades": 5,
+              "losing_trades": 14,
+              "win_rate": 0.2631578947368421,
+              "average_win": 112.5399999999992,
+              "average_loss": -39.87256241353606,
+              "largest_win": 204.69999999999987,
+              "largest_loss": -58.34790313596905,
+              "average_trade": 0.2360066426574266,
+              "expectancy": 0.2360066426574266,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 6,
+              "profit_factor": 1.0080329607613094,
+              "max_drawdown": 310.4276009593341,
+              "max_drawdown_percent": 0.030914920417568298
+            },
+            "original_signal_count": 451
+          }
+        },
+        "HIGH": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 8118.521391610198,
+              "net_pnl": -1881.4786083898018,
+              "total_return": -0.1881478608389802,
+              "trade_count": 350,
+              "winning_trades": 95,
+              "losing_trades": 255,
+              "win_rate": 0.2714285714285714,
+              "average_win": 102.25894736841921,
+              "average_loss": -45.47481807211619,
+              "largest_win": 397.19999999999754,
+              "largest_loss": -94.1910122690115,
+              "average_trade": -5.375653166828005,
+              "expectancy": -5.375653166828005,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 20,
+              "profit_factor": 0.8377487190343316,
+              "max_drawdown": 2436.1735098620056,
+              "max_drawdown_percent": 0.2345469721316887
+            },
+            "original_signal_count": 1965
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10185.581773548505,
+              "net_pnl": 185.5817735485044,
+              "total_return": 0.01855817735485044,
+              "trade_count": 38,
+              "winning_trades": 12,
+              "losing_trades": 26,
+              "win_rate": 0.3157894736842105,
+              "average_win": 108.16666666666475,
+              "average_loss": -42.78531640197971,
+              "largest_win": 266.39999999999776,
+              "largest_loss": -78.81403427841605,
+              "average_trade": 4.883730882855379,
+              "expectancy": 4.883730882855379,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 8,
+              "profit_factor": 1.1668273398760247,
+              "max_drawdown": 435.10219742494337,
+              "max_drawdown_percent": 0.04123376523239863
+            },
+            "original_signal_count": 430
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9984.484126210471,
+              "net_pnl": -15.515873789528904,
+              "total_return": -0.0015515873789528904,
+              "trade_count": 19,
+              "winning_trades": 5,
+              "losing_trades": 14,
+              "win_rate": 0.2631578947368421,
+              "average_win": 110.9399999999976,
+              "average_loss": -40.72970527067978,
+              "largest_win": 203.0999999999983,
+              "largest_loss": -59.14790313596985,
+              "average_trade": -0.816624936290995,
+              "expectancy": -0.816624936290995,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 6,
+              "profit_factor": 0.9727894741224685,
+              "max_drawdown": 315.2276009593388,
+              "max_drawdown_percent": 0.03139544498332855
+            },
+            "original_signal_count": 451
+          }
+        },
+        "verdict_base_cost": "REJECTED"
+      },
+      "C_trending_or_high_vol": {
+        "LOW": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 7985.7224357811865,
+              "net_pnl": -2014.2775642188137,
+              "total_return": -0.20142775642188138,
+              "trade_count": 597,
+              "winning_trades": 146,
+              "losing_trades": 451,
+              "win_rate": 0.24455611390284757,
+              "average_win": 98.96232876712318,
+              "average_loss": -36.50283273662705,
+              "largest_win": 399.4999999999993,
+              "largest_loss": -93.04101226901062,
+              "average_trade": -3.373999270048264,
+              "expectancy": -3.373999270048264,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 15,
+              "profit_factor": 0.8776465540908013,
+              "max_drawdown": 2612.4590339617735,
+              "max_drawdown_percent": 0.2526925692560415
+            },
+            "original_signal_count": 1965
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10590.408343661198,
+              "net_pnl": 590.4083436611973,
+              "total_return": 0.059040834366119725,
+              "trade_count": 115,
+              "winning_trades": 37,
+              "losing_trades": 78,
+              "win_rate": 0.3217391304347826,
+              "average_win": 76.95405405405386,
+              "average_loss": -28.93450841459994,
+              "largest_win": 268.6999999999995,
+              "largest_loss": -77.66403427841517,
+              "average_trade": 5.133985597053889,
+              "expectancy": 5.133985597053889,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 13,
+              "profit_factor": 1.2616024309376805,
+              "max_drawdown": 869.7852960440014,
+              "max_drawdown_percent": 0.07754691156594658
+            },
+            "original_signal_count": 430
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9780.30211591593,
+              "net_pnl": -219.6978840840691,
+              "total_return": -0.02196978840840691,
+              "trade_count": 120,
+              "winning_trades": 28,
+              "losing_trades": 91,
+              "win_rate": 0.23333333333333334,
+              "average_win": 78.96428571428567,
+              "average_loss": -26.71096575916558,
+              "largest_win": 236.80000000000146,
+              "largest_loss": -57.997903135968976,
+              "average_trade": -1.8308157007005759,
+              "expectancy": -1.8308157007005759,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 17,
+              "profit_factor": 0.9096153061544071,
+              "max_drawdown": 950.7402240859265,
+              "max_drawdown_percent": 0.09400809293697025
+            },
+            "original_signal_count": 451
+          }
+        },
+        "BASE": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 7718.3224357811305,
+              "net_pnl": -2281.677564218869,
+              "total_return": -0.2281677564218869,
+              "trade_count": 597,
+              "winning_trades": 146,
+              "losing_trades": 451,
+              "win_rate": 0.24455611390284757,
+              "average_win": 98.26232876712304,
+              "average_loss": -36.86912985414375,
+              "largest_win": 398.79999999999916,
+              "largest_loss": -93.3910122690107,
+              "average_trade": -3.8219054677032984,
+              "expectancy": -3.8219054677032984,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 15,
+              "profit_factor": 0.8627808129156529,
+              "max_drawdown": 2856.75903396185,
+              "max_drawdown_percent": 0.27654741186131193
+            },
+            "original_signal_count": 1965
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10536.158343661185,
+              "net_pnl": 536.1583436611861,
+              "total_return": 0.05361583436611861,
+              "trade_count": 115,
+              "winning_trades": 36,
+              "losing_trades": 79,
+              "win_rate": 0.3130434782608696,
+              "average_win": 78.3777777777774,
+              "average_loss": -28.929641219478487,
+              "largest_win": 267.9999999999994,
+              "largest_loss": -78.01403427841524,
+              "average_trade": 4.66224646661901,
+              "expectancy": 4.66224646661901,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 16,
+              "profit_factor": 1.2345972570221255,
+              "max_drawdown": 884.4852960440021,
+              "max_drawdown_percent": 0.07905733441813588
+            },
+            "original_signal_count": 430
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9726.40211591592,
+              "net_pnl": -273.5978840840803,
+              "total_return": -0.02735978840840803,
+              "trade_count": 120,
+              "winning_trades": 28,
+              "losing_trades": 92,
+              "win_rate": 0.23333333333333334,
+              "average_win": 78.26428571428552,
+              "average_loss": -26.793455261783425,
+              "largest_win": 236.1000000000013,
+              "largest_loss": -58.34790313596905,
+              "average_trade": -2.279982367367336,
+              "expectancy": -2.279982367367336,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 17,
+              "profit_factor": 0.889006848301721,
+              "max_drawdown": 997.2902240859366,
+              "max_drawdown_percent": 0.09862114217995162
+            },
+            "original_signal_count": 451
+          }
+        },
+        "HIGH": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 7107.1224357805195,
+              "net_pnl": -2892.8775642194805,
+              "total_return": -0.28928775642194804,
+              "trade_count": 597,
+              "winning_trades": 145,
+              "losing_trades": 452,
+              "win_rate": 0.24288107202680068,
+              "average_win": 97.33103448275676,
+              "average_loss": -37.62362292968852,
+              "largest_win": 397.19999999999754,
+              "largest_loss": -94.1910122690115,
+              "average_trade": -4.845691062344189,
+              "expectancy": -4.845691062344189,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 17,
+              "profit_factor": 0.8298895453471824,
+              "max_drawdown": 3415.1590339624054,
+              "max_drawdown_percent": 0.3312187188817975
+            },
+            "original_signal_count": 1965
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10412.158343661062,
+              "net_pnl": 412.15834366106213,
+              "total_return": 0.041215834366106215,
+              "trade_count": 115,
+              "winning_trades": 36,
+              "losing_trades": 79,
+              "win_rate": 0.3130434782608696,
+              "average_win": 76.7777777777758,
+              "average_loss": -29.77014754859325,
+              "largest_win": 266.39999999999776,
+              "largest_loss": -78.81403427841605,
+              "average_trade": 3.583985597052714,
+              "expectancy": 3.583985597052714,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 16,
+              "profit_factor": 1.1752491893109303,
+              "max_drawdown": 918.0852960440407,
+              "max_drawdown_percent": 0.08253864147550496
+            },
+            "original_signal_count": 430
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9603.202115915796,
+              "net_pnl": -396.7978840842035,
+              "total_return": -0.03967978840842035,
+              "trade_count": 120,
+              "winning_trades": 28,
+              "losing_trades": 92,
+              "win_rate": 0.23333333333333334,
+              "average_win": 76.6642857142839,
+              "average_loss": -27.645629174827754,
+              "largest_win": 234.49999999999972,
+              "largest_loss": -59.14790313596985,
+              "average_trade": -3.3066490340350287,
+              "expectancy": -3.3066490340350287,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 17,
+              "profit_factor": 0.843989064169924,
+              "max_drawdown": 1103.6902240860436,
+              "max_drawdown_percent": 0.10916885289707044
+            },
+            "original_signal_count": 451
+          }
+        },
+        "verdict_base_cost": "REJECTED"
+      }
+    },
+    "60": {
+      "UNFILTERED": {
+        "LOW": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 7351.829209161066,
+              "net_pnl": -2648.170790838935,
+              "total_return": -0.2648170790838935,
+              "trade_count": 591,
+              "winning_trades": 135,
+              "losing_trades": 456,
+              "win_rate": 0.22842639593908629,
+              "average_win": 100.65703703703684,
+              "average_loss": -35.60717278692743,
+              "largest_win": 457.9,
+              "largest_loss": -133.63730534196483,
+              "average_trade": -4.480830441351836,
+              "expectancy": -4.480830441351836,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 16,
+              "profit_factor": 0.8369038699049651,
+              "max_drawdown": 3091.946751536336,
+              "max_drawdown_percent": 0.3020341892485736
+            },
+            "original_signal_count": 1571
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10284.241127244875,
+              "net_pnl": 284.24112724487526,
+              "total_return": 0.028424112724487527,
+              "trade_count": 122,
+              "winning_trades": 34,
+              "losing_trades": 87,
+              "win_rate": 0.2786885245901639,
+              "average_win": 84.77352941176444,
+              "average_loss": -29.862745663851907,
+              "largest_win": 268.6999999999995,
+              "largest_loss": -81.157650400554,
+              "average_trade": 2.329845305285863,
+              "expectancy": 2.329845305285863,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 13,
+              "profit_factor": 1.109405191016111,
+              "max_drawdown": 1063.05082857227,
+              "max_drawdown_percent": 0.0945490675434993
+            },
+            "original_signal_count": 348
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9611.435930849817,
+              "net_pnl": -388.5640691501835,
+              "total_return": -0.03885640691501835,
+              "trade_count": 142,
+              "winning_trades": 32,
+              "losing_trades": 110,
+              "win_rate": 0.22535211267605634,
+              "average_win": 80.296875,
+              "average_loss": -26.891491537728943,
+              "largest_win": 235.60000000000025,
+              "largest_loss": -57.997903135968976,
+              "average_trade": -2.7363666841562218,
+              "expectancy": -2.7363666841562218,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 20,
+              "profit_factor": 0.8686424431429528,
+              "max_drawdown": 1111.306409152041,
+              "max_drawdown_percent": 0.10885996369670276
+            },
+            "original_signal_count": 370
+          }
+        },
+        "BASE": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 7088.62920916101,
+              "net_pnl": -2911.3707908389897,
+              "total_return": -0.29113707908389896,
+              "trade_count": 591,
+              "winning_trades": 133,
+              "losing_trades": 457,
+              "win_rate": 0.22504230118443316,
+              "average_win": 101.461654135338,
+              "average_loss": -35.898841993083025,
+              "largest_win": 457.1999999999998,
+              "largest_loss": -133.9873053419649,
+              "average_trade": -4.92617731106428,
+              "expectancy": -4.92617731106428,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 16,
+              "profit_factor": 0.8225398350399535,
+              "max_drawdown": 3336.9467515364067,
+              "max_drawdown_percent": 0.3260782902995151
+            },
+            "original_signal_count": 1571
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10227.541127244864,
+              "net_pnl": 227.54112724486353,
+              "total_return": 0.022754112724486353,
+              "trade_count": 122,
+              "winning_trades": 34,
+              "losing_trades": 88,
+              "win_rate": 0.2786885245901639,
+              "average_win": 84.0735294117643,
+              "average_loss": -29.89725991767185,
+              "largest_win": 267.9999999999994,
+              "largest_loss": -81.50765040055407,
+              "average_trade": 1.8650912069251109,
+              "expectancy": 1.8650912069251109,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 14,
+              "profit_factor": 1.0864860069084181,
+              "max_drawdown": 1083.3508285722655,
+              "max_drawdown_percent": 0.09664338648390813
+            },
+            "original_signal_count": 348
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9548.785930849803,
+              "net_pnl": -451.21406915019645,
+              "total_return": -0.045121406915019646,
+              "trade_count": 142,
+              "winning_trades": 32,
+              "losing_trades": 110,
+              "win_rate": 0.22535211267605634,
+              "average_win": 79.59687499999986,
+              "average_loss": -27.25740062863811,
+              "largest_win": 234.90000000000012,
+              "largest_loss": -58.34790313596905,
+              "average_trade": -3.1775638672549045,
+              "expectancy": -3.1775638672549045,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 20,
+              "profit_factor": 0.8495107387872533,
+              "max_drawdown": 1166.6064091520566,
+              "max_drawdown_percent": 0.1142965651619316
+            },
+            "original_signal_count": 370
+          }
+        },
+        "HIGH": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 6487.029209160409,
+              "net_pnl": -3512.9707908395912,
+              "total_return": -0.35129707908395913,
+              "trade_count": 591,
+              "winning_trades": 133,
+              "losing_trades": 458,
+              "win_rate": 0.22504230118443316,
+              "average_win": 99.8616541353364,
+              "average_loss": -36.6693685389505,
+              "largest_win": 455.5999999999982,
+              "largest_loss": -134.7873053419657,
+              "average_trade": -5.9441130132649596,
+              "expectancy": -5.9441130132649596,
+              "max_consecutive_wins": 4,
+              "max_consecutive_losses": 16,
+              "profit_factor": 0.7908269979274638,
+              "max_drawdown": 3896.9467515369643,
+              "max_drawdown_percent": 0.38109804297303057
+            },
+            "original_signal_count": 1571
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10097.941127244734,
+              "net_pnl": 97.94112724473395,
+              "total_return": 0.009794112724473395,
+              "trade_count": 122,
+              "winning_trades": 33,
+              "losing_trades": 89,
+              "win_rate": 0.27049180327868855,
+              "average_win": 85.00909090908894,
+              "average_loss": -30.41976261522698,
+              "largest_win": 266.39999999999776,
+              "largest_loss": -82.30765040055488,
+              "average_trade": 0.8027961249568356,
+              "expectancy": 0.8027961249568356,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 14,
+              "profit_factor": 1.0361758938685002,
+              "max_drawdown": 1129.7508285723088,
+              "max_drawdown_percent": 0.10147787156399526
+            },
+            "original_signal_count": 348
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9405.58593084966,
+              "net_pnl": -594.4140691503397,
+              "total_return": -0.059441406915033974,
+              "trade_count": 142,
+              "winning_trades": 32,
+              "losing_trades": 110,
+              "win_rate": 0.22535211267605634,
+              "average_win": 77.99687499999825,
+              "average_loss": -28.093764265002584,
+              "largest_win": 233.2999999999985,
+              "largest_loss": -59.14790313596985,
+              "average_trade": -4.186014571481266,
+              "expectancy": -4.186014571481266,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 20,
+              "profit_factor": 0.8076525376225658,
+              "max_drawdown": 1293.0064091521763,
+              "max_drawdown_percent": 0.12673008599365054
+            },
+            "original_signal_count": 370
+          }
+        },
+        "verdict_base_cost": "REJECTED"
+      },
+      "A_trending_only": {
+        "LOW": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9510.686726135718,
+              "net_pnl": -489.31327386428245,
+              "total_return": -0.04893132738642825,
+              "trade_count": 343,
+              "winning_trades": 75,
+              "losing_trades": 268,
+              "win_rate": 0.21865889212827988,
+              "average_win": 95.07466666666643,
+              "average_loss": -28.432512215911437,
+              "largest_win": 393.3999999999993,
+              "largest_loss": -50.345784878285116,
+              "average_trade": -1.4265693115576747,
+              "expectancy": -1.4265693115576747,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 17,
+              "profit_factor": 0.9357849287415658,
+              "max_drawdown": 1065.9529492868242,
+              "max_drawdown_percent": 0.10412670743925272
+            },
+            "original_signal_count": 1571
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10291.940344808656,
+              "net_pnl": 291.94034480865656,
+              "total_return": 0.029194034480865657,
+              "trade_count": 89,
+              "winning_trades": 26,
+              "losing_trades": 63,
+              "win_rate": 0.29213483146067415,
+              "average_win": 73.10769230769223,
+              "average_loss": -25.537454844307007,
+              "largest_win": 225.40000000000003,
+              "largest_loss": -34.57865184525622,
+              "average_trade": 3.280228593355692,
+              "expectancy": 3.280228593355692,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 9,
+              "profit_factor": 1.1814579313159146,
+              "max_drawdown": 478.1626694529605,
+              "max_drawdown_percent": 0.04460980233714017
+            },
+            "original_signal_count": 348
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9526.054436930131,
+              "net_pnl": -473.94556306986857,
+              "total_return": -0.04739455630698686,
+              "trade_count": 105,
+              "winning_trades": 23,
+              "losing_trades": 81,
+              "win_rate": 0.21904761904761905,
+              "average_win": 69.9434782608696,
+              "average_loss": -25.711673618146534,
+              "largest_win": 222.59999999999945,
+              "largest_loss": -47.60967679547478,
+              "average_trade": -4.5137672673320814,
+              "expectancy": -4.5137672673320814,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 14,
+              "profit_factor": 0.7724310024355457,
+              "max_drawdown": 1046.4844705443065,
+              "max_drawdown_percent": 0.10347517320896904
+            },
+            "original_signal_count": 370
+          }
+        },
+        "BASE": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9360.186726135686,
+              "net_pnl": -639.8132738643137,
+              "total_return": -0.06398132738643138,
+              "trade_count": 343,
+              "winning_trades": 75,
+              "losing_trades": 268,
+              "win_rate": 0.21865889212827988,
+              "average_win": 94.37466666666629,
+              "average_loss": -28.798183857702558,
+              "largest_win": 392.69999999999914,
+              "largest_loss": -50.69578487828519,
+              "average_trade": -1.8653448217618476,
+              "expectancy": -1.8653448217618476,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 17,
+              "profit_factor": 0.9171002250011075,
+              "max_drawdown": 1108.3029492868372,
+              "max_drawdown_percent": 0.10830065857987341
+            },
+            "original_signal_count": 1571
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10250.990344808648,
+              "net_pnl": 250.99034480864813,
+              "total_return": 0.025099034480864812,
+              "trade_count": 89,
+              "winning_trades": 26,
+              "losing_trades": 63,
+              "win_rate": 0.29213483146067415,
+              "average_win": 72.40769230769209,
+              "average_loss": -25.898565955418192,
+              "largest_win": 224.6999999999999,
+              "largest_loss": -34.92865184525628,
+              "average_trade": 2.8201162338050354,
+              "expectancy": 2.8201162338050354,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 9,
+              "profit_factor": 1.15382989675874,
+              "max_drawdown": 492.16266945295683,
+              "max_drawdown_percent": 0.04602261813046409
+            },
+            "original_signal_count": 348
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9479.854436930122,
+              "net_pnl": -520.1455630698781,
+              "total_return": -0.052014556306987814,
+              "trade_count": 105,
+              "winning_trades": 23,
+              "losing_trades": 82,
+              "win_rate": 0.21904761904761905,
+              "average_win": 69.24347826086945,
+              "average_loss": -25.765189793535068,
+              "largest_win": 221.89999999999932,
+              "largest_loss": -47.95967679547486,
+              "average_trade": -4.953767267332172,
+              "expectancy": -4.953767267332172,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 14,
+              "profit_factor": 0.7538058665644088,
+              "max_drawdown": 1087.7844705443185,
+              "max_drawdown_percent": 0.10757003762773316
+            },
+            "original_signal_count": 370
+          }
+        },
+        "HIGH": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9016.186726135342,
+              "net_pnl": -983.8132738646575,
+              "total_return": -0.09838132738646575,
+              "trade_count": 343,
+              "winning_trades": 75,
+              "losing_trades": 268,
+              "win_rate": 0.21865889212827988,
+              "average_win": 92.7746666666647,
+              "average_loss": -29.63400475322578,
+              "largest_win": 391.0999999999976,
+              "largest_loss": -51.49578487828599,
+              "average_trade": -2.8682602736578935,
+              "expectancy": -2.8682602736578935,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 17,
+              "profit_factor": 0.8761238961016837,
+              "max_drawdown": 1317.7839489185553,
+              "max_drawdown_percent": 0.12887137444104485
+            },
+            "original_signal_count": 1571
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10157.390344808555,
+              "net_pnl": 157.3903448085545,
+              "total_return": 0.015739034480855448,
+              "trade_count": 89,
+              "winning_trades": 26,
+              "losing_trades": 63,
+              "win_rate": 0.29213483146067415,
+              "average_win": 70.80769230769049,
+              "average_loss": -26.723962780815842,
+              "largest_win": 223.0999999999983,
+              "largest_loss": -35.72865184525709,
+              "average_trade": 1.768430840545556,
+              "expectancy": 1.768430840545556,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 9,
+              "profit_factor": 1.0934838692111575,
+              "max_drawdown": 524.1626694529878,
+              "max_drawdown_percent": 0.04927669924147889
+            },
+            "original_signal_count": 348
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9374.254436930016,
+              "net_pnl": -625.7455630699837,
+              "total_return": -0.06257455630699837,
+              "trade_count": 105,
+              "winning_trades": 23,
+              "losing_trades": 82,
+              "win_rate": 0.21904761904761905,
+              "average_win": 67.64347826086785,
+              "average_loss": -26.60421418377981,
+              "largest_win": 220.2999999999977,
+              "largest_loss": -48.759676795475656,
+              "average_trade": -5.959481553047464,
+              "expectancy": -5.959481553047464,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 14,
+              "profit_factor": 0.7131641100406753,
+              "max_drawdown": 1182.1844705444146,
+              "max_drawdown_percent": 0.11693292170720809
+            },
+            "original_signal_count": 370
+          }
+        },
+        "verdict_base_cost": "REJECTED"
+      },
+      "B_high_vol_only": {
+        "LOW": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 7835.079567279068,
+              "net_pnl": -2164.9204327209313,
+              "total_return": -0.21649204327209312,
+              "trade_count": 309,
+              "winning_trades": 76,
+              "losing_trades": 233,
+              "win_rate": 0.2459546925566343,
+              "average_win": 110.91184210526318,
+              "average_loss": -45.46875722197825,
+              "largest_win": 457.9,
+              "largest_loss": -133.63730534196483,
+              "average_trade": -7.006214992624373,
+              "expectancy": -7.006214992624373,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 15,
+              "profit_factor": 0.795650803523548,
+              "max_drawdown": 3194.7196446670496,
+              "max_drawdown_percent": 0.29244160954265197
+            },
+            "original_signal_count": 1571
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9840.812136222035,
+              "net_pnl": -159.18786377796536,
+              "total_return": -0.015918786377796538,
+              "trade_count": 38,
+              "winning_trades": 10,
+              "losing_trades": 28,
+              "win_rate": 0.2631578947368421,
+              "average_win": 115.66999999999948,
+              "average_loss": -46.995995134927156,
+              "largest_win": 268.6999999999995,
+              "largest_loss": -81.157650400554,
+              "average_trade": -4.189154309946457,
+              "expectancy": -4.189154309946457,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 8,
+              "profit_factor": 0.8790262695174257,
+              "max_drawdown": 606.4759457929395,
+              "max_drawdown_percent": 0.05886244583351241
+            },
+            "original_signal_count": 348
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9975.862138665481,
+              "net_pnl": -24.137861334518895,
+              "total_return": -0.0024137861334518895,
+              "trade_count": 18,
+              "winning_trades": 5,
+              "losing_trades": 13,
+              "win_rate": 0.2777777777777778,
+              "average_win": 98.95999999999995,
+              "average_loss": -39.9182970257322,
+              "largest_win": 177.1999999999996,
+              "largest_loss": -57.997903135968976,
+              "average_trade": -1.3409922963621608,
+              "expectancy": -1.3409922963621608,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 6,
+              "profit_factor": 0.9534860276480017,
+              "max_drawdown": 315.1276009593348,
+              "max_drawdown_percent": 0.0313818910299826
+            },
+            "original_signal_count": 370
+          }
+        },
+        "BASE": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 7697.52956727904,
+              "net_pnl": -2302.47043272096,
+              "total_return": -0.23024704327209602,
+              "trade_count": 309,
+              "winning_trades": 75,
+              "losing_trades": 234,
+              "win_rate": 0.24271844660194175,
+              "average_win": 111.68399999999987,
+              "average_loss": -45.63577108000406,
+              "largest_win": 457.1999999999998,
+              "largest_loss": -133.9873053419649,
+              "average_trade": -7.451360623692428,
+              "expectancy": -7.451360623692428,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 15,
+              "profit_factor": 0.7843880578548694,
+              "max_drawdown": 3282.219644667078,
+              "max_drawdown_percent": 0.3018147101838015
+            },
+            "original_signal_count": 1571
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9824.01213622203,
+              "net_pnl": -175.9878637779688,
+              "total_return": -0.017598786377796882,
+              "trade_count": 38,
+              "winning_trades": 9,
+              "losing_trades": 29,
+              "win_rate": 0.23684210526315788,
+              "average_win": 127.78888888888822,
+              "average_loss": -45.72716771648147,
+              "largest_win": 267.9999999999994,
+              "largest_loss": -81.50765040055407,
+              "average_trade": -4.631259573104442,
+              "expectancy": -4.631259573104442,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 10,
+              "profit_factor": 0.8672879312260747,
+              "max_drawdown": 612.075945792938,
+              "max_drawdown_percent": 0.059428168737110154
+            },
+            "original_signal_count": 348
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9967.46213866548,
+              "net_pnl": -32.53786133452062,
+              "total_return": -0.003253786133452062,
+              "trade_count": 18,
+              "winning_trades": 5,
+              "losing_trades": 13,
+              "win_rate": 0.2777777777777778,
+              "average_win": 98.25999999999979,
+              "average_loss": -40.29522010265536,
+              "largest_win": 176.49999999999943,
+              "largest_loss": -58.34790313596905,
+              "average_trade": -1.8076589630289233,
+              "expectancy": -1.8076589630289233,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 6,
+              "profit_factor": 0.9378856250450706,
+              "max_drawdown": 317.2276009593352,
+              "max_drawdown_percent": 0.03159212005506779
+            },
+            "original_signal_count": 370
+          }
+        },
+        "HIGH": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 7383.1295672787255,
+              "net_pnl": -2616.8704327212745,
+              "total_return": -0.26168704327212744,
+              "trade_count": 309,
+              "winning_trades": 75,
+              "losing_trades": 234,
+              "win_rate": 0.24271844660194175,
+              "average_win": 110.08399999999827,
+              "average_loss": -46.46654031077412,
+              "largest_win": 455.5999999999982,
+              "largest_loss": -134.7873053419657,
+              "average_trade": -8.468836351848784,
+              "expectancy": -8.468836351848784,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 15,
+              "profit_factor": 0.7593277463170996,
+              "max_drawdown": 3482.219644667278,
+              "max_drawdown_percent": 0.32356173252104775
+            },
+            "original_signal_count": 1571
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9785.612136221993,
+              "net_pnl": -214.3878637780072,
+              "total_return": -0.02143878637780072,
+              "trade_count": 38,
+              "winning_trades": 8,
+              "losing_trades": 30,
+              "win_rate": 0.21052631578947367,
+              "average_win": 142.11249999999788,
+              "average_loss": -45.042928792599675,
+              "largest_win": 266.39999999999776,
+              "largest_loss": -82.30765040055488,
+              "average_trade": -5.641785888894926,
+              "expectancy": -5.641785888894926,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 12,
+              "profit_factor": 0.8413455270895336,
+              "max_drawdown": 624.8759457929482,
+              "max_drawdown_percent": 0.06072283921071519
+            },
+            "original_signal_count": 348
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9948.262138665461,
+              "net_pnl": -51.73786133453983,
+              "total_return": -0.005173786133453983,
+              "trade_count": 18,
+              "winning_trades": 5,
+              "losing_trades": 13,
+              "win_rate": 0.2777777777777778,
+              "average_win": 96.65999999999819,
+              "average_loss": -41.156758564194675,
+              "largest_win": 174.89999999999785,
+              "largest_loss": -59.14790313596985,
+              "average_trade": -2.8743256296966573,
+              "expectancy": -2.8743256296966573,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 6,
+              "profit_factor": 0.9033005604397949,
+              "max_drawdown": 322.0276009593399,
+              "max_drawdown_percent": 0.032072698577991436
+            },
+            "original_signal_count": 370
+          }
+        },
+        "verdict_base_cost": "REJECTED"
+      },
+      "C_trending_or_high_vol": {
+        "LOW": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 7533.652489372158,
+              "net_pnl": -2466.347510627842,
+              "total_return": -0.2466347510627842,
+              "trade_count": 544,
+              "winning_trades": 125,
+              "losing_trades": 419,
+              "win_rate": 0.22977941176470587,
+              "average_win": 102.52879999999986,
+              "average_loss": -36.47362174374182,
+              "largest_win": 457.9,
+              "largest_loss": -133.63730534196483,
+              "average_trade": -4.533727041595298,
+              "expectancy": -4.533727041595298,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 16,
+              "profit_factor": 0.8386156727243671,
+              "max_drawdown": 2870.9666924350286,
+              "max_drawdown_percent": 0.2804479400812484
+            },
+            "original_signal_count": 1571
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10086.825421705182,
+              "net_pnl": 86.82542170518113,
+              "total_return": 0.008682542170518113,
+              "trade_count": 110,
+              "winning_trades": 33,
+              "losing_trades": 77,
+              "win_rate": 0.3,
+              "average_win": 75.81515151515136,
+              "average_loss": -31.364604912919653,
+              "largest_win": 268.6999999999995,
+              "largest_loss": -81.157650400554,
+              "average_trade": 0.7893220155016466,
+              "expectancy": 0.7893220155016466,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 11,
+              "profit_factor": 1.0359514453447998,
+              "max_drawdown": 961.4890408323445,
+              "max_drawdown_percent": 0.08783215043689732
+            },
+            "original_signal_count": 348
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9533.452376302004,
+              "net_pnl": -466.5476236979949,
+              "total_return": -0.046654762369799485,
+              "trade_count": 114,
+              "winning_trades": 26,
+              "losing_trades": 87,
+              "win_rate": 0.22807017543859648,
+              "average_win": 71.33846153846157,
+              "average_loss": -26.682156594229838,
+              "largest_win": 222.59999999999945,
+              "largest_loss": -57.997903135968976,
+              "average_trade": -4.092523014894692,
+              "expectancy": -4.092523014894692,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 15,
+              "profit_factor": 0.7990186308439376,
+              "max_drawdown": 1094.089963699851,
+              "max_drawdown_percent": 0.10818234927189353
+            },
+            "original_signal_count": 370
+          }
+        },
+        "BASE": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 7292.152489372107,
+              "net_pnl": -2707.8475106278925,
+              "total_return": -0.27078475106278926,
+              "trade_count": 544,
+              "winning_trades": 124,
+              "losing_trades": 420,
+              "win_rate": 0.22794117647058823,
+              "average_win": 102.65161290322551,
+              "average_loss": -36.75392264435203,
+              "largest_win": 457.1999999999998,
+              "largest_loss": -133.9873053419649,
+              "average_trade": -4.977660865124802,
+              "expectancy": -4.977660865124802,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 16,
+              "profit_factor": 0.8245831869411032,
+              "max_drawdown": 3094.616692435089,
+              "max_drawdown_percent": 0.3023983885079878
+            },
+            "original_signal_count": 1571
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 10036.07542170517,
+              "net_pnl": 36.075421705170655,
+              "total_return": 0.0036075421705170654,
+              "trade_count": 110,
+              "winning_trades": 32,
+              "losing_trades": 78,
+              "win_rate": 0.2909090909090909,
+              "average_win": 77.46874999999966,
+              "average_loss": -31.319545875574594,
+              "largest_win": 267.9999999999994,
+              "largest_loss": -81.50765040055407,
+              "average_trade": 0.32795837913791503,
+              "expectancy": 0.32795837913791503,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 15,
+              "profit_factor": 1.0147673088337226,
+              "max_drawdown": 981.0890408323412,
+              "max_drawdown_percent": 0.08985531818408017
+            },
+            "original_signal_count": 348
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9482.352376301995,
+              "net_pnl": -517.6476236980054,
+              "total_return": -0.05176476236980054,
+              "trade_count": 114,
+              "winning_trades": 26,
+              "losing_trades": 88,
+              "win_rate": 0.22807017543859648,
+              "average_win": 70.63846153846143,
+              "average_loss": -26.752813905659117,
+              "largest_win": 221.89999999999932,
+              "largest_loss": -58.34790313596905,
+              "average_trade": -4.540768628929872,
+              "expectancy": -4.540768628929872,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 15,
+              "profit_factor": 0.780121845090834,
+              "max_drawdown": 1138.5399636998627,
+              "max_drawdown_percent": 0.11258920314847645
+            },
+            "original_signal_count": 370
+          }
+        },
+        "HIGH": {
+          "development": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 6740.152489371556,
+              "net_pnl": -3259.847510628444,
+              "total_return": -0.3259847510628444,
+              "trade_count": 544,
+              "winning_trades": 123,
+              "losing_trades": 421,
+              "win_rate": 0.2261029411764706,
+              "average_win": 101.87560975609566,
+              "average_loss": -37.507238742584825,
+              "largest_win": 455.5999999999982,
+              "largest_loss": -134.7873053419657,
+              "average_trade": -5.992366747478758,
+              "expectancy": -5.992366747478758,
+              "max_consecutive_wins": 2,
+              "max_consecutive_losses": 16,
+              "profit_factor": 0.7935570309747445,
+              "max_drawdown": 3605.8166924356174,
+              "max_drawdown_percent": 0.35262726755625395
+            },
+            "original_signal_count": 1571
+          },
+          "validation": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9920.075421705054,
+              "net_pnl": -79.92457829494533,
+              "total_return": -0.007992457829494534,
+              "trade_count": 110,
+              "winning_trades": 31,
+              "losing_trades": 79,
+              "win_rate": 0.2818181818181818,
+              "average_win": 78.35483870967553,
+              "average_loss": -31.758538965758056,
+              "largest_win": 266.39999999999776,
+              "largest_loss": -82.30765040055488,
+              "average_trade": -0.7265870754085939,
+              "expectancy": -0.7265870754085939,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 17,
+              "profit_factor": 0.9681438896225157,
+              "max_drawdown": 1025.8890408323896,
+              "max_drawdown_percent": 0.09451938942325623
+            },
+            "original_signal_count": 348
+          },
+          "out_of_sample": {
+            "summary": {
+              "initial_balance": 10000.0,
+              "final_balance": 9365.552376301877,
+              "net_pnl": -634.4476236981222,
+              "total_return": -0.06344476236981222,
+              "trade_count": 114,
+              "winning_trades": 26,
+              "losing_trades": 88,
+              "win_rate": 0.22807017543859648,
+              "average_win": 69.03846153845983,
+              "average_loss": -27.60735936020543,
+              "largest_win": 220.2999999999977,
+              "largest_loss": -59.14790313596985,
+              "average_trade": -5.565330032439669,
+              "expectancy": -5.565330032439669,
+              "max_consecutive_wins": 3,
+              "max_consecutive_losses": 15,
+              "profit_factor": 0.738851079764225,
+              "max_drawdown": 1240.139963699965,
+              "max_drawdown_percent": 0.12266544933932945
+            },
+            "original_signal_count": 370
+          }
+        },
+        "verdict_base_cost": "REJECTED"
+      }
+    }
+  }
+}
