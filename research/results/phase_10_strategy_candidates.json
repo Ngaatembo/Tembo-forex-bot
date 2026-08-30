@@ -1,0 +1,87 @@
+[
+  {
+    "candidate_id": "cand_h1___range_extreme_mean_reversion_4e36584d",
+    "name": "H1 \u2014 Range-Extreme Mean Reversion",
+    "family": "mean_reversion",
+    "description": "LONG near the 20-candle low / SHORT near the high, filtered to calm volatility.",
+    "experiment_ids": [
+      "exp_054b0a77bd",
+      "phase8_1_h1_robustness_diagnostic"
+    ],
+    "parent_candidate_id": null,
+    "lineage_note": "Phase 8 initial test + Phase 8.1 dedicated robustness/statistical follow-up (diagnostic only \u2014 Phase 8.1 never had its own formal ResearchExperiment record).",
+    "research_priority": "CLOSED",
+    "gate_status": "CLOSED",
+    "created_at": "2026-08-30T11:00:48.012364+00:00",
+    "verdict": "OUT_OF_SAMPLE_FAILED"
+  },
+  {
+    "candidate_id": "cand_h2___volatility_squeeze_breakout_c4b8221e",
+    "name": "H2 \u2014 Volatility Squeeze Breakout",
+    "family": "volatility",
+    "description": "LONG/SHORT on a compressed 20-candle range with an SMA50-slope directional bias.",
+    "experiment_ids": [
+      "exp_48f760d1e2"
+    ],
+    "parent_candidate_id": null,
+    "lineage_note": "Phase 8 only \u2014 no follow-up research was ever conducted on H2.",
+    "research_priority": "CLOSED",
+    "gate_status": "REJECT_EARLY",
+    "created_at": "2026-08-30T11:00:48.776772+00:00",
+    "verdict": "REJECTED"
+  },
+  {
+    "candidate_id": "cand_market_structure_breakout__lookback_20_53055d0e",
+    "name": "Market-Structure Breakout (lookback=20)",
+    "family": "breakout",
+    "description": "Breaks of the prior 20-candle range, ATR-stop + max-hold exit.",
+    "experiment_ids": [
+      "phase9_breakout_lookback20_unfiltered",
+      "phase9_1_breakout_lookback20_A_trending_only",
+      "phase9_1_breakout_lookback20_B_high_vol_only",
+      "phase9_1_breakout_lookback20_C_trending_or_high_vol"
+    ],
+    "parent_candidate_id": null,
+    "lineage_note": "Phase 9 initial test + Phase 9.1's 3 regime-filter follow-ups for this lookback (all synthetic experiment_id references \u2014 Phase 9/9.1 never saved formal ResearchExperiment records).",
+    "research_priority": "CLOSED",
+    "gate_status": "REJECT_EARLY",
+    "created_at": "2022-03-04T23:00:00+00:00",
+    "verdict": "REJECTED"
+  },
+  {
+    "candidate_id": "cand_market_structure_breakout__lookback_40_025dc203",
+    "name": "Market-Structure Breakout (lookback=40)",
+    "family": "breakout",
+    "description": "Breaks of the prior 40-candle range, ATR-stop + max-hold exit.",
+    "experiment_ids": [
+      "phase9_breakout_lookback40_unfiltered",
+      "phase9_1_breakout_lookback40_A_trending_only",
+      "phase9_1_breakout_lookback40_B_high_vol_only",
+      "phase9_1_breakout_lookback40_C_trending_or_high_vol"
+    ],
+    "parent_candidate_id": null,
+    "lineage_note": "Phase 9 initial test + Phase 9.1's 3 regime-filter follow-ups for this lookback (all synthetic experiment_id references \u2014 Phase 9/9.1 never saved formal ResearchExperiment records).",
+    "research_priority": "CLOSED",
+    "gate_status": "REJECT_EARLY",
+    "created_at": "2022-03-04T23:00:00+00:00",
+    "verdict": "REJECTED"
+  },
+  {
+    "candidate_id": "cand_market_structure_breakout__lookback_60_6c78286c",
+    "name": "Market-Structure Breakout (lookback=60)",
+    "family": "breakout",
+    "description": "Breaks of the prior 60-candle range, ATR-stop + max-hold exit.",
+    "experiment_ids": [
+      "phase9_breakout_lookback60_unfiltered",
+      "phase9_1_breakout_lookback60_A_trending_only",
+      "phase9_1_breakout_lookback60_B_high_vol_only",
+      "phase9_1_breakout_lookback60_C_trending_or_high_vol"
+    ],
+    "parent_candidate_id": null,
+    "lineage_note": "Phase 9 initial test + Phase 9.1's 3 regime-filter follow-ups for this lookback (all synthetic experiment_id references \u2014 Phase 9/9.1 never saved formal ResearchExperiment records).",
+    "research_priority": "CLOSED",
+    "gate_status": "REJECT_EARLY",
+    "created_at": "2022-03-04T23:00:00+00:00",
+    "verdict": "REJECTED"
+  }
+]
