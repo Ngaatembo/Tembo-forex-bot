@@ -104,3 +104,10 @@ def test_phase14_strategy_selection_has_no_execution_or_broker_dependency():
         content = path.read_text()
         for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
             assert token not in content, f"{filename} references '{token}' — a real safety regression."
+
+
+def test_decisions_api_has_no_execution_or_broker_dependency():
+    path = Path(__file__).resolve().parent.parent / "app" / "api" / "routes" / "decisions.py"
+    content = path.read_text()
+    for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
+        assert token not in content, f"decisions.py references '{token}' — a real safety regression."

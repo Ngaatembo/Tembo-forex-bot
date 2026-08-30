@@ -1,0 +1,234 @@
+[
+  {
+    "config_id": "vsc_eurusd_h1_mean_reversion_f8f7b1ee",
+    "candidate_id": "cand_h1___range_extreme_mean_reversion_4e36584d",
+    "instrument": "EUR/USD",
+    "timeframe": "h1",
+    "strategy_family": "mean_reversion",
+    "parameters": {},
+    "exit_config_summary": {},
+    "cost_assumptions": {
+      "tier": "BASE"
+    },
+    "evidence_period_start": "2012-11-16T00:00:00+00:00",
+    "evidence_period_end": "2022-03-04T23:00:00+00:00",
+    "gate_status": "CLOSED",
+    "verdict": "OUT_OF_SAMPLE_FAILED",
+    "statistical_level": "UNKNOWN",
+    "regime_evidence": {},
+    "created_at": "2026-08-30T21:05:50.366246+00:00"
+  },
+  {
+    "config_id": "vsc_eurusd_h1_volatility_82981e72",
+    "candidate_id": "cand_h2___volatility_squeeze_breakout_c4b8221e",
+    "instrument": "EUR/USD",
+    "timeframe": "h1",
+    "strategy_family": "volatility",
+    "parameters": {},
+    "exit_config_summary": {},
+    "cost_assumptions": {
+      "tier": "BASE"
+    },
+    "evidence_period_start": "2012-11-16T00:00:00+00:00",
+    "evidence_period_end": "2022-03-04T23:00:00+00:00",
+    "gate_status": "REJECT_EARLY",
+    "verdict": "REJECTED",
+    "statistical_level": "UNKNOWN",
+    "regime_evidence": {},
+    "created_at": "2026-08-30T21:05:50.366308+00:00"
+  },
+  {
+    "config_id": "vsc_eurusd_h1_breakout_e1c3539c",
+    "candidate_id": "cand_market_structure_breakout__lookback_20_53055d0e",
+    "instrument": "EUR/USD",
+    "timeframe": "h1",
+    "strategy_family": "breakout",
+    "parameters": {},
+    "exit_config_summary": {},
+    "cost_assumptions": {
+      "tier": "BASE"
+    },
+    "evidence_period_start": "2012-11-16T00:00:00+00:00",
+    "evidence_period_end": "2022-03-04T23:00:00+00:00",
+    "gate_status": "REJECT_EARLY",
+    "verdict": "REJECTED",
+    "statistical_level": "UNKNOWN",
+    "regime_evidence": {},
+    "created_at": "2026-08-30T21:05:50.366325+00:00"
+  },
+  {
+    "config_id": "vsc_eurusd_h1_breakout_2016ddea",
+    "candidate_id": "cand_market_structure_breakout__lookback_40_025dc203",
+    "instrument": "EUR/USD",
+    "timeframe": "h1",
+    "strategy_family": "breakout",
+    "parameters": {},
+    "exit_config_summary": {},
+    "cost_assumptions": {
+      "tier": "BASE"
+    },
+    "evidence_period_start": "2012-11-16T00:00:00+00:00",
+    "evidence_period_end": "2022-03-04T23:00:00+00:00",
+    "gate_status": "REJECT_EARLY",
+    "verdict": "REJECTED",
+    "statistical_level": "UNKNOWN",
+    "regime_evidence": {},
+    "created_at": "2026-08-30T21:05:50.366345+00:00"
+  },
+  {
+    "config_id": "vsc_eurusd_h1_breakout_38b87dc5",
+    "candidate_id": "cand_market_structure_breakout__lookback_60_6c78286c",
+    "instrument": "EUR/USD",
+    "timeframe": "h1",
+    "strategy_family": "breakout",
+    "parameters": {},
+    "exit_config_summary": {},
+    "cost_assumptions": {
+      "tier": "BASE"
+    },
+    "evidence_period_start": "2012-11-16T00:00:00+00:00",
+    "evidence_period_end": "2022-03-04T23:00:00+00:00",
+    "gate_status": "REJECT_EARLY",
+    "verdict": "REJECTED",
+    "statistical_level": "UNKNOWN",
+    "regime_evidence": {},
+    "created_at": "2026-08-30T21:05:50.366357+00:00"
+  },
+  {
+    "config_id": "vsc_gbpusd_h1_mean_reversion_bd055b94",
+    "candidate_id": "gbpusd_h1",
+    "instrument": "GBP/USD",
+    "timeframe": "h1",
+    "strategy_family": "mean_reversion",
+    "parameters": {},
+    "exit_config_summary": {},
+    "cost_assumptions": {
+      "tier": "BASE"
+    },
+    "evidence_period_start": "2012-11-16T00:00:00+00:00",
+    "evidence_period_end": "2022-03-04T23:00:00+00:00",
+    "gate_status": "REJECT_EARLY",
+    "verdict": "REJECTED",
+    "statistical_level": "UNKNOWN",
+    "regime_evidence": {},
+    "created_at": "2026-08-30T21:05:50.374966+00:00"
+  },
+  {
+    "config_id": "vsc_gbpusd_h1_breakout_26f0f564",
+    "candidate_id": "gbpusd_breakout40",
+    "instrument": "GBP/USD",
+    "timeframe": "h1",
+    "strategy_family": "breakout",
+    "parameters": {},
+    "exit_config_summary": {},
+    "cost_assumptions": {
+      "tier": "BASE"
+    },
+    "evidence_period_start": "2012-11-16T00:00:00+00:00",
+    "evidence_period_end": "2022-03-04T23:00:00+00:00",
+    "gate_status": "CLOSED",
+    "verdict": "OUT_OF_SAMPLE_FAILED",
+    "statistical_level": "UNKNOWN",
+    "regime_evidence": {},
+    "created_at": "2026-08-30T21:05:50.375026+00:00"
+  },
+  {
+    "config_id": "vsc_gbpusd_h1_momentum_80df49f1",
+    "candidate_id": "gbpusd_momentum_t1_60",
+    "instrument": "GBP/USD",
+    "timeframe": "h1",
+    "strategy_family": "momentum",
+    "parameters": {},
+    "exit_config_summary": {},
+    "cost_assumptions": {
+      "tier": "BASE"
+    },
+    "evidence_period_start": "2012-11-16T00:00:00+00:00",
+    "evidence_period_end": "2022-03-04T23:00:00+00:00",
+    "gate_status": "CLOSED",
+    "verdict": "OUT_OF_SAMPLE_FAILED",
+    "statistical_level": "UNKNOWN",
+    "regime_evidence": {},
+    "created_at": "2026-08-30T21:05:50.375066+00:00"
+  },
+  {
+    "config_id": "vsc_xauusd_h1_breakout_30_d7479141",
+    "candidate_id": "xauusd_breakout_30",
+    "instrument": "XAU/USD",
+    "timeframe": "h1",
+    "strategy_family": "breakout",
+    "parameters": {
+      "lookback": 30
+    },
+    "exit_config_summary": {
+      "atr_stop_multiple": 2.0,
+      "max_holding_candles": 100
+    },
+    "cost_assumptions": {
+      "tier": "BASE"
+    },
+    "evidence_period_start": "2012-11-16T00:00:00+00:00",
+    "evidence_period_end": "2022-03-04T23:00:00+00:00",
+    "gate_status": "PROMISING",
+    "verdict": "PROMISING",
+    "statistical_level": "WEAK",
+    "regime_evidence": {
+      "UNKNOWN": 2,
+      "HIGH_VOLATILITY": 173,
+      "RANGING": 1
+    },
+    "created_at": "2026-08-30T21:05:50.376175+00:00"
+  },
+  {
+    "config_id": "vsc_xauusd_h1_breakout_40_10bb1fc9",
+    "candidate_id": "xauusd_breakout_40",
+    "instrument": "XAU/USD",
+    "timeframe": "h1",
+    "strategy_family": "breakout",
+    "parameters": {
+      "lookback": 40
+    },
+    "exit_config_summary": {
+      "atr_stop_multiple": 2.0,
+      "max_holding_candles": 100
+    },
+    "cost_assumptions": {
+      "tier": "BASE"
+    },
+    "evidence_period_start": "2012-11-16T00:00:00+00:00",
+    "evidence_period_end": "2022-03-04T23:00:00+00:00",
+    "gate_status": "PROMISING",
+    "verdict": "PROMISING",
+    "statistical_level": "WEAK",
+    "regime_evidence": {
+      "HIGH_VOLATILITY": 158
+    },
+    "created_at": "2026-08-30T21:05:50.376202+00:00"
+  },
+  {
+    "config_id": "vsc_xauusd_h1_breakout_50_7c4a7a31",
+    "candidate_id": "xauusd_breakout_50",
+    "instrument": "XAU/USD",
+    "timeframe": "h1",
+    "strategy_family": "breakout",
+    "parameters": {
+      "lookback": 50
+    },
+    "exit_config_summary": {
+      "atr_stop_multiple": 2.0,
+      "max_holding_candles": 100
+    },
+    "cost_assumptions": {
+      "tier": "BASE"
+    },
+    "evidence_period_start": "2012-11-16T00:00:00+00:00",
+    "evidence_period_end": "2022-03-04T23:00:00+00:00",
+    "gate_status": "PROMISING",
+    "verdict": "PROMISING",
+    "statistical_level": "WEAK",
+    "regime_evidence": {
+      "HIGH_VOLATILITY": 133
+    },
+    "created_at": "2026-08-30T21:05:50.376213+00:00"
+  }
+]
