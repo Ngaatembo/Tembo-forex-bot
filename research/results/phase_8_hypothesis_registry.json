@@ -1,0 +1,105 @@
+[
+  {
+    "id": "range_extreme_reversion_b128c096",
+    "name": "Range-Extreme Mean Reversion",
+    "description": "LONG when close is within 0.0005 (price units) of the recent 20-candle low AND volatility is not elevated (atr_percent < 0.0015). SHORT is the mirror at the recent high.",
+    "hypothesis_type": "mean_reversion",
+    "market": "EUR/USD",
+    "timeframe": "1h",
+    "entry_long": {
+      "conditions": [
+        {
+          "field": "distance_from_low",
+          "operator": "<",
+          "value": 0.0005,
+          "compare_field": null
+        },
+        {
+          "field": "atr_percent",
+          "operator": "<",
+          "value": 0.0015,
+          "compare_field": null
+        }
+      ]
+    },
+    "entry_short": {
+      "conditions": [
+        {
+          "field": "distance_from_high",
+          "operator": "<",
+          "value": 0.0005,
+          "compare_field": null
+        },
+        {
+          "field": "atr_percent",
+          "operator": "<",
+          "value": 0.0015,
+          "compare_field": null
+        }
+      ]
+    },
+    "risk_conditions": {
+      "exit_config": "baseline_opposite_signal"
+    },
+    "rationale": "Range position (distance from the 20-candle high/low) is a structurally different mechanism from RSI or SMA crossover \u2014 it directly measures where price sits within its own recent range rather than a momentum oscillator or a moving-average relationship. The volatility filter excludes breakout-like conditions where a range extreme is more likely to continue than revert.",
+    "data_requirements": [
+      "distance_from_low",
+      "distance_from_high",
+      "atr_percent"
+    ],
+    "status": "draft",
+    "created_at": "2026-08-30T11:00:47.025228+00:00",
+    "version": 1
+  },
+  {
+    "id": "volatility_squeeze_breakout_d82ea8f6",
+    "name": "Volatility Squeeze Breakout",
+    "description": "LONG when the 20-candle rolling range compresses below 0.0030 (price units) AND SMA50 slope is positive. SHORT is the mirror with negative slope.",
+    "hypothesis_type": "volatility",
+    "market": "EUR/USD",
+    "timeframe": "1h",
+    "entry_long": {
+      "conditions": [
+        {
+          "field": "rolling_range",
+          "operator": "<",
+          "value": 0.003,
+          "compare_field": null
+        },
+        {
+          "field": "sma_50_slope",
+          "operator": ">",
+          "value": 0.0,
+          "compare_field": null
+        }
+      ]
+    },
+    "entry_short": {
+      "conditions": [
+        {
+          "field": "rolling_range",
+          "operator": "<",
+          "value": 0.003,
+          "compare_field": null
+        },
+        {
+          "field": "sma_50_slope",
+          "operator": "<",
+          "value": 0.0,
+          "compare_field": null
+        }
+      ]
+    },
+    "risk_conditions": {
+      "exit_config": "baseline_opposite_signal"
+    },
+    "rationale": "A compression in the recent trading range (rolling_range) is a volatility-structure signal, not a momentum or level-based one. Combined with a directional bias (SMA50 slope, already present, not newly computed), the hypothesis is that a squeeze resolves in the direction of the existing trend \u2014 genuinely distinct from testing SMA crossover or RSI momentum directly.",
+    "data_requirements": [
+      "rolling_range",
+      "sma_50_slope"
+    ],
+    "status": "draft",
+    "created_at": "2026-08-30T11:00:48.016298+00:00",
+    "version": 1
+  }
+]
