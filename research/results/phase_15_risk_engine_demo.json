@@ -1,0 +1,26 @@
+{
+  "A_EURUSD": {
+    "selector_status": "NO_VALIDATED_EDGE",
+    "risk_state": "NO_VALIDATED_EDGE",
+    "reason": "Strategy Selector returned status 'NO_VALIDATED_EDGE' for EUR/USD h1, not TRADEABLE. Every eligible configuration for EUR/USD h1 has gate status REJECT_EARLY (rejected)."
+  },
+  "B_XAUUSD": {
+    "selector_status": "PROMISING_NOT_TRADEABLE",
+    "risk_state": "NO_VALIDATED_EDGE",
+    "reason": "Strategy Selector returned status 'PROMISING_NOT_TRADEABLE' for XAU/USD h1, not TRADEABLE. Selected vsc_xauusd_h1_breakout_30_89846440: gate status PROMISING (statistical evidence: WEAK)."
+  },
+  "C_TEST_ONLY": {
+    "selector_status": "TRADEABLE",
+    "risk_state": "APPROVED",
+    "reason": "Candidate is eligible, stop is valid, calculated risk is 1.00%, total open risk remains within account limits.",
+    "position_sizing": {
+      "sizing_model": "notional_price_unit",
+      "risk_amount": 100.0,
+      "stop_distance": 40.0,
+      "raw_position_size": 2.5,
+      "final_position_size": 2.5,
+      "notes": "Broker tick/point metadata unavailable \u2014 sized directly in price units (same model used throughout this project's backtesting). Real broker contract specs would be required for tick-precise live sizing."
+    },
+    "computed_risk_pct": 0.01
+  }
+}
