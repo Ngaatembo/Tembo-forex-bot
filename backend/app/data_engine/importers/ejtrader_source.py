@@ -49,6 +49,26 @@ def ejtrader_import_config() -> CSVImportConfig:
     )
 
 
+# XAU/USD-SPECIFIC SCALING — a real gotcha discovered in Phase 13, not
+# assumed: this source scales gold to 2 decimal places (real quoting
+# convention for gold, e.g. 154759.0 -> $1547.59), NOT the 5-decimal
+# forex convention EJTRADER_PRICE_SCALE uses for currency pairs.
+# Applying the forex scale to gold silently produces prices 1000x too
+# small. Verified against real history: 2012-05-17 gold traded around
+# $1547-1550/oz, matching 154759.0 / 100 = 1547.59, not / 100000 = 1.54759.
+EJTRADER_XAU_PRICE_SCALE = 1 / 100
+
+
+def ejtrader_xauusd_import_config() -> CSVImportConfig:
+    return CSVImportConfig(
+        timestamp_column="Date",
+        open_column="open", high_column="high", low_column="low", close_column="close",
+        volume_column="tick_volume",
+        price_scale=EJTRADER_XAU_PRICE_SCALE,
+        assumed_timezone="UTC",
+    )
+
+
 def import_ejtrader_eurusd_h1(path: str) -> list[Candle]:
     return import_candles_from_csv(
         path, symbol="EUR/USD", timeframe="1h", config=ejtrader_import_config()
