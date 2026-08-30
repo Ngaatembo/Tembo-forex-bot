@@ -89,3 +89,10 @@ def test_breakout_strategy_has_no_execution_or_code_execution_dependency():
     content = breakout_path.read_text()
     for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
         assert token not in content, f"breakout.py references '{token}' — a real safety regression."
+
+
+def test_momentum_strategy_has_no_execution_or_code_execution_dependency():
+    momentum_path = Path(__file__).resolve().parent.parent / "app" / "strategy_engine" / "momentum.py"
+    content = momentum_path.read_text()
+    for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
+        assert token not in content, f"momentum.py references '{token}' — a real safety regression."
