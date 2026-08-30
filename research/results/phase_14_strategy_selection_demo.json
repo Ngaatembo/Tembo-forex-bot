@@ -1,0 +1,317 @@
+{
+  "configs": [
+    {
+      "config_id": "vsc_eurusd_h1_mean_reversion_3a8d6d01",
+      "candidate_id": "cand_h1___range_extreme_mean_reversion_4e36584d",
+      "instrument": "EUR/USD",
+      "timeframe": "h1",
+      "strategy_family": "mean_reversion",
+      "parameters": {},
+      "exit_config_summary": {},
+      "cost_assumptions": {
+        "tier": "BASE"
+      },
+      "evidence_period_start": "2012-11-16T00:00:00+00:00",
+      "evidence_period_end": "2022-03-04T23:00:00+00:00",
+      "gate_status": "CLOSED",
+      "verdict": "OUT_OF_SAMPLE_FAILED",
+      "statistical_level": "UNKNOWN",
+      "regime_evidence": {},
+      "created_at": "2026-08-30T17:02:59.662020+00:00"
+    },
+    {
+      "config_id": "vsc_eurusd_h1_volatility_b5914b2c",
+      "candidate_id": "cand_h2___volatility_squeeze_breakout_c4b8221e",
+      "instrument": "EUR/USD",
+      "timeframe": "h1",
+      "strategy_family": "volatility",
+      "parameters": {},
+      "exit_config_summary": {},
+      "cost_assumptions": {
+        "tier": "BASE"
+      },
+      "evidence_period_start": "2012-11-16T00:00:00+00:00",
+      "evidence_period_end": "2022-03-04T23:00:00+00:00",
+      "gate_status": "REJECT_EARLY",
+      "verdict": "REJECTED",
+      "statistical_level": "UNKNOWN",
+      "regime_evidence": {},
+      "created_at": "2026-08-30T17:02:59.662061+00:00"
+    },
+    {
+      "config_id": "vsc_eurusd_h1_breakout_b9376caa",
+      "candidate_id": "cand_market_structure_breakout__lookback_20_53055d0e",
+      "instrument": "EUR/USD",
+      "timeframe": "h1",
+      "strategy_family": "breakout",
+      "parameters": {},
+      "exit_config_summary": {},
+      "cost_assumptions": {
+        "tier": "BASE"
+      },
+      "evidence_period_start": "2012-11-16T00:00:00+00:00",
+      "evidence_period_end": "2022-03-04T23:00:00+00:00",
+      "gate_status": "REJECT_EARLY",
+      "verdict": "REJECTED",
+      "statistical_level": "UNKNOWN",
+      "regime_evidence": {},
+      "created_at": "2026-08-30T17:02:59.662082+00:00"
+    },
+    {
+      "config_id": "vsc_eurusd_h1_breakout_fe25d756",
+      "candidate_id": "cand_market_structure_breakout__lookback_40_025dc203",
+      "instrument": "EUR/USD",
+      "timeframe": "h1",
+      "strategy_family": "breakout",
+      "parameters": {},
+      "exit_config_summary": {},
+      "cost_assumptions": {
+        "tier": "BASE"
+      },
+      "evidence_period_start": "2012-11-16T00:00:00+00:00",
+      "evidence_period_end": "2022-03-04T23:00:00+00:00",
+      "gate_status": "REJECT_EARLY",
+      "verdict": "REJECTED",
+      "statistical_level": "UNKNOWN",
+      "regime_evidence": {},
+      "created_at": "2026-08-30T17:02:59.662097+00:00"
+    },
+    {
+      "config_id": "vsc_eurusd_h1_breakout_59a39b19",
+      "candidate_id": "cand_market_structure_breakout__lookback_60_6c78286c",
+      "instrument": "EUR/USD",
+      "timeframe": "h1",
+      "strategy_family": "breakout",
+      "parameters": {},
+      "exit_config_summary": {},
+      "cost_assumptions": {
+        "tier": "BASE"
+      },
+      "evidence_period_start": "2012-11-16T00:00:00+00:00",
+      "evidence_period_end": "2022-03-04T23:00:00+00:00",
+      "gate_status": "REJECT_EARLY",
+      "verdict": "REJECTED",
+      "statistical_level": "UNKNOWN",
+      "regime_evidence": {},
+      "created_at": "2026-08-30T17:02:59.662112+00:00"
+    },
+    {
+      "config_id": "vsc_gbpusd_h1_mean_reversion_92ed1075",
+      "candidate_id": "gbpusd_h1",
+      "instrument": "GBP/USD",
+      "timeframe": "h1",
+      "strategy_family": "mean_reversion",
+      "parameters": {},
+      "exit_config_summary": {},
+      "cost_assumptions": {
+        "tier": "BASE"
+      },
+      "evidence_period_start": "2012-11-16T00:00:00+00:00",
+      "evidence_period_end": "2022-03-04T23:00:00+00:00",
+      "gate_status": "REJECT_EARLY",
+      "verdict": "REJECTED",
+      "statistical_level": "UNKNOWN",
+      "regime_evidence": {},
+      "created_at": "2026-08-30T17:02:59.670382+00:00"
+    },
+    {
+      "config_id": "vsc_gbpusd_h1_breakout_e3286676",
+      "candidate_id": "gbpusd_breakout40",
+      "instrument": "GBP/USD",
+      "timeframe": "h1",
+      "strategy_family": "breakout",
+      "parameters": {},
+      "exit_config_summary": {},
+      "cost_assumptions": {
+        "tier": "BASE"
+      },
+      "evidence_period_start": "2012-11-16T00:00:00+00:00",
+      "evidence_period_end": "2022-03-04T23:00:00+00:00",
+      "gate_status": "CLOSED",
+      "verdict": "OUT_OF_SAMPLE_FAILED",
+      "statistical_level": "UNKNOWN",
+      "regime_evidence": {},
+      "created_at": "2026-08-30T17:02:59.670439+00:00"
+    },
+    {
+      "config_id": "vsc_gbpusd_h1_momentum_dbc75bfa",
+      "candidate_id": "gbpusd_momentum_t1_60",
+      "instrument": "GBP/USD",
+      "timeframe": "h1",
+      "strategy_family": "momentum",
+      "parameters": {},
+      "exit_config_summary": {},
+      "cost_assumptions": {
+        "tier": "BASE"
+      },
+      "evidence_period_start": "2012-11-16T00:00:00+00:00",
+      "evidence_period_end": "2022-03-04T23:00:00+00:00",
+      "gate_status": "CLOSED",
+      "verdict": "OUT_OF_SAMPLE_FAILED",
+      "statistical_level": "UNKNOWN",
+      "regime_evidence": {},
+      "created_at": "2026-08-30T17:02:59.670476+00:00"
+    },
+    {
+      "config_id": "vsc_xauusd_h1_breakout_30_b7c2151e",
+      "candidate_id": "xauusd_breakout_30",
+      "instrument": "XAU/USD",
+      "timeframe": "h1",
+      "strategy_family": "breakout",
+      "parameters": {
+        "lookback": 30
+      },
+      "exit_config_summary": {
+        "atr_stop_multiple": 2.0,
+        "max_holding_candles": 100
+      },
+      "cost_assumptions": {
+        "tier": "BASE"
+      },
+      "evidence_period_start": "2012-11-16T00:00:00+00:00",
+      "evidence_period_end": "2022-03-04T23:00:00+00:00",
+      "gate_status": "PROMISING",
+      "verdict": "PROMISING",
+      "statistical_level": "WEAK",
+      "regime_evidence": {
+        "UNKNOWN": 2,
+        "HIGH_VOLATILITY": 173,
+        "RANGING": 1
+      },
+      "created_at": "2026-08-30T17:02:59.670850+00:00"
+    },
+    {
+      "config_id": "vsc_xauusd_h1_breakout_40_1b1633ce",
+      "candidate_id": "xauusd_breakout_40",
+      "instrument": "XAU/USD",
+      "timeframe": "h1",
+      "strategy_family": "breakout",
+      "parameters": {
+        "lookback": 40
+      },
+      "exit_config_summary": {
+        "atr_stop_multiple": 2.0,
+        "max_holding_candles": 100
+      },
+      "cost_assumptions": {
+        "tier": "BASE"
+      },
+      "evidence_period_start": "2012-11-16T00:00:00+00:00",
+      "evidence_period_end": "2022-03-04T23:00:00+00:00",
+      "gate_status": "PROMISING",
+      "verdict": "PROMISING",
+      "statistical_level": "WEAK",
+      "regime_evidence": {
+        "HIGH_VOLATILITY": 158
+      },
+      "created_at": "2026-08-30T17:02:59.670873+00:00"
+    },
+    {
+      "config_id": "vsc_xauusd_h1_breakout_50_b888a573",
+      "candidate_id": "xauusd_breakout_50",
+      "instrument": "XAU/USD",
+      "timeframe": "h1",
+      "strategy_family": "breakout",
+      "parameters": {
+        "lookback": 50
+      },
+      "exit_config_summary": {
+        "atr_stop_multiple": 2.0,
+        "max_holding_candles": 100
+      },
+      "cost_assumptions": {
+        "tier": "BASE"
+      },
+      "evidence_period_start": "2012-11-16T00:00:00+00:00",
+      "evidence_period_end": "2022-03-04T23:00:00+00:00",
+      "gate_status": "PROMISING",
+      "verdict": "PROMISING",
+      "statistical_level": "WEAK",
+      "regime_evidence": {
+        "HIGH_VOLATILITY": 133
+      },
+      "created_at": "2026-08-30T17:02:59.670887+00:00"
+    }
+  ],
+  "selections": {
+    "EUR/USD": {
+      "status": "NO_VALIDATED_EDGE",
+      "reason": "Every eligible configuration for EUR/USD h1 has gate status REJECT_EARLY (rejected).",
+      "selected_config_id": null,
+      "considered": [
+        {
+          "config_id": "vsc_eurusd_h1_mean_reversion_3a8d6d01",
+          "gate_status": "CLOSED",
+          "reason": "Gate status: CLOSED"
+        },
+        {
+          "config_id": "vsc_eurusd_h1_volatility_b5914b2c",
+          "gate_status": "REJECT_EARLY",
+          "reason": "Gate status: REJECT_EARLY"
+        },
+        {
+          "config_id": "vsc_eurusd_h1_breakout_b9376caa",
+          "gate_status": "REJECT_EARLY",
+          "reason": "Gate status: REJECT_EARLY"
+        },
+        {
+          "config_id": "vsc_eurusd_h1_breakout_fe25d756",
+          "gate_status": "REJECT_EARLY",
+          "reason": "Gate status: REJECT_EARLY"
+        },
+        {
+          "config_id": "vsc_eurusd_h1_breakout_59a39b19",
+          "gate_status": "REJECT_EARLY",
+          "reason": "Gate status: REJECT_EARLY"
+        }
+      ],
+      "research_recommendation": "Every tested configuration for this instrument/timeframe was rejected. Consider testing an already-researched mechanism on a different instrument/timeframe rather than modifying a rejected one."
+    },
+    "GBP/USD": {
+      "status": "NO_VALIDATED_EDGE",
+      "reason": "Every eligible configuration for GBP/USD h1 has gate status CLOSED (rejected).",
+      "selected_config_id": null,
+      "considered": [
+        {
+          "config_id": "vsc_gbpusd_h1_mean_reversion_92ed1075",
+          "gate_status": "REJECT_EARLY",
+          "reason": "Gate status: REJECT_EARLY"
+        },
+        {
+          "config_id": "vsc_gbpusd_h1_breakout_e3286676",
+          "gate_status": "CLOSED",
+          "reason": "Gate status: CLOSED"
+        },
+        {
+          "config_id": "vsc_gbpusd_h1_momentum_dbc75bfa",
+          "gate_status": "CLOSED",
+          "reason": "Gate status: CLOSED"
+        }
+      ],
+      "research_recommendation": "Every tested configuration for this instrument/timeframe was rejected. Consider testing an already-researched mechanism on a different instrument/timeframe rather than modifying a rejected one."
+    },
+    "XAU/USD": {
+      "status": "PROMISING_NOT_TRADEABLE",
+      "reason": "Selected vsc_xauusd_h1_breakout_30_b7c2151e: gate status PROMISING (statistical evidence: WEAK).",
+      "selected_config_id": "vsc_xauusd_h1_breakout_30_b7c2151e",
+      "considered": [
+        {
+          "config_id": "vsc_xauusd_h1_breakout_30_b7c2151e",
+          "gate_status": "PROMISING",
+          "reason": "Gate status: PROMISING"
+        },
+        {
+          "config_id": "vsc_xauusd_h1_breakout_40_1b1633ce",
+          "gate_status": "PROMISING",
+          "reason": "Gate status: PROMISING"
+        },
+        {
+          "config_id": "vsc_xauusd_h1_breakout_50_b888a573",
+          "gate_status": "PROMISING",
+          "reason": "Gate status: PROMISING"
+        }
+      ],
+      "research_recommendation": "Grow the out-of-sample statistical sample (more trades or, ideally, genuinely fresh confirmation data) before this can advance past PROMISING."
+    }
+  }
+}

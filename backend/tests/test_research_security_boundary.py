@@ -96,3 +96,11 @@ def test_momentum_strategy_has_no_execution_or_code_execution_dependency():
     content = momentum_path.read_text()
     for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
         assert token not in content, f"momentum.py references '{token}' — a real safety regression."
+
+
+def test_phase14_strategy_selection_has_no_execution_or_broker_dependency():
+    for filename in ("validated_strategy_config.py", "instrument_adapter.py", "strategy_selector.py"):
+        path = Path(__file__).resolve().parent.parent / "app" / "research" / filename
+        content = path.read_text()
+        for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
+            assert token not in content, f"{filename} references '{token}' — a real safety regression."
