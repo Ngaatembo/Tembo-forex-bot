@@ -1,0 +1,122 @@
+{
+  "metadata": {
+    "generated_at": "2026-08-30T08:36:29.856664+00:00",
+    "data_source_url": "https://github.com/ejtraderLabs/historical-data",
+    "data_source_license": "Apache-2.0",
+    "candle_count": 57600,
+    "period_start": "2012-11-16T00:00:00+00:00",
+    "period_end": "2022-03-04T23:00:00+00:00",
+    "baseline_trade_count": 1539,
+    "trades_matched_to_features": 1539,
+    "backtest_configuration": {
+      "initial_balance": 10000.0,
+      "position_size": 10000.0,
+      "spread": 0.0001,
+      "slippage": 2e-05
+    },
+    "note": "OBSERVED HISTORICAL STATISTICS ONLY \u2014 not predictive claims. See docs/phase-5-notes.md."
+  },
+  "regime_distribution_all_candles": {
+    "UNKNOWN": 54,
+    "TRENDING_UP": 12146,
+    "HIGH_VOLATILITY": 14730,
+    "RANGING": 17674,
+    "TRENDING_DOWN": 12634,
+    "LOW_VOLATILITY": 362
+  },
+  "baseline_trades_by_regime": {
+    "RANGING": {
+      "condition_label": "RANGING",
+      "trade_count": 1105,
+      "winning_trades": 348,
+      "losing_trades": 755,
+      "win_rate": 0.31493212669683257,
+      "net_pnl": -1993.1000000003119,
+      "average_trade": -1.8037104072401013,
+      "profit_factor": 0.9172620208972326,
+      "largest_win": 579.8999999999999,
+      "largest_loss": -238.1000000000011,
+      "approx_subset_max_drawdown": 3566.600000000217
+    },
+    "HIGH_VOLATILITY": {
+      "condition_label": "HIGH_VOLATILITY",
+      "trade_count": 424,
+      "winning_trades": 145,
+      "losing_trades": 279,
+      "win_rate": 0.3419811320754717,
+      "net_pnl": -2265.300000000139,
+      "average_trade": -5.342688679245611,
+      "profit_factor": 0.8293263616295008,
+      "largest_win": 383.7999999999986,
+      "largest_loss": -280.59999999999974,
+      "approx_subset_max_drawdown": 3381.800000000105
+    },
+    "LOW_VOLATILITY": {
+      "condition_label": "LOW_VOLATILITY",
+      "trade_count": 10,
+      "winning_trades": 2,
+      "losing_trades": 8,
+      "win_rate": 0.2,
+      "net_pnl": -42.00000000000648,
+      "average_trade": -4.200000000000648,
+      "profit_factor": 0.7167902899527655,
+      "largest_win": 64.69999999999976,
+      "largest_loss": -32.600000000000406,
+      "approx_subset_max_drawdown": 100.10000000000295
+    }
+  },
+  "baseline_trades_by_rsi_zone": {
+    "RSI 30-50": {
+      "condition_label": "RSI 30-50",
+      "trade_count": 704,
+      "winning_trades": 221,
+      "losing_trades": 482,
+      "win_rate": 0.31392045454545453,
+      "net_pnl": -1111.1000000002023,
+      "average_trade": -1.5782670454548329,
+      "profit_factor": 0.9321805263928785,
+      "largest_win": 579.8999999999999,
+      "largest_loss": -238.1000000000011,
+      "approx_subset_max_drawdown": 2993.1000000000895
+    },
+    "RSI 50-70": {
+      "condition_label": "RSI 50-70",
+      "trade_count": 686,
+      "winning_trades": 218,
+      "losing_trades": 468,
+      "win_rate": 0.3177842565597668,
+      "net_pnl": -1761.2000000002026,
+      "average_trade": -2.5673469387758057,
+      "profit_factor": 0.8894274234053122,
+      "largest_win": 383.7999999999986,
+      "largest_loss": -264.899999999999,
+      "approx_subset_max_drawdown": 3063.2000000001544
+    },
+    "RSI<30": {
+      "condition_label": "RSI<30",
+      "trade_count": 81,
+      "winning_trades": 31,
+      "losing_trades": 49,
+      "win_rate": 0.38271604938271603,
+      "net_pnl": -302.7000000000268,
+      "average_trade": -3.7370370370373682,
+      "profit_factor": 0.8726385324188894,
+      "largest_win": 247.79999999999802,
+      "largest_loss": -163.90000000000126,
+      "approx_subset_max_drawdown": 739.3000000000139
+    },
+    "RSI>=70": {
+      "condition_label": "RSI>=70",
+      "trade_count": 68,
+      "winning_trades": 25,
+      "losing_trades": 43,
+      "win_rate": 0.36764705882352944,
+      "net_pnl": -1125.4000000000253,
+      "average_trade": -16.550000000000374,
+      "profit_factor": 0.6012613378684738,
+      "largest_win": 297.49999999999943,
+      "largest_loss": -280.59999999999974,
+      "approx_subset_max_drawdown": 1251.400000000023
+    }
+  }
+}

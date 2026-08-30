@@ -7,7 +7,7 @@ Run with:
 
 from fastapi import FastAPI
 
-from app.api.routes import health, market_data, technical_analysis
+from app.api.routes import backtest, health, market_data, strategy, technical_analysis
 from app.core.config import get_settings
 from app.core.logging import configure_logging
 
@@ -26,6 +26,8 @@ app = FastAPI(
 app.include_router(health.router, tags=["system"])
 app.include_router(market_data.router)
 app.include_router(technical_analysis.router)
+app.include_router(strategy.router)
+app.include_router(backtest.router)
 
 
 @app.get("/")

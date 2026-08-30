@@ -1,0 +1,267 @@
+{
+  "metadata": {
+    "generated_at": "2026-08-30T08:21:22.638615+00:00",
+    "data_source_url": "https://github.com/ejtraderLabs/historical-data",
+    "data_source_license": "Apache-2.0",
+    "csv_file": "/home/claude/real_data/EURUSDh1.csv",
+    "symbol": "EUR/USD",
+    "timeframe": "1h",
+    "candle_count": 57600,
+    "period_start": "2012-11-16T00:00:00+00:00",
+    "period_end": "2022-03-04T23:00:00+00:00",
+    "strategy": "sma_10_50_crossover (Phase 3, unmodified)",
+    "backtest_engine": "Phase 4 (unmodified)",
+    "data_quality_audit": {
+      "ohlc_violations": 0,
+      "zero_or_negative_prices": 0,
+      "duplicate_timestamps": 0,
+      "unexpected_gaps": 14,
+      "is_clean": true
+    },
+    "csv_file_sha256": "1b29ca23bdc7b2645ae48a0ccb06108263b69e586bdc7d0ba40e66d1e5966eb9"
+  },
+  "cost_tier_results_full_period": {
+    "ZERO_COST_DIAGNOSTIC": {
+      "configuration": {
+        "symbol": "EUR/USD",
+        "timeframe": "1h",
+        "initial_balance": 10000.0,
+        "position_size": 10000.0,
+        "spread": 0.0,
+        "slippage": 0.0,
+        "execution_model": "next_open",
+        "end_of_data_policy": "close"
+      },
+      "summary": {
+        "initial_balance": 10000.0,
+        "final_balance": 7854.199999999989,
+        "net_pnl": -2145.800000000011,
+        "total_return": -0.2145800000000011,
+        "trade_count": 1539,
+        "winning_trades": 515,
+        "losing_trades": 1022,
+        "win_rate": 0.3346328784925276,
+        "average_win": 65.86155339805823,
+        "average_loss": -35.28816046966732,
+        "largest_win": 581.3000000000002,
+        "largest_loss": -279.1999999999995,
+        "average_trade": -1.3942820012995523,
+        "expectancy": -1.3942820012995523,
+        "max_consecutive_wins": 5,
+        "max_consecutive_losses": 17,
+        "profit_factor": 0.9405010467357093,
+        "max_drawdown": 5428.400000000002,
+        "max_drawdown_percent": 0.5084390161661955
+      }
+    },
+    "LOW_COST": {
+      "configuration": {
+        "symbol": "EUR/USD",
+        "timeframe": "1h",
+        "initial_balance": 10000.0,
+        "position_size": 10000.0,
+        "spread": 5e-05,
+        "slippage": 1e-05,
+        "execution_model": "next_open",
+        "end_of_data_policy": "close"
+      },
+      "summary": {
+        "initial_balance": 10000.0,
+        "final_balance": 6776.899999999766,
+        "net_pnl": -3223.100000000234,
+        "total_return": -0.3223100000000234,
+        "trade_count": 1539,
+        "winning_trades": 506,
+        "losing_trades": 1033,
+        "win_rate": 0.32878492527615333,
+        "average_win": 66.32648221343855,
+        "average_loss": -35.60919651500498,
+        "largest_win": 580.6,
+        "largest_loss": -279.8999999999996,
+        "average_trade": -2.0942820012996974,
+        "expectancy": -2.0942820012996974,
+        "max_consecutive_wins": 5,
+        "max_consecutive_losses": 20,
+        "profit_factor": 0.9123783788192183,
+        "max_drawdown": 5985.60000000011,
+        "max_drawdown_percent": 0.5608117604070151
+      }
+    },
+    "BASE_COST": {
+      "configuration": {
+        "symbol": "EUR/USD",
+        "timeframe": "1h",
+        "initial_balance": 10000.0,
+        "position_size": 10000.0,
+        "spread": 0.0001,
+        "slippage": 2e-05,
+        "execution_model": "next_open",
+        "end_of_data_policy": "close"
+      },
+      "summary": {
+        "initial_balance": 10000.0,
+        "final_balance": 5699.599999999543,
+        "net_pnl": -4300.400000000457,
+        "total_return": -0.4300400000000457,
+        "trade_count": 1539,
+        "winning_trades": 495,
+        "losing_trades": 1042,
+        "win_rate": 0.3216374269005848,
+        "average_win": 67.09070707070676,
+        "average_loss": -35.99836852207322,
+        "largest_win": 579.8999999999999,
+        "largest_loss": -280.59999999999974,
+        "average_trade": -2.7942820012998424,
+        "expectancy": -2.7942820012998424,
+        "max_consecutive_wins": 5,
+        "max_consecutive_losses": 20,
+        "profit_factor": 0.8853541560584581,
+        "max_drawdown": 6542.80000000024,
+        "max_drawdown_percent": 0.6132188648121993
+      }
+    },
+    "HIGH_COST": {
+      "configuration": {
+        "symbol": "EUR/USD",
+        "timeframe": "1h",
+        "initial_balance": 10000.0,
+        "position_size": 10000.0,
+        "spread": 0.0002,
+        "slippage": 5e-05,
+        "execution_model": "next_open",
+        "end_of_data_policy": "close"
+      },
+      "summary": {
+        "initial_balance": 10000.0,
+        "final_balance": 3237.1999999970803,
+        "net_pnl": -6762.80000000292,
+        "total_return": -0.676280000000292,
+        "trade_count": 1539,
+        "winning_trades": 474,
+        "losing_trades": 1065,
+        "win_rate": 0.3079922027290448,
+        "average_win": 68.43059071729765,
+        "average_loss": -36.80647887324132,
+        "largest_win": 578.2999999999982,
+        "largest_loss": -282.20000000000135,
+        "average_trade": -4.394282001301442,
+        "expectancy": -4.394282001301442,
+        "max_consecutive_wins": 5,
+        "max_consecutive_losses": 20,
+        "profit_factor": 0.8274747505669146,
+        "max_drawdown": 8295.900000002122,
+        "max_drawdown_percent": 0.7781102273581949
+      }
+    }
+  },
+  "chronological_period_results_base_cost": {
+    "train_dev": {
+      "period_start": "2012-11-16T00:00:00+00:00",
+      "period_end": "2019-05-24T14:00:00+00:00",
+      "candle_count": 40320,
+      "configuration": {
+        "symbol": "EUR/USD",
+        "timeframe": "1h",
+        "initial_balance": 10000.0,
+        "position_size": 10000.0,
+        "spread": 0.0001,
+        "slippage": 2e-05,
+        "execution_model": "next_open",
+        "end_of_data_policy": "close"
+      },
+      "summary": {
+        "initial_balance": 10000.0,
+        "final_balance": 4224.199999999685,
+        "net_pnl": -5775.800000000315,
+        "total_return": -0.5775800000000315,
+        "trade_count": 1076,
+        "winning_trades": 343,
+        "losing_trades": 732,
+        "win_rate": 0.3187732342007435,
+        "average_win": 68.48892128279849,
+        "average_loss": -39.982923497268025,
+        "largest_win": 579.8999999999999,
+        "largest_loss": -280.59999999999974,
+        "average_trade": -5.367843866171296,
+        "expectancy": -5.367843866171296,
+        "max_consecutive_wins": 5,
+        "max_consecutive_losses": 13,
+        "profit_factor": 0.802654821901417,
+        "max_drawdown": 6542.80000000024,
+        "max_drawdown_percent": 0.6132188648121993
+      }
+    },
+    "validation": {
+      "period_start": "2019-05-24T15:00:00+00:00",
+      "period_end": "2020-10-14T10:00:00+00:00",
+      "candle_count": 8640,
+      "configuration": {
+        "symbol": "EUR/USD",
+        "timeframe": "1h",
+        "initial_balance": 10000.0,
+        "position_size": 10000.0,
+        "spread": 0.0001,
+        "slippage": 2e-05,
+        "execution_model": "next_open",
+        "end_of_data_policy": "close"
+      },
+      "summary": {
+        "initial_balance": 10000.0,
+        "final_balance": 11732.099999999946,
+        "net_pnl": 1732.0999999999453,
+        "total_return": 0.17320999999999454,
+        "trade_count": 200,
+        "winning_trades": 70,
+        "losing_trades": 130,
+        "win_rate": 0.35,
+        "average_win": 75.61857142857112,
+        "average_loss": -27.393846153846408,
+        "largest_win": 369.89999999999856,
+        "largest_loss": -139.80000000000103,
+        "average_trade": 8.660499999999727,
+        "expectancy": 8.660499999999727,
+        "max_consecutive_wins": 3,
+        "max_consecutive_losses": 10,
+        "profit_factor": 1.4863809951701474,
+        "max_drawdown": 500.1000000000058,
+        "max_drawdown_percent": 0.0480823774865643
+      }
+    },
+    "out_of_sample": {
+      "period_start": "2020-10-14T11:00:00+00:00",
+      "period_end": "2022-03-04T23:00:00+00:00",
+      "candle_count": 8640,
+      "configuration": {
+        "symbol": "EUR/USD",
+        "timeframe": "1h",
+        "initial_balance": 10000.0,
+        "position_size": 10000.0,
+        "spread": 0.0001,
+        "slippage": 2e-05,
+        "execution_model": "next_open",
+        "end_of_data_policy": "close"
+      },
+      "summary": {
+        "initial_balance": 10000.0,
+        "final_balance": 9668.49999999991,
+        "net_pnl": -331.50000000008896,
+        "total_return": -0.033150000000008895,
+        "trade_count": 262,
+        "winning_trades": 81,
+        "losing_trades": 180,
+        "win_rate": 0.30916030534351147,
+        "average_win": 53.704938271604654,
+        "average_loss": -26.008888888889256,
+        "largest_win": 270.79999999999995,
+        "largest_loss": -107.50000000000037,
+        "average_trade": -1.2652671755728586,
+        "expectancy": -1.2652671755728586,
+        "max_consecutive_wins": 4,
+        "max_consecutive_losses": 20,
+        "profit_factor": 0.9291908749145411,
+        "max_drawdown": 1278.3000000000775,
+        "max_drawdown_percent": 0.12234292003637626
+      }
+    }
+  }
+}
