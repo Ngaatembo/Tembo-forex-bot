@@ -20,6 +20,14 @@ class Settings(BaseSettings):
     environment: str = "development"  # development | staging | production
     debug: bool = True
 
+    # --- CORS ---
+    # Comma-separated list of frontend origins allowed to call this API.
+    # The frontend NEVER needs a secret to be in this list -- CORS is
+    # about which origins the browser permits to receive responses, not
+    # authentication. Defaults to common local-dev ports; set the real
+    # Vercel URL here in production via the CORS_ALLOWED_ORIGINS env var.
+    cors_allowed_origins: str = "http://localhost:3000,http://localhost:5173"
+
     # --- Database ---
     database_url: str = "postgresql+asyncpg://user:password@localhost:5432/ai_trading"
 

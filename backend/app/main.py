@@ -6,6 +6,7 @@ Run with:
 """
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import backtest, decisions, health, market_data, paper_trading, research, strategy, technical_analysis
 from app.core.config import get_settings
@@ -21,6 +22,18 @@ app = FastAPI(
         "and paper trading. Not an autonomous trading system. See README.md."
     ),
     version="0.1.0",
+)
+
+# CORS: allows the frontend (a different origin -- e.g. Vercel) to call
+# this API from the browser. This is NOT a secret or an auth mechanism --
+# it never exposes credentials, it only controls which origins the
+# browser permits to read responses. No API key of any kind lives here.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[o.strip() for o in settings.cors_allowed_origins.split(",") if o.strip()],
+    allow_credentials=False,
+    allow_methods=["GET"],  # every route in this API is GET-only -- see the security-boundary tests
+    allow_headers=["*"],
 )
 
 app.include_router(health.router, tags=["system"])
