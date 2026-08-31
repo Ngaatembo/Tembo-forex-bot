@@ -118,3 +118,17 @@ def test_paper_trading_api_has_no_execution_or_broker_dependency():
     content = path.read_text()
     for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
         assert token not in content, f"paper_trading.py references '{token}' — a real safety regression."
+
+
+def test_twelvedata_provider_has_no_execution_or_broker_dependency():
+    path = Path(__file__).resolve().parent.parent / "app" / "data_engine" / "providers" / "twelvedata.py"
+    content = path.read_text()
+    for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
+        assert token not in content, f"twelvedata.py references '{token}' — a real safety regression."
+
+
+def test_markets_route_has_no_execution_or_broker_dependency():
+    path = Path(__file__).resolve().parent.parent / "app" / "api" / "routes" / "markets.py"
+    content = path.read_text()
+    for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
+        assert token not in content, f"markets.py references '{token}' — a real safety regression."

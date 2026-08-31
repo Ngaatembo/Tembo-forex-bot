@@ -91,6 +91,10 @@ def get_market_data_provider(provider_name: str) -> MarketDataProvider:
         from app.data_engine.providers.oanda import OANDAProvider
 
         return OANDAProvider()
+    if provider_name == "twelvedata":
+        from app.data_engine.providers.twelvedata import TwelveDataProvider
+
+        return TwelveDataProvider()
     raise NotImplementedError(
         f"Market data provider '{provider_name}' is not implemented yet. "
         "Falling back is intentionally not automatic — set "

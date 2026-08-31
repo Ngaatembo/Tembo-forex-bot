@@ -19,6 +19,17 @@ _TIMEFRAME_DELTAS = {
     "1h": timedelta(hours=1),
     "4h": timedelta(hours=4),
     "1d": timedelta(days=1),
+    # Tembo's actual internal timeframe convention (used by decisions.py,
+    # paper_trading/engine.py, and every provider adapter) — added
+    # alongside the older keys above rather than replacing them, since
+    # ingest.py may still call this with the old style. Found as a real
+    # gap while wiring up TwelveDataProvider: without these, gap
+    # detection silently no-ops for every "h1"-style call site.
+    "m5": timedelta(minutes=5),
+    "m15": timedelta(minutes=15),
+    "h1": timedelta(hours=1),
+    "h4": timedelta(hours=4),
+    "d1": timedelta(days=1),
 }
 
 
