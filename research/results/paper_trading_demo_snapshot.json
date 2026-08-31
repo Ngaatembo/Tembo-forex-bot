@@ -1,0 +1,66 @@
+{
+  "generated_at": "2026-08-31T05:18:51.700338+00:00",
+  "note": "Paper trading demonstration snapshot. TEST/ONLY instrument is synthetic and clearly labeled -- it does not represent any real research finding. Real instruments (EUR/USD, XAU/USD) show REAL Selector/Gate outcomes.",
+  "scenarios": {
+    "A": {
+      "status": "NO_VALIDATED_EDGE",
+      "reason": "Every eligible configuration for EUR/USD h1 has gate status REJECT_EARLY (rejected).",
+      "has_position": false
+    },
+    "B": {
+      "status": "PROMISING_NOT_TRADEABLE",
+      "reason": "Selected vsc_xauusd_h1_breakout_30_633a1c0e: gate status PROMISING (statistical evidence: WEAK).",
+      "has_position": false
+    },
+    "B2": {
+      "status": "RISK_REJECTED",
+      "reason": "LONG stop (1900.0) must be below entry (1900.0) \u2014 stop is on the wrong side.",
+      "has_position": false
+    },
+    "C": {
+      "status": "PAPER_TRADE_APPROVED",
+      "reason": "Candidate is eligible, stop is valid, calculated risk is 1.00%, total open risk remains within account limits.",
+      "has_position": true
+    }
+  },
+  "demo_account": {
+    "account_id": "demo_lifecycle",
+    "initial_equity": 10000.0,
+    "realized_pnl": -102.5,
+    "equity": 9897.5,
+    "open_positions": [
+      {
+        "position_id": "paper_pos_1",
+        "instrument": "TEST/ONLY",
+        "timeframe": "h1",
+        "direction": "LONG",
+        "entry_price": 1900.0,
+        "entry_time": "2026-08-31T05:18:51.699491",
+        "stop_price": 1860.0,
+        "position_size": 2.5,
+        "candidate_config_id": "vsc_testonly_h1_breakout_4e004fcf",
+        "take_profit_price": null,
+        "max_holding_periods": null,
+        "periods_held": 0,
+        "status": "OPEN"
+      }
+    ],
+    "closed_trades": [
+      {
+        "trade_id": "trade_paper_pos_1",
+        "position_id": "paper_pos_1",
+        "instrument": "TEST/ONLY",
+        "timeframe": "h1",
+        "direction": "LONG",
+        "entry_price": 1900.0,
+        "entry_time": "2026-08-31T05:18:51.699861",
+        "exit_price": 1859.0,
+        "exit_time": "2026-08-31T07:18:51.699948+00:00",
+        "exit_reason": "STOP_LOSS",
+        "position_size": 2.5,
+        "realized_pnl": -102.5,
+        "candidate_config_id": "vsc_testonly_h1_breakout_ebbd5853"
+      }
+    ]
+  }
+}
