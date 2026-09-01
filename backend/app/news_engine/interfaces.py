@@ -52,6 +52,10 @@ def get_economic_calendar_provider(provider_name: str) -> EconomicCalendarProvid
         from app.news_engine.providers.finnhub_calendar import FinnhubEconomicCalendarProvider
 
         return FinnhubEconomicCalendarProvider()
+    if provider_name == "static_central_banks":
+        from app.news_engine.providers.static_central_bank_calendar import StaticCentralBankCalendarProvider
+
+        return StaticCentralBankCalendarProvider()
     raise NotImplementedError(
         f"Economic calendar provider '{provider_name}' is not implemented yet. "
         "Falling back is intentionally not automatic — set ECONOMIC_CALENDAR_PROVIDER=mock explicitly during development."

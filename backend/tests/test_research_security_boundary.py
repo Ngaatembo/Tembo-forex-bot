@@ -160,3 +160,19 @@ def test_macro_event_risk_has_no_direction_field_structurally():
     assert "direction" not in field_names
     assert "signal" not in field_names
     assert "action" not in field_names
+
+
+def test_static_central_bank_calendar_has_no_execution_or_broker_dependency():
+    path = Path(__file__).resolve().parent.parent / "app" / "news_engine" / "providers" / "static_central_bank_calendar.py"
+    content = path.read_text()
+    for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
+        assert token not in content, f"static_central_bank_calendar.py references '{token}' — a real safety regression."
+
+
+def test_static_central_bank_calendar_has_no_network_imports():
+    """Structural proof this file makes no network call whatsoever --
+    it's a static, manually-verified dataset, not a live fetch."""
+    path = Path(__file__).resolve().parent.parent / "app" / "news_engine" / "providers" / "static_central_bank_calendar.py"
+    content = path.read_text()
+    for forbidden_import in ("import httpx", "import requests", "import urllib", "import aiohttp"):
+        assert forbidden_import not in content

@@ -20,6 +20,18 @@ def _relevant_currencies_for_instrument(instrument: str) -> tuple:
     return tuple(currency for currency, instruments in CURRENCY_TO_INSTRUMENTS.items() if instrument in instruments)
 
 
+def _event_within_window(event: MacroEvent, now: datetime, window_end: datetime) -> bool:
+    """Precise datetime comparison when the event has a real confirmed
+    time. For time_confirmed=False events (see models.py), compares
+    calendar DATES instead -- the whole day counts as within-window,
+    since the timestamp itself is a neutral anchor, not a real time.
+    Deliberately conservative: better to protect the whole day than
+    miss the actual announcement due to a false-precision timestamp."""
+    if event.time_confirmed:
+        return now <= event.timestamp <= window_end
+    return now.date() <= event.timestamp.date() <= window_end.date()
+
+
 def compute_macro_event_risk(
     instrument: str,
     upcoming_events,
@@ -38,7 +50,7 @@ def compute_macro_event_risk(
 
     relevant_events = [e for e in upcoming_events if e.currency in relevant_currencies]
 
-    high_impact_soon = [e for e in relevant_events if e.importance == "HIGH" and now <= e.timestamp <= window_end]
+    high_impact_soon = [e for e in relevant_events if e.importance == "HIGH" and _event_within_window(e, now, window_end)]
     if high_impact_soon:
         names = ", ".join(e.event_name for e in high_impact_soon)
         return MacroEventRisk(
@@ -47,9 +59,10 @@ def compute_macro_event_risk(
             triggering_events=tuple(high_impact_soon),
         )
 
+    wider_window_end = now + timedelta(hours=protection_window_hours * 4)
     medium_or_high_events = [
         e for e in relevant_events
-        if e.importance in ("HIGH", "MEDIUM") and now <= e.timestamp <= now + timedelta(hours=protection_window_hours * 4)
+        if e.importance in ("HIGH", "MEDIUM") and _event_within_window(e, now, wider_window_end)
     ]
     if medium_or_high_events:
         return MacroEventRisk(

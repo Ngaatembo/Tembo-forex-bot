@@ -75,3 +75,66 @@ def test_calendar_endpoint_exposes_error_detail_when_unavailable():
     assert "error" in body
     assert body["error"] is not None
     assert "ECONOMIC_CALENDAR_PROVIDER" in body["error"]
+
+
+def test_calendar_reports_static_official_not_live(monkeypatch):
+    from app.core.config import get_settings
+    get_settings.cache_clear()
+    monkeypatch.setenv("ECONOMIC_CALENDAR_PROVIDER", "static_central_banks")
+    import app.news_engine.context as context_module
+    context_module._calendar_cache._store.clear()
+
+    resp = client.get("/calendar")
+    body = resp.json()
+    assert body["status"] == "STATIC_OFFICIAL"
+    assert body["status"] != "LIVE"
+    assert len(body["events"]) == 32
+    get_settings.cache_clear()
+    context_module._calendar_cache._store.clear()
+
+
+def test_calendar_for_currency_reports_static_official(monkeypatch):
+    from app.core.config import get_settings
+    get_settings.cache_clear()
+    monkeypatch.setenv("ECONOMIC_CALENDAR_PROVIDER", "static_central_banks")
+    import app.news_engine.context as context_module
+    context_module._calendar_cache._store.clear()
+
+    resp = client.get("/calendar/USD")
+    body = resp.json()
+    assert body["status"] == "STATIC_OFFICIAL"
+    assert len(body["events"]) == 8
+    get_settings.cache_clear()
+    context_module._calendar_cache._store.clear()
+
+
+def test_calendar_events_include_time_confirmed_field(monkeypatch):
+    from app.core.config import get_settings
+    get_settings.cache_clear()
+    monkeypatch.setenv("ECONOMIC_CALENDAR_PROVIDER", "static_central_banks")
+    import app.news_engine.context as context_module
+    context_module._calendar_cache._store.clear()
+
+    resp = client.get("/calendar/GBP")
+    body = resp.json()
+    assert all(e["time_confirmed"] is False for e in body["events"])
+    get_settings.cache_clear()
+    context_module._calendar_cache._store.clear()
+
+
+def test_calendar_shows_events_earlier_in_the_year_not_just_forward_from_now(monkeypatch):
+    """Regression test for a real bug found during Phase 1: a static
+    dataset's earlier-in-the-year events were invisible once 'now' had
+    passed them, because /calendar only looked forward. All 32 events
+    must be visible regardless of today's date within the covered year."""
+    from app.core.config import get_settings
+    get_settings.cache_clear()
+    monkeypatch.setenv("ECONOMIC_CALENDAR_PROVIDER", "static_central_banks")
+    import app.news_engine.context as context_module
+    context_module._calendar_cache._store.clear()
+
+    resp = client.get("/calendar")
+    body = resp.json()
+    assert len(body["events"]) == 32
+    get_settings.cache_clear()
+    context_module._calendar_cache._store.clear()

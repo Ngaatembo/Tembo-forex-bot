@@ -45,6 +45,14 @@ class MacroEvent:
     actual: Optional[float]
     source: str
     url: Optional[str]
+    # True for every existing (Finnhub) event -- a real provider-supplied
+    # time. False only for statically-sourced events where the official
+    # source did not confirm an exact announcement time (see
+    # static_central_bank_calendar.py) -- timestamp is then a neutral
+    # start-of-day UTC anchor, NOT a real decision time. Consumers (see
+    # macro_risk.py) must treat False differently: the whole calendar
+    # date counts as "within window", not the precise datetime.
+    time_confirmed: bool = True
 
 
 IMPORTANCE_LEVELS = frozenset({"HIGH", "MEDIUM", "LOW", "UNKNOWN"})

@@ -87,10 +87,17 @@ async def get_news_context(instrument: Optional[str] = None) -> NewsContext:
         )
 
 
-async def get_upcoming_macro_events(lookahead_hours: float = 48) -> Optional[list]:
+async def get_upcoming_macro_events(lookahead_hours: float = 48, lookback_hours: float = 0) -> Optional[list]:
     """Returns None (not an empty list) when the calendar is genuinely
     unavailable — callers (e.g. macro_risk.py) must treat that as
     UNKNOWN risk, never as 'no events'.
+
+    lookback_hours: 0 by default (matches the original risk-check
+    semantics — only ever look forward). Full-year calendar browsing
+    (see app/api/routes/news.py's /calendar) needs a real lookback,
+    since a static dataset's earlier-in-the-year events are otherwise
+    invisible once "now" has passed them — found as a real bug while
+    wiring up the static central bank calendar provider.
 
     IMPORTANT, found during a real production investigation:
     ECONOMIC_CALENDAR_PROVIDER and ECONOMIC_CALENDAR_API_KEY are BOTH
@@ -109,15 +116,21 @@ async def get_upcoming_macro_events(lookahead_hours: float = 48) -> Optional[lis
         _last_calendar_error = "ECONOMIC_CALENDAR_PROVIDER is 'mock' (the default) — set it to 'finnhub' explicitly to enable real calendar data."
         return None
 
-    cached_events, freshness = _calendar_cache.get("upcoming")
+    # Cache key includes the window shape -- different callers (a short
+    # forward-only risk check vs. a full-year browse) must never share
+    # a cache entry, or one silently corrupts the other's result.
+    cache_key = f"upcoming:{lookback_hours}:{lookahead_hours}"
+    cached_events, freshness = _calendar_cache.get(cache_key)
     if cached_events is not None and freshness == FRESH:
         return cached_events
 
     try:
         provider = get_economic_calendar_provider(provider_name)
         now = datetime.now(timezone.utc)
-        events = await provider.get_upcoming_events(now, now + timedelta(hours=lookahead_hours))
-        _calendar_cache.set("upcoming", events)
+        start = now - timedelta(hours=lookback_hours)
+        end = now + timedelta(hours=lookahead_hours)
+        events = await provider.get_upcoming_events(start, end)
+        _calendar_cache.set(cache_key, events)
         _last_successful_calendar_fetch = now
         _last_calendar_error = None
         return events
@@ -129,7 +142,7 @@ async def get_upcoming_macro_events(lookahead_hours: float = 48) -> Optional[lis
         _last_calendar_error = message
         logger.warning("Economic calendar fetch failed: %s", message)
 
-        cached_events, freshness = _calendar_cache.get("upcoming")
+        cached_events, freshness = _calendar_cache.get(cache_key)
         if cached_events is not None and freshness == STALE:
             return cached_events
         return None
