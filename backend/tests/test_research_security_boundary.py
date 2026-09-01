@@ -176,3 +176,10 @@ def test_static_central_bank_calendar_has_no_network_imports():
     content = path.read_text()
     for forbidden_import in ("import httpx", "import requests", "import urllib", "import aiohttp"):
         assert forbidden_import not in content
+
+
+def test_walk_forward_has_no_execution_or_broker_dependency():
+    path = Path(__file__).resolve().parent.parent / "app" / "research" / "walk_forward.py"
+    content = path.read_text()
+    for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
+        assert token not in content, f"walk_forward.py references '{token}' — a real safety regression."
