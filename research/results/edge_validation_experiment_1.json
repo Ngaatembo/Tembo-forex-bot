@@ -1,0 +1,4669 @@
+{
+  "generated_at": "2026-09-01T18:59:54.437530+00:00",
+  "methodology_note": "Walk-forward OOS performance is a stronger test of whether historical performance survives repeated unseen periods. It is NOT proof of future profitability. Classifications below are neutral descriptions of what already happened in this historical data, not predictions.",
+  "dataset_source": "https://github.com/ejtraderLabs/historical-data",
+  "dataset_license": "Apache-2.0",
+  "walk_forward_config": {
+    "development_days": 1000,
+    "validation_days": 200,
+    "out_of_sample_days": 200,
+    "step_days": 200
+  },
+  "cost_assumptions": {
+    "spread": 0.0001,
+    "slippage": 2e-05,
+    "tier": "BASE (reused verbatim from Phase 9/9.1/11/13)"
+  },
+  "results": {
+    "EUR/USD": {
+      "sma_crossover": {
+        "windows": [
+          {
+            "window_index": 0,
+            "development": {
+              "label": "development",
+              "start": "2012-11-16T00:00:00+00:00",
+              "end": "2015-08-13T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-08-13T00:00:00+00:00",
+              "end": "2016-02-29T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-02-29T00:00:00+00:00",
+              "end": "2016-09-16T00:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.8231136977759222
+            },
+            "oos_trade_count": 87,
+            "oos_win_rate": 0.3103448275862069,
+            "oos_profit_factor": 0.6537513908758411,
+            "oos_expectancy": -10.014942528736135,
+            "oos_max_drawdown": 1328.500000000011,
+            "oos_net_pnl": -871.3000000000437,
+            "oos_total_return": -0.08713000000000437,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 1,
+            "development": {
+              "label": "development",
+              "start": "2013-06-04T00:00:00+00:00",
+              "end": "2016-02-29T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-02-29T00:00:00+00:00",
+              "end": "2016-09-16T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-09-16T00:00:00+00:00",
+              "end": "2017-04-04T00:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.8607783838036912
+            },
+            "oos_trade_count": 98,
+            "oos_win_rate": 0.3163265306122449,
+            "oos_profit_factor": 0.5565135487610404,
+            "oos_expectancy": -12.491836734694214,
+            "oos_max_drawdown": 1409.1000000000404,
+            "oos_net_pnl": -1224.200000000033,
+            "oos_total_return": -0.1224200000000033,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 2,
+            "development": {
+              "label": "development",
+              "start": "2013-12-21T00:00:00+00:00",
+              "end": "2016-09-16T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-09-16T00:00:00+00:00",
+              "end": "2017-04-04T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-04-04T00:00:00+00:00",
+              "end": "2017-10-21T00:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.8097552418018567
+            },
+            "oos_trade_count": 86,
+            "oos_win_rate": 0.3023255813953488,
+            "oos_profit_factor": 0.7001749101156302,
+            "oos_expectancy": -7.175581395348957,
+            "oos_max_drawdown": 1051.000000000011,
+            "oos_net_pnl": -617.1000000000104,
+            "oos_total_return": -0.061710000000001035,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 3,
+            "development": {
+              "label": "development",
+              "start": "2014-07-09T00:00:00+00:00",
+              "end": "2017-04-04T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-04-04T00:00:00+00:00",
+              "end": "2017-10-21T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-10-21T00:00:00+00:00",
+              "end": "2018-05-09T00:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.7839811200182132
+            },
+            "oos_trade_count": 83,
+            "oos_win_rate": 0.3855421686746988,
+            "oos_profit_factor": 1.511695027358529,
+            "oos_expectancy": 10.253012048192524,
+            "oos_max_drawdown": 303.0000000000091,
+            "oos_net_pnl": 850.9999999999795,
+            "oos_total_return": 0.08509999999999796,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 4,
+            "development": {
+              "label": "development",
+              "start": "2015-01-25T00:00:00+00:00",
+              "end": "2017-10-21T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-10-21T00:00:00+00:00",
+              "end": "2018-05-09T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-05-09T00:00:00+00:00",
+              "end": "2018-11-25T00:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.8715021101583192
+            },
+            "oos_trade_count": 87,
+            "oos_win_rate": 0.3563218390804598,
+            "oos_profit_factor": 0.9172325558507832,
+            "oos_expectancy": -1.9333333333337994,
+            "oos_max_drawdown": 681.8000000000175,
+            "oos_net_pnl": -168.20000000004055,
+            "oos_total_return": -0.016820000000004054,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 5,
+            "development": {
+              "label": "development",
+              "start": "2015-08-13T00:00:00+00:00",
+              "end": "2018-05-09T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-05-09T00:00:00+00:00",
+              "end": "2018-11-25T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-11-25T00:00:00+00:00",
+              "end": "2019-06-13T00:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.8658042636376312
+            },
+            "oos_trade_count": 100,
+            "oos_win_rate": 0.27,
+            "oos_profit_factor": 0.5818687916166261,
+            "oos_expectancy": -7.66100000000025,
+            "oos_max_drawdown": 862.9000000000196,
+            "oos_net_pnl": -766.100000000025,
+            "oos_total_return": -0.07661000000000251,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 6,
+            "development": {
+              "label": "development",
+              "start": "2016-02-29T00:00:00+00:00",
+              "end": "2018-11-25T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-11-25T00:00:00+00:00",
+              "end": "2019-06-13T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-06-13T00:00:00+00:00",
+              "end": "2019-12-30T00:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.7787137235612284
+            },
+            "oos_trade_count": 81,
+            "oos_win_rate": 0.30864197530864196,
+            "oos_profit_factor": 1.050899928005734,
+            "oos_expectancy": 0.8728395061724175,
+            "oos_max_drawdown": 500.1000000000058,
+            "oos_net_pnl": 70.69999999996581,
+            "oos_total_return": 0.007069999999996581,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 7,
+            "development": {
+              "label": "development",
+              "start": "2016-09-16T00:00:00+00:00",
+              "end": "2019-06-13T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-06-13T00:00:00+00:00",
+              "end": "2019-12-30T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-12-30T00:00:00+00:00",
+              "end": "2020-07-17T00:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.8386795469462508
+            },
+            "oos_trade_count": 67,
+            "oos_win_rate": 0.40298507462686567,
+            "oos_profit_factor": 2.1414481597305572,
+            "oos_expectancy": 21.246268656716182,
+            "oos_max_drawdown": 374.6000000000022,
+            "oos_net_pnl": 1423.4999999999843,
+            "oos_total_return": 0.14234999999999842,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 8,
+            "development": {
+              "label": "development",
+              "start": "2017-04-04T00:00:00+00:00",
+              "end": "2019-12-30T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-12-30T00:00:00+00:00",
+              "end": "2020-07-17T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-07-17T00:00:00+00:00",
+              "end": "2021-02-02T00:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 1.078520372040681
+            },
+            "oos_trade_count": 93,
+            "oos_win_rate": 0.34408602150537637,
+            "oos_profit_factor": 0.9116255202691107,
+            "oos_expectancy": -1.6666666666667458,
+            "oos_max_drawdown": 580.4000000000051,
+            "oos_net_pnl": -155.00000000000736,
+            "oos_total_return": -0.015500000000000735,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 9,
+            "development": {
+              "label": "development",
+              "start": "2017-10-21T00:00:00+00:00",
+              "end": "2020-07-17T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-07-17T00:00:00+00:00",
+              "end": "2021-02-02T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2021-02-02T00:00:00+00:00",
+              "end": "2021-08-21T00:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 1.1567241154851284
+            },
+            "oos_trade_count": 92,
+            "oos_win_rate": 0.391304347826087,
+            "oos_profit_factor": 1.1032548476453947,
+            "oos_expectancy": 1.620652173912534,
+            "oos_max_drawdown": 507.3000000000302,
+            "oos_net_pnl": 149.09999999995313,
+            "oos_total_return": 0.014909999999995312,
+            "classification": "POSITIVE_OOS_RESULT"
+          }
+        ],
+        "aggregate_oos": {
+          "windows_total": 10,
+          "windows_with_selection": 10,
+          "windows_without_selection": 0,
+          "total_oos_trades": 874,
+          "combined_oos_win_rate": 0.33638443935926776,
+          "combined_oos_profit_factor": 0.9725023799599295,
+          "combined_oos_expectancy": -1.496109839817251,
+          "worst_oos_max_drawdown": 1409.1000000000404
+        },
+        "windows_profitable_pct": 40.0,
+        "average_oos_net_pnl_per_window": -130.76000000002773,
+        "worst_oos_window": {
+          "window_index": 1,
+          "development": {
+            "label": "development",
+            "start": "2013-06-04T00:00:00+00:00",
+            "end": "2016-02-29T00:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2016-02-29T00:00:00+00:00",
+            "end": "2016-09-16T00:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2016-09-16T00:00:00+00:00",
+            "end": "2017-04-04T00:00:00+00:00"
+          },
+          "selected_candidate": "sma_crossover",
+          "candidate_validation_scores": {
+            "sma_crossover": 0.8607783838036912
+          },
+          "oos_trade_count": 98,
+          "oos_win_rate": 0.3163265306122449,
+          "oos_profit_factor": 0.5565135487610404,
+          "oos_expectancy": -12.491836734694214,
+          "oos_max_drawdown": 1409.1000000000404,
+          "oos_net_pnl": -1224.200000000033,
+          "oos_total_return": -0.1224200000000033,
+          "classification": "NEGATIVE_OOS_RESULT"
+        },
+        "best_oos_window": {
+          "window_index": 7,
+          "development": {
+            "label": "development",
+            "start": "2016-09-16T00:00:00+00:00",
+            "end": "2019-06-13T00:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2019-06-13T00:00:00+00:00",
+            "end": "2019-12-30T00:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2019-12-30T00:00:00+00:00",
+            "end": "2020-07-17T00:00:00+00:00"
+          },
+          "selected_candidate": "sma_crossover",
+          "candidate_validation_scores": {
+            "sma_crossover": 0.8386795469462508
+          },
+          "oos_trade_count": 67,
+          "oos_win_rate": 0.40298507462686567,
+          "oos_profit_factor": 2.1414481597305572,
+          "oos_expectancy": 21.246268656716182,
+          "oos_max_drawdown": 374.6000000000022,
+          "oos_net_pnl": 1423.4999999999843,
+          "oos_total_return": 0.14234999999999842,
+          "classification": "POSITIVE_OOS_RESULT"
+        },
+        "classification": "MIXED"
+      },
+      "breakout_40": {
+        "windows": [
+          {
+            "window_index": 0,
+            "development": {
+              "label": "development",
+              "start": "2012-11-16T00:00:00+00:00",
+              "end": "2015-08-13T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-08-13T00:00:00+00:00",
+              "end": "2016-02-29T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-02-29T00:00:00+00:00",
+              "end": "2016-09-16T00:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.9029952554224767
+            },
+            "oos_trade_count": 64,
+            "oos_win_rate": 0.265625,
+            "oos_profit_factor": 0.9216652070937269,
+            "oos_expectancy": -1.8424818680375796,
+            "oos_max_drawdown": 340.85855740133775,
+            "oos_net_pnl": -117.9188395544051,
+            "oos_total_return": -0.01179188395544051,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 1,
+            "development": {
+              "label": "development",
+              "start": "2013-06-04T00:00:00+00:00",
+              "end": "2016-02-29T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-02-29T00:00:00+00:00",
+              "end": "2016-09-16T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-09-16T00:00:00+00:00",
+              "end": "2017-04-04T00:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.9694145052359234
+            },
+            "oos_trade_count": 61,
+            "oos_win_rate": 0.2459016393442623,
+            "oos_profit_factor": 0.7302660957246909,
+            "oos_expectancy": -6.5813373758541776,
+            "oos_max_drawdown": 867.0644373890991,
+            "oos_net_pnl": -401.4615799271048,
+            "oos_total_return": -0.040146157992710485,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 2,
+            "development": {
+              "label": "development",
+              "start": "2013-12-21T00:00:00+00:00",
+              "end": "2016-09-16T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-09-16T00:00:00+00:00",
+              "end": "2017-04-04T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-04-04T00:00:00+00:00",
+              "end": "2017-10-21T00:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.9516944975249306
+            },
+            "oos_trade_count": 60,
+            "oos_win_rate": 0.2833333333333333,
+            "oos_profit_factor": 0.8377727085683986,
+            "oos_expectancy": -3.251558058761021,
+            "oos_max_drawdown": 415.4733644081007,
+            "oos_net_pnl": -195.09348352566127,
+            "oos_total_return": -0.01950934835256613,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 3,
+            "development": {
+              "label": "development",
+              "start": "2014-07-09T00:00:00+00:00",
+              "end": "2017-04-04T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-04-04T00:00:00+00:00",
+              "end": "2017-10-21T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-10-21T00:00:00+00:00",
+              "end": "2018-05-09T00:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.9445457417831552
+            },
+            "oos_trade_count": 59,
+            "oos_win_rate": 0.3050847457627119,
+            "oos_profit_factor": 1.4043393597642735,
+            "oos_expectancy": 8.963139698554969,
+            "oos_max_drawdown": 408.22257051971246,
+            "oos_net_pnl": 528.8252422147432,
+            "oos_total_return": 0.05288252422147432,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 4,
+            "development": {
+              "label": "development",
+              "start": "2015-01-25T00:00:00+00:00",
+              "end": "2017-10-21T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-10-21T00:00:00+00:00",
+              "end": "2018-05-09T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-05-09T00:00:00+00:00",
+              "end": "2018-11-25T00:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.000065339959899
+            },
+            "oos_trade_count": 66,
+            "oos_win_rate": 0.25757575757575757,
+            "oos_profit_factor": 0.7404973231026177,
+            "oos_expectancy": -5.938960026534746,
+            "oos_max_drawdown": 599.3808246830449,
+            "oos_net_pnl": -391.9713617512932,
+            "oos_total_return": -0.03919713617512932,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 5,
+            "development": {
+              "label": "development",
+              "start": "2015-08-13T00:00:00+00:00",
+              "end": "2018-05-09T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-05-09T00:00:00+00:00",
+              "end": "2018-11-25T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-11-25T00:00:00+00:00",
+              "end": "2019-06-13T00:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.9192504348048648
+            },
+            "oos_trade_count": 65,
+            "oos_win_rate": 0.2,
+            "oos_profit_factor": 0.6353125513211377,
+            "oos_expectancy": -6.972237284157993,
+            "oos_max_drawdown": 487.36328665746623,
+            "oos_net_pnl": -453.19542347026953,
+            "oos_total_return": -0.04531954234702695,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 6,
+            "development": {
+              "label": "development",
+              "start": "2016-02-29T00:00:00+00:00",
+              "end": "2018-11-25T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-11-25T00:00:00+00:00",
+              "end": "2019-06-13T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-06-13T00:00:00+00:00",
+              "end": "2019-12-30T00:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.8581559428027555
+            },
+            "oos_trade_count": 57,
+            "oos_win_rate": 0.3333333333333333,
+            "oos_profit_factor": 1.28177430846109,
+            "oos_expectancy": 3.8802179774967587,
+            "oos_max_drawdown": 313.91155755281034,
+            "oos_net_pnl": 221.17242471731524,
+            "oos_total_return": 0.022117242471731524,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 7,
+            "development": {
+              "label": "development",
+              "start": "2016-09-16T00:00:00+00:00",
+              "end": "2019-06-13T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-06-13T00:00:00+00:00",
+              "end": "2019-12-30T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-12-30T00:00:00+00:00",
+              "end": "2020-07-17T00:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.9076195080110265
+            },
+            "oos_trade_count": 62,
+            "oos_win_rate": 0.3064516129032258,
+            "oos_profit_factor": 1.3742671216947406,
+            "oos_expectancy": 7.693588837982045,
+            "oos_max_drawdown": 531.189982126265,
+            "oos_net_pnl": 477.00250795488677,
+            "oos_total_return": 0.047700250795488675,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 8,
+            "development": {
+              "label": "development",
+              "start": "2017-04-04T00:00:00+00:00",
+              "end": "2019-12-30T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-12-30T00:00:00+00:00",
+              "end": "2020-07-17T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-07-17T00:00:00+00:00",
+              "end": "2021-02-02T00:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.0268798908281032
+            },
+            "oos_trade_count": 63,
+            "oos_win_rate": 0.20634920634920634,
+            "oos_profit_factor": 0.7341095753018525,
+            "oos_expectancy": -6.2625147691726335,
+            "oos_max_drawdown": 763.6552304408342,
+            "oos_net_pnl": -394.5384304578759,
+            "oos_total_return": -0.03945384304578759,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 9,
+            "development": {
+              "label": "development",
+              "start": "2017-10-21T00:00:00+00:00",
+              "end": "2020-07-17T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-07-17T00:00:00+00:00",
+              "end": "2021-02-02T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2021-02-02T00:00:00+00:00",
+              "end": "2021-08-21T00:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.9990609138279934
+            },
+            "oos_trade_count": 66,
+            "oos_win_rate": 0.2727272727272727,
+            "oos_profit_factor": 0.8626877311063063,
+            "oos_expectancy": -2.3491747783831887,
+            "oos_max_drawdown": 529.8028826951504,
+            "oos_net_pnl": -155.04553537329045,
+            "oos_total_return": -0.015504553537329045,
+            "classification": "NEGATIVE_OOS_RESULT"
+          }
+        ],
+        "aggregate_oos": {
+          "windows_total": 10,
+          "windows_with_selection": 10,
+          "windows_without_selection": 0,
+          "total_oos_trades": 623,
+          "combined_oos_win_rate": 0.2664526484751204,
+          "combined_oos_profit_factor": 0.9442621502703633,
+          "combined_oos_expectancy": -1.416090656778419,
+          "worst_oos_max_drawdown": 867.0644373890991
+        },
+        "windows_profitable_pct": 30.0,
+        "average_oos_net_pnl_per_window": -88.22244791729551,
+        "worst_oos_window": {
+          "window_index": 5,
+          "development": {
+            "label": "development",
+            "start": "2015-08-13T00:00:00+00:00",
+            "end": "2018-05-09T00:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2018-05-09T00:00:00+00:00",
+            "end": "2018-11-25T00:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2018-11-25T00:00:00+00:00",
+            "end": "2019-06-13T00:00:00+00:00"
+          },
+          "selected_candidate": "breakout_40",
+          "candidate_validation_scores": {
+            "breakout_40": 0.9192504348048648
+          },
+          "oos_trade_count": 65,
+          "oos_win_rate": 0.2,
+          "oos_profit_factor": 0.6353125513211377,
+          "oos_expectancy": -6.972237284157993,
+          "oos_max_drawdown": 487.36328665746623,
+          "oos_net_pnl": -453.19542347026953,
+          "oos_total_return": -0.04531954234702695,
+          "classification": "NEGATIVE_OOS_RESULT"
+        },
+        "best_oos_window": {
+          "window_index": 3,
+          "development": {
+            "label": "development",
+            "start": "2014-07-09T00:00:00+00:00",
+            "end": "2017-04-04T00:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2017-04-04T00:00:00+00:00",
+            "end": "2017-10-21T00:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2017-10-21T00:00:00+00:00",
+            "end": "2018-05-09T00:00:00+00:00"
+          },
+          "selected_candidate": "breakout_40",
+          "candidate_validation_scores": {
+            "breakout_40": 0.9445457417831552
+          },
+          "oos_trade_count": 59,
+          "oos_win_rate": 0.3050847457627119,
+          "oos_profit_factor": 1.4043393597642735,
+          "oos_expectancy": 8.963139698554969,
+          "oos_max_drawdown": 408.22257051971246,
+          "oos_net_pnl": 528.8252422147432,
+          "oos_total_return": 0.05288252422147432,
+          "classification": "POSITIVE_OOS_RESULT"
+        },
+        "classification": "MIXED"
+      },
+      "momentum_20": {
+        "windows": [
+          {
+            "window_index": 0,
+            "development": {
+              "label": "development",
+              "start": "2012-11-16T00:00:00+00:00",
+              "end": "2015-08-13T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-08-13T00:00:00+00:00",
+              "end": "2016-02-29T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-02-29T00:00:00+00:00",
+              "end": "2016-09-16T00:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.835344817660845
+            },
+            "oos_trade_count": 395,
+            "oos_win_rate": 0.2582278481012658,
+            "oos_profit_factor": 0.7388416617541879,
+            "oos_expectancy": -2.8045828492968075,
+            "oos_max_drawdown": 1172.1393676388543,
+            "oos_net_pnl": -1107.810225472239,
+            "oos_total_return": -0.1107810225472239,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 1,
+            "development": {
+              "label": "development",
+              "start": "2013-06-04T00:00:00+00:00",
+              "end": "2016-02-29T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-02-29T00:00:00+00:00",
+              "end": "2016-09-16T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-09-16T00:00:00+00:00",
+              "end": "2017-04-04T00:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8370967960671436
+            },
+            "oos_trade_count": 298,
+            "oos_win_rate": 0.3187919463087248,
+            "oos_profit_factor": 1.006658748381477,
+            "oos_expectancy": 0.07500806543643913,
+            "oos_max_drawdown": 562.7730827550986,
+            "oos_net_pnl": 22.352403500058863,
+            "oos_total_return": 0.002235240350005886,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 2,
+            "development": {
+              "label": "development",
+              "start": "2013-12-21T00:00:00+00:00",
+              "end": "2016-09-16T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-09-16T00:00:00+00:00",
+              "end": "2017-04-04T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-04-04T00:00:00+00:00",
+              "end": "2017-10-21T00:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8855128075423162
+            },
+            "oos_trade_count": 317,
+            "oos_win_rate": 0.277602523659306,
+            "oos_profit_factor": 0.8374732077050328,
+            "oos_expectancy": -1.6988606895237686,
+            "oos_max_drawdown": 851.7866603443345,
+            "oos_net_pnl": -538.5388385790346,
+            "oos_total_return": -0.05385388385790346,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 3,
+            "development": {
+              "label": "development",
+              "start": "2014-07-09T00:00:00+00:00",
+              "end": "2017-04-04T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-04-04T00:00:00+00:00",
+              "end": "2017-10-21T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-10-21T00:00:00+00:00",
+              "end": "2018-05-09T00:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8976332961286798
+            },
+            "oos_trade_count": 327,
+            "oos_win_rate": 0.2996941896024465,
+            "oos_profit_factor": 0.9198502661269051,
+            "oos_expectancy": -0.8761309099584199,
+            "oos_max_drawdown": 648.9702553051029,
+            "oos_net_pnl": -286.4948075564033,
+            "oos_total_return": -0.028649480755640333,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 4,
+            "development": {
+              "label": "development",
+              "start": "2015-01-25T00:00:00+00:00",
+              "end": "2017-10-21T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-10-21T00:00:00+00:00",
+              "end": "2018-05-09T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-05-09T00:00:00+00:00",
+              "end": "2018-11-25T00:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.9009815299812758
+            },
+            "oos_trade_count": 320,
+            "oos_win_rate": 0.31875,
+            "oos_profit_factor": 0.9571807211955852,
+            "oos_expectancy": -0.4353533869698166,
+            "oos_max_drawdown": 774.8725314188669,
+            "oos_net_pnl": -139.31308383034133,
+            "oos_total_return": -0.013931308383034132,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 5,
+            "development": {
+              "label": "development",
+              "start": "2015-08-13T00:00:00+00:00",
+              "end": "2018-05-09T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-05-09T00:00:00+00:00",
+              "end": "2018-11-25T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-11-25T00:00:00+00:00",
+              "end": "2019-06-13T00:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8921481347969761
+            },
+            "oos_trade_count": 335,
+            "oos_win_rate": 0.3074626865671642,
+            "oos_profit_factor": 0.6277232582275417,
+            "oos_expectancy": -3.3379468230545326,
+            "oos_max_drawdown": 1240.378192052145,
+            "oos_net_pnl": -1118.2121857232685,
+            "oos_total_return": -0.11182121857232685,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 6,
+            "development": {
+              "label": "development",
+              "start": "2016-02-29T00:00:00+00:00",
+              "end": "2018-11-25T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-11-25T00:00:00+00:00",
+              "end": "2019-06-13T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-06-13T00:00:00+00:00",
+              "end": "2019-12-30T00:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8498611729558002
+            },
+            "oos_trade_count": 324,
+            "oos_win_rate": 0.2716049382716049,
+            "oos_profit_factor": 0.81542856391553,
+            "oos_expectancy": -1.3929545107781864,
+            "oos_max_drawdown": 660.9535934861033,
+            "oos_net_pnl": -451.3172614921324,
+            "oos_total_return": -0.045131726149213236,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 7,
+            "development": {
+              "label": "development",
+              "start": "2016-09-16T00:00:00+00:00",
+              "end": "2019-06-13T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-06-13T00:00:00+00:00",
+              "end": "2019-12-30T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-12-30T00:00:00+00:00",
+              "end": "2020-07-17T00:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8668393417732335
+            },
+            "oos_trade_count": 326,
+            "oos_win_rate": 0.3220858895705521,
+            "oos_profit_factor": 0.9017589069596212,
+            "oos_expectancy": -1.1644293678196438,
+            "oos_max_drawdown": 952.1527964080342,
+            "oos_net_pnl": -379.6039739092039,
+            "oos_total_return": -0.037960397390920386,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 8,
+            "development": {
+              "label": "development",
+              "start": "2017-04-04T00:00:00+00:00",
+              "end": "2019-12-30T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-12-30T00:00:00+00:00",
+              "end": "2020-07-17T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-07-17T00:00:00+00:00",
+              "end": "2021-02-02T00:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8521879416157064
+            },
+            "oos_trade_count": 310,
+            "oos_win_rate": 0.3096774193548387,
+            "oos_profit_factor": 0.8669737606945919,
+            "oos_expectancy": -1.3754429605716678,
+            "oos_max_drawdown": 681.8846917530245,
+            "oos_net_pnl": -426.38731777721705,
+            "oos_total_return": -0.042638731777721706,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 9,
+            "development": {
+              "label": "development",
+              "start": "2017-10-21T00:00:00+00:00",
+              "end": "2020-07-17T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-07-17T00:00:00+00:00",
+              "end": "2021-02-02T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2021-02-02T00:00:00+00:00",
+              "end": "2021-08-21T00:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8537756742035937
+            },
+            "oos_trade_count": 329,
+            "oos_win_rate": 0.25835866261398177,
+            "oos_profit_factor": 0.7370887400672335,
+            "oos_expectancy": -2.371058638581885,
+            "oos_max_drawdown": 1043.7707732492545,
+            "oos_net_pnl": -780.0782920934402,
+            "oos_total_return": -0.07800782920934402,
+            "classification": "NEGATIVE_OOS_RESULT"
+          }
+        ],
+        "aggregate_oos": {
+          "windows_total": 10,
+          "windows_with_selection": 10,
+          "windows_without_selection": 0,
+          "total_oos_trades": 3281,
+          "combined_oos_win_rate": 0.29320329167936604,
+          "combined_oos_profit_factor": 0.8363664276867732,
+          "combined_oos_expectancy": -1.5865295894340816,
+          "worst_oos_max_drawdown": 1240.378192052145
+        },
+        "windows_profitable_pct": 10.0,
+        "average_oos_net_pnl_per_window": -520.5403582933221,
+        "worst_oos_window": {
+          "window_index": 5,
+          "development": {
+            "label": "development",
+            "start": "2015-08-13T00:00:00+00:00",
+            "end": "2018-05-09T00:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2018-05-09T00:00:00+00:00",
+            "end": "2018-11-25T00:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2018-11-25T00:00:00+00:00",
+            "end": "2019-06-13T00:00:00+00:00"
+          },
+          "selected_candidate": "momentum_20",
+          "candidate_validation_scores": {
+            "momentum_20": 0.8921481347969761
+          },
+          "oos_trade_count": 335,
+          "oos_win_rate": 0.3074626865671642,
+          "oos_profit_factor": 0.6277232582275417,
+          "oos_expectancy": -3.3379468230545326,
+          "oos_max_drawdown": 1240.378192052145,
+          "oos_net_pnl": -1118.2121857232685,
+          "oos_total_return": -0.11182121857232685,
+          "classification": "NEGATIVE_OOS_RESULT"
+        },
+        "best_oos_window": {
+          "window_index": 1,
+          "development": {
+            "label": "development",
+            "start": "2013-06-04T00:00:00+00:00",
+            "end": "2016-02-29T00:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2016-02-29T00:00:00+00:00",
+            "end": "2016-09-16T00:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2016-09-16T00:00:00+00:00",
+            "end": "2017-04-04T00:00:00+00:00"
+          },
+          "selected_candidate": "momentum_20",
+          "candidate_validation_scores": {
+            "momentum_20": 0.8370967960671436
+          },
+          "oos_trade_count": 298,
+          "oos_win_rate": 0.3187919463087248,
+          "oos_profit_factor": 1.006658748381477,
+          "oos_expectancy": 0.07500806543643913,
+          "oos_max_drawdown": 562.7730827550986,
+          "oos_net_pnl": 22.352403500058863,
+          "oos_total_return": 0.002235240350005886,
+          "classification": "POSITIVE_OOS_RESULT"
+        },
+        "classification": "MIXED"
+      },
+      "regime_filtered_breakout_40": {
+        "windows": [
+          {
+            "window_index": 0,
+            "development": {
+              "label": "development",
+              "start": "2012-11-16T00:00:00+00:00",
+              "end": "2015-08-13T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-08-13T00:00:00+00:00",
+              "end": "2016-02-29T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-02-29T00:00:00+00:00",
+              "end": "2016-09-16T00:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.8668637153632572
+            },
+            "oos_trade_count": 47,
+            "oos_win_rate": 0.3617021276595745,
+            "oos_profit_factor": 1.0471446669818225,
+            "oos_expectancy": 1.076220117434158,
+            "oos_max_drawdown": 340.85855740133775,
+            "oos_net_pnl": 50.58234551940542,
+            "oos_total_return": 0.005058234551940542,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 1,
+            "development": {
+              "label": "development",
+              "start": "2013-06-04T00:00:00+00:00",
+              "end": "2016-02-29T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-02-29T00:00:00+00:00",
+              "end": "2016-09-16T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-09-16T00:00:00+00:00",
+              "end": "2017-04-04T00:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.9654634898246178
+            },
+            "oos_trade_count": 53,
+            "oos_win_rate": 0.24528301886792453,
+            "oos_profit_factor": 0.67985198169287,
+            "oos_expectancy": -8.49412157694015,
+            "oos_max_drawdown": 919.6223063574234,
+            "oos_net_pnl": -450.188443577828,
+            "oos_total_return": -0.045018844357782806,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 2,
+            "development": {
+              "label": "development",
+              "start": "2013-12-21T00:00:00+00:00",
+              "end": "2016-09-16T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-09-16T00:00:00+00:00",
+              "end": "2017-04-04T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-04-04T00:00:00+00:00",
+              "end": "2017-10-21T00:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.9015810291800388
+            },
+            "oos_trade_count": 53,
+            "oos_win_rate": 0.18867924528301888,
+            "oos_profit_factor": 0.4470565289999557,
+            "oos_expectancy": -14.009117124989062,
+            "oos_max_drawdown": 846.0435465666069,
+            "oos_net_pnl": -742.4832076244203,
+            "oos_total_return": -0.07424832076244203,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 3,
+            "development": {
+              "label": "development",
+              "start": "2014-07-09T00:00:00+00:00",
+              "end": "2017-04-04T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-04-04T00:00:00+00:00",
+              "end": "2017-10-21T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-10-21T00:00:00+00:00",
+              "end": "2018-05-09T00:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.8650308635545035
+            },
+            "oos_trade_count": 41,
+            "oos_win_rate": 0.3902439024390244,
+            "oos_profit_factor": 1.9755048381780909,
+            "oos_expectancy": 21.29604027965801,
+            "oos_max_drawdown": 345.3843378940237,
+            "oos_net_pnl": 873.1376514659784,
+            "oos_total_return": 0.08731376514659783,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 4,
+            "development": {
+              "label": "development",
+              "start": "2015-01-25T00:00:00+00:00",
+              "end": "2017-10-21T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-10-21T00:00:00+00:00",
+              "end": "2018-05-09T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-05-09T00:00:00+00:00",
+              "end": "2018-11-25T00:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.9696372282389498
+            },
+            "oos_trade_count": 54,
+            "oos_win_rate": 0.25925925925925924,
+            "oos_profit_factor": 0.6457137484202214,
+            "oos_expectancy": -8.751347987436613,
+            "oos_max_drawdown": 652.6152132327734,
+            "oos_net_pnl": -472.57279132157714,
+            "oos_total_return": -0.047257279132157715,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 5,
+            "development": {
+              "label": "development",
+              "start": "2015-08-13T00:00:00+00:00",
+              "end": "2018-05-09T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-05-09T00:00:00+00:00",
+              "end": "2018-11-25T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-11-25T00:00:00+00:00",
+              "end": "2019-06-13T00:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.8749811094656981
+            },
+            "oos_trade_count": 44,
+            "oos_win_rate": 0.25,
+            "oos_profit_factor": 1.0246953536807057,
+            "oos_expectancy": 0.4606422859525104,
+            "oos_max_drawdown": 390.78219466997507,
+            "oos_net_pnl": 20.268260581910457,
+            "oos_total_return": 0.0020268260581910455,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 6,
+            "development": {
+              "label": "development",
+              "start": "2016-02-29T00:00:00+00:00",
+              "end": "2018-11-25T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-11-25T00:00:00+00:00",
+              "end": "2019-06-13T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-06-13T00:00:00+00:00",
+              "end": "2019-12-30T00:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.8675850485888131
+            },
+            "oos_trade_count": 36,
+            "oos_win_rate": 0.3888888888888889,
+            "oos_profit_factor": 1.30105030751105,
+            "oos_expectancy": 4.2910029461517505,
+            "oos_max_drawdown": 269.91951277119915,
+            "oos_net_pnl": 154.476106061463,
+            "oos_total_return": 0.015447610606146302,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 7,
+            "development": {
+              "label": "development",
+              "start": "2016-09-16T00:00:00+00:00",
+              "end": "2019-06-13T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-06-13T00:00:00+00:00",
+              "end": "2019-12-30T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-12-30T00:00:00+00:00",
+              "end": "2020-07-17T00:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.8853297798289104
+            },
+            "oos_trade_count": 53,
+            "oos_win_rate": 0.24528301886792453,
+            "oos_profit_factor": 1.0348214111742473,
+            "oos_expectancy": 0.8188935763445727,
+            "oos_max_drawdown": 884.4852960440021,
+            "oos_net_pnl": 43.401359546262356,
+            "oos_total_return": 0.004340135954626236,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 8,
+            "development": {
+              "label": "development",
+              "start": "2017-04-04T00:00:00+00:00",
+              "end": "2019-12-30T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-12-30T00:00:00+00:00",
+              "end": "2020-07-17T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-07-17T00:00:00+00:00",
+              "end": "2021-02-02T00:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.9544933865737594
+            },
+            "oos_trade_count": 55,
+            "oos_win_rate": 0.18181818181818182,
+            "oos_profit_factor": 0.6116516081805916,
+            "oos_expectancy": -9.720011776715898,
+            "oos_max_drawdown": 838.9886012653242,
+            "oos_net_pnl": -534.6006477193744,
+            "oos_total_return": -0.05346006477193744,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 9,
+            "development": {
+              "label": "development",
+              "start": "2017-10-21T00:00:00+00:00",
+              "end": "2020-07-17T00:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-07-17T00:00:00+00:00",
+              "end": "2021-02-02T00:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2021-02-02T00:00:00+00:00",
+              "end": "2021-08-21T00:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.9959616317802334
+            },
+            "oos_trade_count": 41,
+            "oos_win_rate": 0.3170731707317073,
+            "oos_profit_factor": 1.217408562692997,
+            "oos_expectancy": 3.681424722595994,
+            "oos_max_drawdown": 346.9581704314005,
+            "oos_net_pnl": 150.93841362643576,
+            "oos_total_return": 0.015093841362643577,
+            "classification": "POSITIVE_OOS_RESULT"
+          }
+        ],
+        "aggregate_oos": {
+          "windows_total": 10,
+          "windows_with_selection": 10,
+          "windows_without_selection": 0,
+          "total_oos_trades": 477,
+          "combined_oos_win_rate": 0.2746331236897275,
+          "combined_oos_profit_factor": 0.9541524573161184,
+          "combined_oos_expectancy": -1.9015533615130908,
+          "worst_oos_max_drawdown": 919.6223063574234
+        },
+        "windows_profitable_pct": 60.0,
+        "average_oos_net_pnl_per_window": -90.70409534417445,
+        "worst_oos_window": {
+          "window_index": 2,
+          "development": {
+            "label": "development",
+            "start": "2013-12-21T00:00:00+00:00",
+            "end": "2016-09-16T00:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2016-09-16T00:00:00+00:00",
+            "end": "2017-04-04T00:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2017-04-04T00:00:00+00:00",
+            "end": "2017-10-21T00:00:00+00:00"
+          },
+          "selected_candidate": "regime_filtered_breakout_40",
+          "candidate_validation_scores": {
+            "regime_filtered_breakout_40": 0.9015810291800388
+          },
+          "oos_trade_count": 53,
+          "oos_win_rate": 0.18867924528301888,
+          "oos_profit_factor": 0.4470565289999557,
+          "oos_expectancy": -14.009117124989062,
+          "oos_max_drawdown": 846.0435465666069,
+          "oos_net_pnl": -742.4832076244203,
+          "oos_total_return": -0.07424832076244203,
+          "classification": "NEGATIVE_OOS_RESULT"
+        },
+        "best_oos_window": {
+          "window_index": 3,
+          "development": {
+            "label": "development",
+            "start": "2014-07-09T00:00:00+00:00",
+            "end": "2017-04-04T00:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2017-04-04T00:00:00+00:00",
+            "end": "2017-10-21T00:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2017-10-21T00:00:00+00:00",
+            "end": "2018-05-09T00:00:00+00:00"
+          },
+          "selected_candidate": "regime_filtered_breakout_40",
+          "candidate_validation_scores": {
+            "regime_filtered_breakout_40": 0.8650308635545035
+          },
+          "oos_trade_count": 41,
+          "oos_win_rate": 0.3902439024390244,
+          "oos_profit_factor": 1.9755048381780909,
+          "oos_expectancy": 21.29604027965801,
+          "oos_max_drawdown": 345.3843378940237,
+          "oos_net_pnl": 873.1376514659784,
+          "oos_total_return": 0.08731376514659783,
+          "classification": "POSITIVE_OOS_RESULT"
+        },
+        "classification": "MIXED"
+      }
+    },
+    "GBP/USD": {
+      "sma_crossover": {
+        "windows": [
+          {
+            "window_index": 0,
+            "development": {
+              "label": "development",
+              "start": "2012-11-16T05:00:00+00:00",
+              "end": "2015-08-13T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-08-13T05:00:00+00:00",
+              "end": "2016-02-29T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-02-29T05:00:00+00:00",
+              "end": "2016-09-16T05:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.9170888026846001
+            },
+            "oos_trade_count": 82,
+            "oos_win_rate": 0.4268292682926829,
+            "oos_profit_factor": 0.9673267820621532,
+            "oos_expectancy": -1.5975609756097973,
+            "oos_max_drawdown": 1917.9000000000033,
+            "oos_net_pnl": -131.00000000000338,
+            "oos_total_return": -0.013100000000000339,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 1,
+            "development": {
+              "label": "development",
+              "start": "2013-06-04T05:00:00+00:00",
+              "end": "2016-02-29T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-02-29T05:00:00+00:00",
+              "end": "2016-09-16T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-09-16T05:00:00+00:00",
+              "end": "2017-04-04T05:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.9649865311753931
+            },
+            "oos_trade_count": 94,
+            "oos_win_rate": 0.26595744680851063,
+            "oos_profit_factor": 0.6830610539660507,
+            "oos_expectancy": -11.702127659574854,
+            "oos_max_drawdown": 2077.1000000000367,
+            "oos_net_pnl": -1100.0000000000364,
+            "oos_total_return": -0.11000000000000364,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 2,
+            "development": {
+              "label": "development",
+              "start": "2013-12-21T05:00:00+00:00",
+              "end": "2016-09-16T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-09-16T05:00:00+00:00",
+              "end": "2017-04-04T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-04-04T05:00:00+00:00",
+              "end": "2017-10-21T05:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.9378348435300533
+            },
+            "oos_trade_count": 96,
+            "oos_win_rate": 0.34375,
+            "oos_profit_factor": 0.8047151863319225,
+            "oos_expectancy": -5.453125000000174,
+            "oos_max_drawdown": 950.7000000000171,
+            "oos_net_pnl": -523.5000000000167,
+            "oos_total_return": -0.05235000000000167,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 3,
+            "development": {
+              "label": "development",
+              "start": "2014-07-09T05:00:00+00:00",
+              "end": "2017-04-04T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-04-04T05:00:00+00:00",
+              "end": "2017-10-21T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-10-21T05:00:00+00:00",
+              "end": "2018-05-09T05:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.9271399598561446
+            },
+            "oos_trade_count": 70,
+            "oos_win_rate": 0.4142857142857143,
+            "oos_profit_factor": 1.8669255663430182,
+            "oos_expectancy": 19.13428571428539,
+            "oos_max_drawdown": 444.3000000000029,
+            "oos_net_pnl": 1339.3999999999774,
+            "oos_total_return": 0.13393999999999773,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 4,
+            "development": {
+              "label": "development",
+              "start": "2015-01-25T05:00:00+00:00",
+              "end": "2017-10-21T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-10-21T05:00:00+00:00",
+              "end": "2018-05-09T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-05-09T05:00:00+00:00",
+              "end": "2018-11-25T05:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.9918195299217188
+            },
+            "oos_trade_count": 78,
+            "oos_win_rate": 0.3717948717948718,
+            "oos_profit_factor": 0.918189218523872,
+            "oos_expectancy": -2.3192307692309604,
+            "oos_max_drawdown": 776.8000000000047,
+            "oos_net_pnl": -180.90000000001493,
+            "oos_total_return": -0.018090000000001494,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 5,
+            "development": {
+              "label": "development",
+              "start": "2015-08-13T05:00:00+00:00",
+              "end": "2018-05-09T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-05-09T05:00:00+00:00",
+              "end": "2018-11-25T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-11-25T05:00:00+00:00",
+              "end": "2019-06-13T05:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.9432159555485214
+            },
+            "oos_trade_count": 88,
+            "oos_win_rate": 0.2727272727272727,
+            "oos_profit_factor": 0.7023040128528122,
+            "oos_expectancy": -9.26477272727279,
+            "oos_max_drawdown": 1126.699999999999,
+            "oos_net_pnl": -815.3000000000055,
+            "oos_total_return": -0.08153000000000055,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 6,
+            "development": {
+              "label": "development",
+              "start": "2016-02-29T05:00:00+00:00",
+              "end": "2018-11-25T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-11-25T05:00:00+00:00",
+              "end": "2019-06-13T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-06-13T05:00:00+00:00",
+              "end": "2019-12-30T05:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.9011913595755691
+            },
+            "oos_trade_count": 85,
+            "oos_win_rate": 0.3176470588235294,
+            "oos_profit_factor": 0.9680212501724765,
+            "oos_expectancy": -1.0905882352944172,
+            "oos_max_drawdown": 914.4000000000269,
+            "oos_net_pnl": -92.70000000002547,
+            "oos_total_return": -0.009270000000002547,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 7,
+            "development": {
+              "label": "development",
+              "start": "2016-09-16T05:00:00+00:00",
+              "end": "2019-06-13T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-06-13T05:00:00+00:00",
+              "end": "2019-12-30T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-12-30T05:00:00+00:00",
+              "end": "2020-07-17T05:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.8979807848884475
+            },
+            "oos_trade_count": 71,
+            "oos_win_rate": 0.49295774647887325,
+            "oos_profit_factor": 2.164264233122463,
+            "oos_expectancy": 31.625352112675987,
+            "oos_max_drawdown": 1131.400000000007,
+            "oos_net_pnl": 2245.399999999995,
+            "oos_total_return": 0.22453999999999952,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 8,
+            "development": {
+              "label": "development",
+              "start": "2017-04-04T05:00:00+00:00",
+              "end": "2019-12-30T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-12-30T05:00:00+00:00",
+              "end": "2020-07-17T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-07-17T05:00:00+00:00",
+              "end": "2021-02-02T05:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 1.119769490020936
+            },
+            "oos_trade_count": 83,
+            "oos_win_rate": 0.3373493975903614,
+            "oos_profit_factor": 0.9236088001478927,
+            "oos_expectancy": -2.4891566265063334,
+            "oos_max_drawdown": 966.7000000000226,
+            "oos_net_pnl": -206.60000000002566,
+            "oos_total_return": -0.020660000000002565,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 9,
+            "development": {
+              "label": "development",
+              "start": "2017-10-21T05:00:00+00:00",
+              "end": "2020-07-17T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-07-17T05:00:00+00:00",
+              "end": "2021-02-02T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2021-02-02T05:00:00+00:00",
+              "end": "2021-08-21T05:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 1.1412994689703198
+            },
+            "oos_trade_count": 78,
+            "oos_win_rate": 0.32051282051282054,
+            "oos_profit_factor": 0.9090474139993163,
+            "oos_expectancy": -2.437179487179882,
+            "oos_max_drawdown": 1277.400000000016,
+            "oos_net_pnl": -190.1000000000308,
+            "oos_total_return": -0.01901000000000308,
+            "classification": "NEGATIVE_OOS_RESULT"
+          }
+        ],
+        "aggregate_oos": {
+          "windows_total": 10,
+          "windows_with_selection": 10,
+          "windows_without_selection": 0,
+          "total_oos_trades": 825,
+          "combined_oos_win_rate": 0.3515151515151515,
+          "combined_oos_profit_factor": 1.0526027762791124,
+          "combined_oos_expectancy": 0.4178181818179559,
+          "worst_oos_max_drawdown": 2077.1000000000367
+        },
+        "windows_profitable_pct": 20.0,
+        "average_oos_net_pnl_per_window": 34.46999999998136,
+        "worst_oos_window": {
+          "window_index": 1,
+          "development": {
+            "label": "development",
+            "start": "2013-06-04T05:00:00+00:00",
+            "end": "2016-02-29T05:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2016-02-29T05:00:00+00:00",
+            "end": "2016-09-16T05:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2016-09-16T05:00:00+00:00",
+            "end": "2017-04-04T05:00:00+00:00"
+          },
+          "selected_candidate": "sma_crossover",
+          "candidate_validation_scores": {
+            "sma_crossover": 0.9649865311753931
+          },
+          "oos_trade_count": 94,
+          "oos_win_rate": 0.26595744680851063,
+          "oos_profit_factor": 0.6830610539660507,
+          "oos_expectancy": -11.702127659574854,
+          "oos_max_drawdown": 2077.1000000000367,
+          "oos_net_pnl": -1100.0000000000364,
+          "oos_total_return": -0.11000000000000364,
+          "classification": "NEGATIVE_OOS_RESULT"
+        },
+        "best_oos_window": {
+          "window_index": 7,
+          "development": {
+            "label": "development",
+            "start": "2016-09-16T05:00:00+00:00",
+            "end": "2019-06-13T05:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2019-06-13T05:00:00+00:00",
+            "end": "2019-12-30T05:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2019-12-30T05:00:00+00:00",
+            "end": "2020-07-17T05:00:00+00:00"
+          },
+          "selected_candidate": "sma_crossover",
+          "candidate_validation_scores": {
+            "sma_crossover": 0.8979807848884475
+          },
+          "oos_trade_count": 71,
+          "oos_win_rate": 0.49295774647887325,
+          "oos_profit_factor": 2.164264233122463,
+          "oos_expectancy": 31.625352112675987,
+          "oos_max_drawdown": 1131.400000000007,
+          "oos_net_pnl": 2245.399999999995,
+          "oos_total_return": 0.22453999999999952,
+          "classification": "POSITIVE_OOS_RESULT"
+        },
+        "classification": "MIXED"
+      },
+      "breakout_40": {
+        "windows": [
+          {
+            "window_index": 0,
+            "development": {
+              "label": "development",
+              "start": "2012-11-16T05:00:00+00:00",
+              "end": "2015-08-13T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-08-13T05:00:00+00:00",
+              "end": "2016-02-29T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-02-29T05:00:00+00:00",
+              "end": "2016-09-16T05:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.2192323909706815
+            },
+            "oos_trade_count": 53,
+            "oos_win_rate": 0.37735849056603776,
+            "oos_profit_factor": 2.3146370024506377,
+            "oos_expectancy": 45.63881254512063,
+            "oos_max_drawdown": 531.6000000000022,
+            "oos_net_pnl": 2418.8570648913933,
+            "oos_total_return": 0.24188570648913932,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 1,
+            "development": {
+              "label": "development",
+              "start": "2013-06-04T05:00:00+00:00",
+              "end": "2016-02-29T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-02-29T05:00:00+00:00",
+              "end": "2016-09-16T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-09-16T05:00:00+00:00",
+              "end": "2017-04-04T05:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.3512138319207643
+            },
+            "oos_trade_count": 67,
+            "oos_win_rate": 0.1791044776119403,
+            "oos_profit_factor": 0.725559356011462,
+            "oos_expectancy": -10.8427040745276,
+            "oos_max_drawdown": 1319.0451719184985,
+            "oos_net_pnl": -726.4611729933491,
+            "oos_total_return": -0.07264611729933491,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 2,
+            "development": {
+              "label": "development",
+              "start": "2013-12-21T05:00:00+00:00",
+              "end": "2016-09-16T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-09-16T05:00:00+00:00",
+              "end": "2017-04-04T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-04-04T05:00:00+00:00",
+              "end": "2017-10-21T05:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.198733776860169
+            },
+            "oos_trade_count": 57,
+            "oos_win_rate": 0.2982456140350877,
+            "oos_profit_factor": 1.1896044279225197,
+            "oos_expectancy": 4.440394395031623,
+            "oos_max_drawdown": 726.0092976756623,
+            "oos_net_pnl": 253.10248051680253,
+            "oos_total_return": 0.025310248051680254,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 3,
+            "development": {
+              "label": "development",
+              "start": "2014-07-09T05:00:00+00:00",
+              "end": "2017-04-04T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-04-04T05:00:00+00:00",
+              "end": "2017-10-21T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-10-21T05:00:00+00:00",
+              "end": "2018-05-09T05:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.210698391380779
+            },
+            "oos_trade_count": 63,
+            "oos_win_rate": 0.2222222222222222,
+            "oos_profit_factor": 0.787103032018633,
+            "oos_expectancy": -6.9895906561117425,
+            "oos_max_drawdown": 1089.7501973103754,
+            "oos_net_pnl": -440.3442113350398,
+            "oos_total_return": -0.04403442113350398,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 4,
+            "development": {
+              "label": "development",
+              "start": "2015-01-25T05:00:00+00:00",
+              "end": "2017-10-21T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-10-21T05:00:00+00:00",
+              "end": "2018-05-09T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-05-09T05:00:00+00:00",
+              "end": "2018-11-25T05:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.185769568507219
+            },
+            "oos_trade_count": 67,
+            "oos_win_rate": 0.22388059701492538,
+            "oos_profit_factor": 0.7343282882633472,
+            "oos_expectancy": -8.413478322874594,
+            "oos_max_drawdown": 1002.7800911977592,
+            "oos_net_pnl": -563.7030476325978,
+            "oos_total_return": -0.05637030476325978,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 5,
+            "development": {
+              "label": "development",
+              "start": "2015-08-13T05:00:00+00:00",
+              "end": "2018-05-09T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-05-09T05:00:00+00:00",
+              "end": "2018-11-25T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-11-25T05:00:00+00:00",
+              "end": "2019-06-13T05:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.0719662107933148
+            },
+            "oos_trade_count": 72,
+            "oos_win_rate": 0.18055555555555555,
+            "oos_profit_factor": 0.587839299063434,
+            "oos_expectancy": -13.033510155382794,
+            "oos_max_drawdown": 1085.5913989237124,
+            "oos_net_pnl": -938.4127311875612,
+            "oos_total_return": -0.09384127311875612,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 6,
+            "development": {
+              "label": "development",
+              "start": "2016-02-29T05:00:00+00:00",
+              "end": "2018-11-25T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-11-25T05:00:00+00:00",
+              "end": "2019-06-13T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-06-13T05:00:00+00:00",
+              "end": "2019-12-30T05:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.0026897193721611
+            },
+            "oos_trade_count": 64,
+            "oos_win_rate": 0.25,
+            "oos_profit_factor": 1.1531295527034586,
+            "oos_expectancy": 4.16664282840793,
+            "oos_max_drawdown": 656.491030334093,
+            "oos_net_pnl": 266.66514101810753,
+            "oos_total_return": 0.026666514101810753,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 7,
+            "development": {
+              "label": "development",
+              "start": "2016-09-16T05:00:00+00:00",
+              "end": "2019-06-13T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-06-13T05:00:00+00:00",
+              "end": "2019-12-30T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-12-30T05:00:00+00:00",
+              "end": "2020-07-17T05:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.8189163577909855
+            },
+            "oos_trade_count": 61,
+            "oos_win_rate": 0.32786885245901637,
+            "oos_profit_factor": 1.4186601179324676,
+            "oos_expectancy": 12.586179480262642,
+            "oos_max_drawdown": 805.573274025357,
+            "oos_net_pnl": 767.7569482960212,
+            "oos_total_return": 0.07677569482960211,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 8,
+            "development": {
+              "label": "development",
+              "start": "2017-04-04T05:00:00+00:00",
+              "end": "2019-12-30T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-12-30T05:00:00+00:00",
+              "end": "2020-07-17T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-07-17T05:00:00+00:00",
+              "end": "2021-02-02T05:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.9361668557936532
+            },
+            "oos_trade_count": 64,
+            "oos_win_rate": 0.171875,
+            "oos_profit_factor": 0.5853211729227564,
+            "oos_expectancy": -15.414621210801915,
+            "oos_max_drawdown": 1775.9055988080509,
+            "oos_net_pnl": -986.5357574913226,
+            "oos_total_return": -0.09865357574913225,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 9,
+            "development": {
+              "label": "development",
+              "start": "2017-10-21T05:00:00+00:00",
+              "end": "2020-07-17T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-07-17T05:00:00+00:00",
+              "end": "2021-02-02T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2021-02-02T05:00:00+00:00",
+              "end": "2021-08-21T05:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.8456753929700428
+            },
+            "oos_trade_count": 62,
+            "oos_win_rate": 0.27419354838709675,
+            "oos_profit_factor": 0.9322807491296161,
+            "oos_expectancy": -1.6439678316484694,
+            "oos_max_drawdown": 792.3494493695107,
+            "oos_net_pnl": -101.9260055622051,
+            "oos_total_return": -0.01019260055622051,
+            "classification": "NEGATIVE_OOS_RESULT"
+          }
+        ],
+        "aggregate_oos": {
+          "windows_total": 10,
+          "windows_with_selection": 10,
+          "windows_without_selection": 0,
+          "total_oos_trades": 630,
+          "combined_oos_win_rate": 0.24603174603174602,
+          "combined_oos_profit_factor": 1.0092192481231987,
+          "combined_oos_expectancy": -0.08095443092023982,
+          "worst_oos_max_drawdown": 1775.9055988080509
+        },
+        "windows_profitable_pct": 40.0,
+        "average_oos_net_pnl_per_window": -5.100129147975106,
+        "worst_oos_window": {
+          "window_index": 8,
+          "development": {
+            "label": "development",
+            "start": "2017-04-04T05:00:00+00:00",
+            "end": "2019-12-30T05:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2019-12-30T05:00:00+00:00",
+            "end": "2020-07-17T05:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2020-07-17T05:00:00+00:00",
+            "end": "2021-02-02T05:00:00+00:00"
+          },
+          "selected_candidate": "breakout_40",
+          "candidate_validation_scores": {
+            "breakout_40": 0.9361668557936532
+          },
+          "oos_trade_count": 64,
+          "oos_win_rate": 0.171875,
+          "oos_profit_factor": 0.5853211729227564,
+          "oos_expectancy": -15.414621210801915,
+          "oos_max_drawdown": 1775.9055988080509,
+          "oos_net_pnl": -986.5357574913226,
+          "oos_total_return": -0.09865357574913225,
+          "classification": "NEGATIVE_OOS_RESULT"
+        },
+        "best_oos_window": {
+          "window_index": 0,
+          "development": {
+            "label": "development",
+            "start": "2012-11-16T05:00:00+00:00",
+            "end": "2015-08-13T05:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2015-08-13T05:00:00+00:00",
+            "end": "2016-02-29T05:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2016-02-29T05:00:00+00:00",
+            "end": "2016-09-16T05:00:00+00:00"
+          },
+          "selected_candidate": "breakout_40",
+          "candidate_validation_scores": {
+            "breakout_40": 1.2192323909706815
+          },
+          "oos_trade_count": 53,
+          "oos_win_rate": 0.37735849056603776,
+          "oos_profit_factor": 2.3146370024506377,
+          "oos_expectancy": 45.63881254512063,
+          "oos_max_drawdown": 531.6000000000022,
+          "oos_net_pnl": 2418.8570648913933,
+          "oos_total_return": 0.24188570648913932,
+          "classification": "POSITIVE_OOS_RESULT"
+        },
+        "classification": "MIXED"
+      },
+      "momentum_20": {
+        "windows": [
+          {
+            "window_index": 0,
+            "development": {
+              "label": "development",
+              "start": "2012-11-16T05:00:00+00:00",
+              "end": "2015-08-13T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-08-13T05:00:00+00:00",
+              "end": "2016-02-29T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-02-29T05:00:00+00:00",
+              "end": "2016-09-16T05:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.816634113275901
+            },
+            "oos_trade_count": 326,
+            "oos_win_rate": 0.3282208588957055,
+            "oos_profit_factor": 1.1904734987195653,
+            "oos_expectancy": 3.5587307611023338,
+            "oos_max_drawdown": 1014.4080237190756,
+            "oos_net_pnl": 1160.1462281193608,
+            "oos_total_return": 0.11601462281193607,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 1,
+            "development": {
+              "label": "development",
+              "start": "2013-06-04T05:00:00+00:00",
+              "end": "2016-02-29T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-02-29T05:00:00+00:00",
+              "end": "2016-09-16T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-09-16T05:00:00+00:00",
+              "end": "2017-04-04T05:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8701793274961956
+            },
+            "oos_trade_count": 337,
+            "oos_win_rate": 0.29080118694362017,
+            "oos_profit_factor": 0.8947237663970294,
+            "oos_expectancy": -1.5785748654515837,
+            "oos_max_drawdown": 1598.9323560299435,
+            "oos_net_pnl": -531.9797296571837,
+            "oos_total_return": -0.05319797296571837,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 2,
+            "development": {
+              "label": "development",
+              "start": "2013-12-21T05:00:00+00:00",
+              "end": "2016-09-16T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-09-16T05:00:00+00:00",
+              "end": "2017-04-04T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-04-04T05:00:00+00:00",
+              "end": "2017-10-21T05:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8928418815736637
+            },
+            "oos_trade_count": 368,
+            "oos_win_rate": 0.2907608695652174,
+            "oos_profit_factor": 0.7018263501525803,
+            "oos_expectancy": -4.031147560443246,
+            "oos_max_drawdown": 1856.711305284678,
+            "oos_net_pnl": -1483.4623022431147,
+            "oos_total_return": -0.14834623022431145,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 3,
+            "development": {
+              "label": "development",
+              "start": "2014-07-09T05:00:00+00:00",
+              "end": "2017-04-04T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-04-04T05:00:00+00:00",
+              "end": "2017-10-21T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-10-21T05:00:00+00:00",
+              "end": "2018-05-09T05:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8964967191360262
+            },
+            "oos_trade_count": 302,
+            "oos_win_rate": 0.31456953642384106,
+            "oos_profit_factor": 1.0159800494099023,
+            "oos_expectancy": 0.2228944843310285,
+            "oos_max_drawdown": 709.9018744966215,
+            "oos_net_pnl": 67.3141342679706,
+            "oos_total_return": 0.00673141342679706,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 4,
+            "development": {
+              "label": "development",
+              "start": "2015-01-25T05:00:00+00:00",
+              "end": "2017-10-21T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-10-21T05:00:00+00:00",
+              "end": "2018-05-09T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-05-09T05:00:00+00:00",
+              "end": "2018-11-25T05:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.9443446523363365
+            },
+            "oos_trade_count": 304,
+            "oos_win_rate": 0.2993421052631579,
+            "oos_profit_factor": 0.8742632433751503,
+            "oos_expectancy": -1.756877873651983,
+            "oos_max_drawdown": 1104.0904651395758,
+            "oos_net_pnl": -534.0908735902028,
+            "oos_total_return": -0.05340908735902028,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 5,
+            "development": {
+              "label": "development",
+              "start": "2015-08-13T05:00:00+00:00",
+              "end": "2018-05-09T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-05-09T05:00:00+00:00",
+              "end": "2018-11-25T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-11-25T05:00:00+00:00",
+              "end": "2019-06-13T05:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.9268246280205258
+            },
+            "oos_trade_count": 348,
+            "oos_win_rate": 0.2672413793103448,
+            "oos_profit_factor": 0.602296743562374,
+            "oos_expectancy": -6.271437984964974,
+            "oos_max_drawdown": 2250.9604187678287,
+            "oos_net_pnl": -2182.460418767811,
+            "oos_total_return": -0.2182460418767811,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 6,
+            "development": {
+              "label": "development",
+              "start": "2016-02-29T05:00:00+00:00",
+              "end": "2018-11-25T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-11-25T05:00:00+00:00",
+              "end": "2019-06-13T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-06-13T05:00:00+00:00",
+              "end": "2019-12-30T05:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8836813327301395
+            },
+            "oos_trade_count": 319,
+            "oos_win_rate": 0.29780564263322884,
+            "oos_profit_factor": 0.9127262495189182,
+            "oos_expectancy": -1.2511369792673392,
+            "oos_max_drawdown": 1390.6751133198868,
+            "oos_net_pnl": -399.11269638628124,
+            "oos_total_return": -0.03991126963862812,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 7,
+            "development": {
+              "label": "development",
+              "start": "2016-09-16T05:00:00+00:00",
+              "end": "2019-06-13T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-06-13T05:00:00+00:00",
+              "end": "2019-12-30T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-12-30T05:00:00+00:00",
+              "end": "2020-07-17T05:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8209829612624425
+            },
+            "oos_trade_count": 314,
+            "oos_win_rate": 0.321656050955414,
+            "oos_profit_factor": 1.1837919240193477,
+            "oos_expectancy": 2.784933908839646,
+            "oos_max_drawdown": 805.5186668220704,
+            "oos_net_pnl": 874.4692473756488,
+            "oos_total_return": 0.08744692473756488,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 8,
+            "development": {
+              "label": "development",
+              "start": "2017-04-04T05:00:00+00:00",
+              "end": "2019-12-30T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-12-30T05:00:00+00:00",
+              "end": "2020-07-17T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-07-17T05:00:00+00:00",
+              "end": "2021-02-02T05:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8654721989338255
+            },
+            "oos_trade_count": 308,
+            "oos_win_rate": 0.3246753246753247,
+            "oos_profit_factor": 0.753636417966004,
+            "oos_expectancy": -4.261690589470839,
+            "oos_max_drawdown": 1848.9937443700474,
+            "oos_net_pnl": -1312.6007015570185,
+            "oos_total_return": -0.13126007015570185,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 9,
+            "development": {
+              "label": "development",
+              "start": "2017-10-21T05:00:00+00:00",
+              "end": "2020-07-17T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-07-17T05:00:00+00:00",
+              "end": "2021-02-02T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2021-02-02T05:00:00+00:00",
+              "end": "2021-08-21T05:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 0.8711501327338759
+            },
+            "oos_trade_count": 315,
+            "oos_win_rate": 0.33015873015873015,
+            "oos_profit_factor": 0.9571541690061888,
+            "oos_expectancy": -0.5198423948153598,
+            "oos_max_drawdown": 817.3211810756693,
+            "oos_net_pnl": -163.75035436683834,
+            "oos_total_return": -0.016375035436683835,
+            "classification": "NEGATIVE_OOS_RESULT"
+          }
+        ],
+        "aggregate_oos": {
+          "windows_total": 10,
+          "windows_with_selection": 10,
+          "windows_without_selection": 0,
+          "total_oos_trades": 3241,
+          "combined_oos_win_rate": 0.30576982412835546,
+          "combined_oos_profit_factor": 0.9029878284761363,
+          "combined_oos_expectancy": -1.390165833633283,
+          "worst_oos_max_drawdown": 2250.9604187678287
+        },
+        "windows_profitable_pct": 30.0,
+        "average_oos_net_pnl_per_window": -450.552746680547,
+        "worst_oos_window": {
+          "window_index": 5,
+          "development": {
+            "label": "development",
+            "start": "2015-08-13T05:00:00+00:00",
+            "end": "2018-05-09T05:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2018-05-09T05:00:00+00:00",
+            "end": "2018-11-25T05:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2018-11-25T05:00:00+00:00",
+            "end": "2019-06-13T05:00:00+00:00"
+          },
+          "selected_candidate": "momentum_20",
+          "candidate_validation_scores": {
+            "momentum_20": 0.9268246280205258
+          },
+          "oos_trade_count": 348,
+          "oos_win_rate": 0.2672413793103448,
+          "oos_profit_factor": 0.602296743562374,
+          "oos_expectancy": -6.271437984964974,
+          "oos_max_drawdown": 2250.9604187678287,
+          "oos_net_pnl": -2182.460418767811,
+          "oos_total_return": -0.2182460418767811,
+          "classification": "NEGATIVE_OOS_RESULT"
+        },
+        "best_oos_window": {
+          "window_index": 0,
+          "development": {
+            "label": "development",
+            "start": "2012-11-16T05:00:00+00:00",
+            "end": "2015-08-13T05:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2015-08-13T05:00:00+00:00",
+            "end": "2016-02-29T05:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2016-02-29T05:00:00+00:00",
+            "end": "2016-09-16T05:00:00+00:00"
+          },
+          "selected_candidate": "momentum_20",
+          "candidate_validation_scores": {
+            "momentum_20": 0.816634113275901
+          },
+          "oos_trade_count": 326,
+          "oos_win_rate": 0.3282208588957055,
+          "oos_profit_factor": 1.1904734987195653,
+          "oos_expectancy": 3.5587307611023338,
+          "oos_max_drawdown": 1014.4080237190756,
+          "oos_net_pnl": 1160.1462281193608,
+          "oos_total_return": 0.11601462281193607,
+          "classification": "POSITIVE_OOS_RESULT"
+        },
+        "classification": "MIXED"
+      },
+      "regime_filtered_breakout_40": {
+        "windows": [
+          {
+            "window_index": 0,
+            "development": {
+              "label": "development",
+              "start": "2012-11-16T05:00:00+00:00",
+              "end": "2015-08-13T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-08-13T05:00:00+00:00",
+              "end": "2016-02-29T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-02-29T05:00:00+00:00",
+              "end": "2016-09-16T05:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 1.2254925818676314
+            },
+            "oos_trade_count": 52,
+            "oos_win_rate": 0.36538461538461536,
+            "oos_profit_factor": 2.360468382918901,
+            "oos_expectancy": 47.19241253712118,
+            "oos_max_drawdown": 531.6000000000004,
+            "oos_net_pnl": 2454.005451930301,
+            "oos_total_return": 0.24540054519303012,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 1,
+            "development": {
+              "label": "development",
+              "start": "2013-06-04T05:00:00+00:00",
+              "end": "2016-02-29T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-02-29T05:00:00+00:00",
+              "end": "2016-09-16T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-09-16T05:00:00+00:00",
+              "end": "2017-04-04T05:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 1.424443206893826
+            },
+            "oos_trade_count": 62,
+            "oos_win_rate": 0.1935483870967742,
+            "oos_profit_factor": 0.7810112714624711,
+            "oos_expectancy": -8.685797408771377,
+            "oos_max_drawdown": 1237.7248512454698,
+            "oos_net_pnl": -538.5194393438254,
+            "oos_total_return": -0.05385194393438254,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 2,
+            "development": {
+              "label": "development",
+              "start": "2013-12-21T05:00:00+00:00",
+              "end": "2016-09-16T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-09-16T05:00:00+00:00",
+              "end": "2017-04-04T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-04-04T05:00:00+00:00",
+              "end": "2017-10-21T05:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 1.2282994737846054
+            },
+            "oos_trade_count": 44,
+            "oos_win_rate": 0.2727272727272727,
+            "oos_profit_factor": 1.2719412563708656,
+            "oos_expectancy": 6.578242491918932,
+            "oos_max_drawdown": 589.3185675078239,
+            "oos_net_pnl": 289.442669644433,
+            "oos_total_return": 0.028944266964443303,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 3,
+            "development": {
+              "label": "development",
+              "start": "2014-07-09T05:00:00+00:00",
+              "end": "2017-04-04T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-04-04T05:00:00+00:00",
+              "end": "2017-10-21T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-10-21T05:00:00+00:00",
+              "end": "2018-05-09T05:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 1.2381057801547153
+            },
+            "oos_trade_count": 57,
+            "oos_win_rate": 0.17543859649122806,
+            "oos_profit_factor": 0.5857822032255815,
+            "oos_expectancy": -14.674582605222056,
+            "oos_max_drawdown": 1309.6109582151657,
+            "oos_net_pnl": -836.4512084976573,
+            "oos_total_return": -0.08364512084976572,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 4,
+            "development": {
+              "label": "development",
+              "start": "2015-01-25T05:00:00+00:00",
+              "end": "2017-10-21T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-10-21T05:00:00+00:00",
+              "end": "2018-05-09T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-05-09T05:00:00+00:00",
+              "end": "2018-11-25T05:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 1.1919522888651137
+            },
+            "oos_trade_count": 54,
+            "oos_win_rate": 0.2962962962962963,
+            "oos_profit_factor": 0.9762246495658323,
+            "oos_expectancy": -0.7365848277578143,
+            "oos_max_drawdown": 610.1028498175892,
+            "oos_net_pnl": -39.77558069892197,
+            "oos_total_return": -0.003977558069892197,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 5,
+            "development": {
+              "label": "development",
+              "start": "2015-08-13T05:00:00+00:00",
+              "end": "2018-05-09T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-05-09T05:00:00+00:00",
+              "end": "2018-11-25T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-11-25T05:00:00+00:00",
+              "end": "2019-06-13T05:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 1.1013189720933048
+            },
+            "oos_trade_count": 59,
+            "oos_win_rate": 0.1694915254237288,
+            "oos_profit_factor": 0.5540569524069671,
+            "oos_expectancy": -14.753650825192048,
+            "oos_max_drawdown": 1067.9799660645149,
+            "oos_net_pnl": -870.4653986863309,
+            "oos_total_return": -0.08704653986863309,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 6,
+            "development": {
+              "label": "development",
+              "start": "2016-02-29T05:00:00+00:00",
+              "end": "2018-11-25T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-11-25T05:00:00+00:00",
+              "end": "2019-06-13T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-06-13T05:00:00+00:00",
+              "end": "2019-12-30T05:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 1.043591591502094
+            },
+            "oos_trade_count": 50,
+            "oos_win_rate": 0.24,
+            "oos_profit_factor": 1.2512675274524865,
+            "oos_expectancy": 7.725979168410911,
+            "oos_max_drawdown": 550.0977079084932,
+            "oos_net_pnl": 386.29895842054555,
+            "oos_total_return": 0.038629895842054555,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 7,
+            "development": {
+              "label": "development",
+              "start": "2016-09-16T05:00:00+00:00",
+              "end": "2019-06-13T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-06-13T05:00:00+00:00",
+              "end": "2019-12-30T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-12-30T05:00:00+00:00",
+              "end": "2020-07-17T05:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.8433315781014118
+            },
+            "oos_trade_count": 61,
+            "oos_win_rate": 0.22950819672131148,
+            "oos_profit_factor": 1.0831713247737402,
+            "oos_expectancy": 2.862318723800555,
+            "oos_max_drawdown": 943.3402826931833,
+            "oos_net_pnl": 174.60144215183388,
+            "oos_total_return": 0.01746014421518339,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 8,
+            "development": {
+              "label": "development",
+              "start": "2017-04-04T05:00:00+00:00",
+              "end": "2019-12-30T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-12-30T05:00:00+00:00",
+              "end": "2020-07-17T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-07-17T05:00:00+00:00",
+              "end": "2021-02-02T05:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.906443140937392
+            },
+            "oos_trade_count": 60,
+            "oos_win_rate": 0.16666666666666666,
+            "oos_profit_factor": 0.528046910408876,
+            "oos_expectancy": -18.109292934209858,
+            "oos_max_drawdown": 1723.814079527221,
+            "oos_net_pnl": -1086.5575760525915,
+            "oos_total_return": -0.10865575760525914,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 9,
+            "development": {
+              "label": "development",
+              "start": "2017-10-21T05:00:00+00:00",
+              "end": "2020-07-17T05:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-07-17T05:00:00+00:00",
+              "end": "2021-02-02T05:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2021-02-02T05:00:00+00:00",
+              "end": "2021-08-21T05:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.8127317616635976
+            },
+            "oos_trade_count": 48,
+            "oos_win_rate": 0.3125,
+            "oos_profit_factor": 1.0740721599876635,
+            "oos_expectancy": 1.8212205516030437,
+            "oos_max_drawdown": 670.5840102957391,
+            "oos_net_pnl": 87.4185864769461,
+            "oos_total_return": 0.00874185864769461,
+            "classification": "POSITIVE_OOS_RESULT"
+          }
+        ],
+        "aggregate_oos": {
+          "windows_total": 10,
+          "windows_with_selection": 10,
+          "windows_without_selection": 0,
+          "total_oos_trades": 547,
+          "combined_oos_win_rate": 0.2376599634369287,
+          "combined_oos_profit_factor": 1.019748907427717,
+          "combined_oos_expectancy": 0.03655924194649496,
+          "worst_oos_max_drawdown": 1723.814079527221
+        },
+        "windows_profitable_pct": 50.0,
+        "average_oos_net_pnl_per_window": 1.9997905344732743,
+        "worst_oos_window": {
+          "window_index": 8,
+          "development": {
+            "label": "development",
+            "start": "2017-04-04T05:00:00+00:00",
+            "end": "2019-12-30T05:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2019-12-30T05:00:00+00:00",
+            "end": "2020-07-17T05:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2020-07-17T05:00:00+00:00",
+            "end": "2021-02-02T05:00:00+00:00"
+          },
+          "selected_candidate": "regime_filtered_breakout_40",
+          "candidate_validation_scores": {
+            "regime_filtered_breakout_40": 0.906443140937392
+          },
+          "oos_trade_count": 60,
+          "oos_win_rate": 0.16666666666666666,
+          "oos_profit_factor": 0.528046910408876,
+          "oos_expectancy": -18.109292934209858,
+          "oos_max_drawdown": 1723.814079527221,
+          "oos_net_pnl": -1086.5575760525915,
+          "oos_total_return": -0.10865575760525914,
+          "classification": "NEGATIVE_OOS_RESULT"
+        },
+        "best_oos_window": {
+          "window_index": 0,
+          "development": {
+            "label": "development",
+            "start": "2012-11-16T05:00:00+00:00",
+            "end": "2015-08-13T05:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2015-08-13T05:00:00+00:00",
+            "end": "2016-02-29T05:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2016-02-29T05:00:00+00:00",
+            "end": "2016-09-16T05:00:00+00:00"
+          },
+          "selected_candidate": "regime_filtered_breakout_40",
+          "candidate_validation_scores": {
+            "regime_filtered_breakout_40": 1.2254925818676314
+          },
+          "oos_trade_count": 52,
+          "oos_win_rate": 0.36538461538461536,
+          "oos_profit_factor": 2.360468382918901,
+          "oos_expectancy": 47.19241253712118,
+          "oos_max_drawdown": 531.6000000000004,
+          "oos_net_pnl": 2454.005451930301,
+          "oos_total_return": 0.24540054519303012,
+          "classification": "POSITIVE_OOS_RESULT"
+        },
+        "classification": "MIXED"
+      }
+    },
+    "XAU/USD": {
+      "sma_crossover": {
+        "windows": [
+          {
+            "window_index": 0,
+            "development": {
+              "label": "development",
+              "start": "2012-05-17T08:00:00+00:00",
+              "end": "2015-02-11T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-02-11T08:00:00+00:00",
+              "end": "2015-08-30T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2015-08-30T08:00:00+00:00",
+              "end": "2016-03-17T08:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.9748923730391346
+            },
+            "oos_trade_count": 78,
+            "oos_win_rate": 0.3333333333333333,
+            "oos_profit_factor": 1.1966154235565925,
+            "oos_expectancy": 6.293780450211312,
+            "oos_max_drawdown": 668.771884805572,
+            "oos_net_pnl": 490.91487511648234,
+            "oos_total_return": 0.049091487511648234,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 1,
+            "development": {
+              "label": "development",
+              "start": "2012-12-03T08:00:00+00:00",
+              "end": "2015-08-30T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-08-30T08:00:00+00:00",
+              "end": "2016-03-17T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-03-17T08:00:00+00:00",
+              "end": "2016-10-03T08:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 1.0187160594282905
+            },
+            "oos_trade_count": 92,
+            "oos_win_rate": 0.34782608695652173,
+            "oos_profit_factor": 1.0552473971870087,
+            "oos_expectancy": 2.147354832472205,
+            "oos_max_drawdown": 825.7062683951572,
+            "oos_net_pnl": 197.55664458744286,
+            "oos_total_return": 0.019755664458744285,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 2,
+            "development": {
+              "label": "development",
+              "start": "2013-06-21T08:00:00+00:00",
+              "end": "2016-03-17T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-03-17T08:00:00+00:00",
+              "end": "2016-10-03T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-10-03T08:00:00+00:00",
+              "end": "2017-04-21T08:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.9809119869737349
+            },
+            "oos_trade_count": 90,
+            "oos_win_rate": 0.32222222222222224,
+            "oos_profit_factor": 0.8413485954200552,
+            "oos_expectancy": -6.078222564644067,
+            "oos_max_drawdown": 1171.808629147814,
+            "oos_net_pnl": -547.040030817966,
+            "oos_total_return": -0.0547040030817966,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 3,
+            "development": {
+              "label": "development",
+              "start": "2014-01-07T08:00:00+00:00",
+              "end": "2016-10-03T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-10-03T08:00:00+00:00",
+              "end": "2017-04-21T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-04-21T08:00:00+00:00",
+              "end": "2017-11-07T08:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 1.002334494350655
+            },
+            "oos_trade_count": 87,
+            "oos_win_rate": 0.3103448275862069,
+            "oos_profit_factor": 0.8884123066212305,
+            "oos_expectancy": -3.2288819637452097,
+            "oos_max_drawdown": 818.9307743284517,
+            "oos_net_pnl": -280.91273084583327,
+            "oos_total_return": -0.028091273084583326,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 4,
+            "development": {
+              "label": "development",
+              "start": "2014-07-26T08:00:00+00:00",
+              "end": "2017-04-21T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-04-21T08:00:00+00:00",
+              "end": "2017-11-07T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-11-07T08:00:00+00:00",
+              "end": "2018-05-26T08:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.9371979084082894
+            },
+            "oos_trade_count": 80,
+            "oos_win_rate": 0.4,
+            "oos_profit_factor": 1.2090052152524229,
+            "oos_expectancy": 5.92583964235805,
+            "oos_max_drawdown": 661.5443038842768,
+            "oos_net_pnl": 474.067171388644,
+            "oos_total_return": 0.0474067171388644,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 5,
+            "development": {
+              "label": "development",
+              "start": "2015-02-11T08:00:00+00:00",
+              "end": "2017-11-07T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-11-07T08:00:00+00:00",
+              "end": "2018-05-26T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-05-26T08:00:00+00:00",
+              "end": "2018-12-12T08:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 1.0532972147578543
+            },
+            "oos_trade_count": 91,
+            "oos_win_rate": 0.2857142857142857,
+            "oos_profit_factor": 0.7773941213624161,
+            "oos_expectancy": -5.5053416372717265,
+            "oos_max_drawdown": 779.1237301549409,
+            "oos_net_pnl": -500.9860889917271,
+            "oos_total_return": -0.05009860889917271,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 6,
+            "development": {
+              "label": "development",
+              "start": "2015-08-30T08:00:00+00:00",
+              "end": "2018-05-26T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-05-26T08:00:00+00:00",
+              "end": "2018-12-12T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-12-12T08:00:00+00:00",
+              "end": "2019-06-30T08:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 1.0073237453561712
+            },
+            "oos_trade_count": 87,
+            "oos_win_rate": 0.26436781609195403,
+            "oos_profit_factor": 1.178540119394195,
+            "oos_expectancy": 4.775558943677257,
+            "oos_max_drawdown": 645.8160296109672,
+            "oos_net_pnl": 415.4736280999214,
+            "oos_total_return": 0.04154736280999214,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 7,
+            "development": {
+              "label": "development",
+              "start": "2016-03-17T08:00:00+00:00",
+              "end": "2018-12-12T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-12-12T08:00:00+00:00",
+              "end": "2019-06-30T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-06-30T08:00:00+00:00",
+              "end": "2020-01-16T08:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.9994081075682458
+            },
+            "oos_trade_count": 78,
+            "oos_win_rate": 0.32051282051282054,
+            "oos_profit_factor": 1.0718197939106684,
+            "oos_expectancy": 2.63618178778619,
+            "oos_max_drawdown": 1092.5676286307844,
+            "oos_net_pnl": 205.62217944732285,
+            "oos_total_return": 0.020562217944732286,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 8,
+            "development": {
+              "label": "development",
+              "start": "2016-10-03T08:00:00+00:00",
+              "end": "2019-06-30T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-06-30T08:00:00+00:00",
+              "end": "2020-01-16T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-01-16T08:00:00+00:00",
+              "end": "2020-08-03T08:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 0.9662829116544658
+            },
+            "oos_trade_count": 76,
+            "oos_win_rate": 0.3684210526315789,
+            "oos_profit_factor": 1.8182188254075928,
+            "oos_expectancy": 44.43688140905969,
+            "oos_max_drawdown": 1286.4760451576713,
+            "oos_net_pnl": 3377.2029870885362,
+            "oos_total_return": 0.3377202987088536,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 9,
+            "development": {
+              "label": "development",
+              "start": "2017-04-21T08:00:00+00:00",
+              "end": "2020-01-16T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-01-16T08:00:00+00:00",
+              "end": "2020-08-03T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-08-03T08:00:00+00:00",
+              "end": "2021-02-19T08:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 1.1981772908016424
+            },
+            "oos_trade_count": 83,
+            "oos_win_rate": 0.42168674698795183,
+            "oos_profit_factor": 1.2420032492118736,
+            "oos_expectancy": 14.101807772088176,
+            "oos_max_drawdown": 1543.5182913464614,
+            "oos_net_pnl": 1170.4500450833186,
+            "oos_total_return": 0.11704500450833186,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 10,
+            "development": {
+              "label": "development",
+              "start": "2017-11-07T08:00:00+00:00",
+              "end": "2020-08-03T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-08-03T08:00:00+00:00",
+              "end": "2021-02-19T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2021-02-19T08:00:00+00:00",
+              "end": "2021-09-07T08:00:00+00:00"
+            },
+            "selected_candidate": "sma_crossover",
+            "candidate_validation_scores": {
+              "sma_crossover": 1.2741798706275145
+            },
+            "oos_trade_count": 100,
+            "oos_win_rate": 0.32,
+            "oos_profit_factor": 0.9767527542677549,
+            "oos_expectancy": -1.0865685157343037,
+            "oos_max_drawdown": 1733.706451290398,
+            "oos_net_pnl": -108.65685157343036,
+            "oos_total_return": -0.010865685157343036,
+            "classification": "NEGATIVE_OOS_RESULT"
+          }
+        ],
+        "aggregate_oos": {
+          "windows_total": 11,
+          "windows_with_selection": 11,
+          "windows_without_selection": 0,
+          "total_oos_trades": 942,
+          "combined_oos_win_rate": 0.3343949044585987,
+          "combined_oos_profit_factor": 1.0997626329737897,
+          "combined_oos_expectancy": 5.195001941170607,
+          "worst_oos_max_drawdown": 1733.706451290398
+        },
+        "windows_profitable_pct": 63.63636363636363,
+        "average_oos_net_pnl_per_window": 444.88107532570103,
+        "worst_oos_window": {
+          "window_index": 2,
+          "development": {
+            "label": "development",
+            "start": "2013-06-21T08:00:00+00:00",
+            "end": "2016-03-17T08:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2016-03-17T08:00:00+00:00",
+            "end": "2016-10-03T08:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2016-10-03T08:00:00+00:00",
+            "end": "2017-04-21T08:00:00+00:00"
+          },
+          "selected_candidate": "sma_crossover",
+          "candidate_validation_scores": {
+            "sma_crossover": 0.9809119869737349
+          },
+          "oos_trade_count": 90,
+          "oos_win_rate": 0.32222222222222224,
+          "oos_profit_factor": 0.8413485954200552,
+          "oos_expectancy": -6.078222564644067,
+          "oos_max_drawdown": 1171.808629147814,
+          "oos_net_pnl": -547.040030817966,
+          "oos_total_return": -0.0547040030817966,
+          "classification": "NEGATIVE_OOS_RESULT"
+        },
+        "best_oos_window": {
+          "window_index": 8,
+          "development": {
+            "label": "development",
+            "start": "2016-10-03T08:00:00+00:00",
+            "end": "2019-06-30T08:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2019-06-30T08:00:00+00:00",
+            "end": "2020-01-16T08:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2020-01-16T08:00:00+00:00",
+            "end": "2020-08-03T08:00:00+00:00"
+          },
+          "selected_candidate": "sma_crossover",
+          "candidate_validation_scores": {
+            "sma_crossover": 0.9662829116544658
+          },
+          "oos_trade_count": 76,
+          "oos_win_rate": 0.3684210526315789,
+          "oos_profit_factor": 1.8182188254075928,
+          "oos_expectancy": 44.43688140905969,
+          "oos_max_drawdown": 1286.4760451576713,
+          "oos_net_pnl": 3377.2029870885362,
+          "oos_total_return": 0.3377202987088536,
+          "classification": "POSITIVE_OOS_RESULT"
+        },
+        "classification": "MIXED"
+      },
+      "breakout_40": {
+        "windows": [
+          {
+            "window_index": 0,
+            "development": {
+              "label": "development",
+              "start": "2012-05-17T08:00:00+00:00",
+              "end": "2015-02-11T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-02-11T08:00:00+00:00",
+              "end": "2015-08-30T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2015-08-30T08:00:00+00:00",
+              "end": "2016-03-17T08:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.1774470185738137
+            },
+            "oos_trade_count": 57,
+            "oos_win_rate": 0.2631578947368421,
+            "oos_profit_factor": 0.7996933343356966,
+            "oos_expectancy": -7.628865010022412,
+            "oos_max_drawdown": 1088.4519248653523,
+            "oos_net_pnl": -434.84530557127744,
+            "oos_total_return": -0.04348453055712774,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 1,
+            "development": {
+              "label": "development",
+              "start": "2012-12-03T08:00:00+00:00",
+              "end": "2015-08-30T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-08-30T08:00:00+00:00",
+              "end": "2016-03-17T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-03-17T08:00:00+00:00",
+              "end": "2016-10-03T08:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.1049530739407822
+            },
+            "oos_trade_count": 57,
+            "oos_win_rate": 0.3157894736842105,
+            "oos_profit_factor": 0.9914775265454456,
+            "oos_expectancy": -0.33963662745231926,
+            "oos_max_drawdown": 636.9681484019784,
+            "oos_net_pnl": -19.3592877647822,
+            "oos_total_return": -0.0019359287764782198,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 2,
+            "development": {
+              "label": "development",
+              "start": "2013-06-21T08:00:00+00:00",
+              "end": "2016-03-17T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-03-17T08:00:00+00:00",
+              "end": "2016-10-03T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-10-03T08:00:00+00:00",
+              "end": "2017-04-21T08:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.9405686326008681
+            },
+            "oos_trade_count": 62,
+            "oos_win_rate": 0.25806451612903225,
+            "oos_profit_factor": 0.7868721451106095,
+            "oos_expectancy": -7.490983114800341,
+            "oos_max_drawdown": 860.3006350229844,
+            "oos_net_pnl": -464.4409531176211,
+            "oos_total_return": -0.046444095311762114,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 3,
+            "development": {
+              "label": "development",
+              "start": "2014-01-07T08:00:00+00:00",
+              "end": "2016-10-03T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-10-03T08:00:00+00:00",
+              "end": "2017-04-21T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-04-21T08:00:00+00:00",
+              "end": "2017-11-07T08:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.9256949639342711
+            },
+            "oos_trade_count": 54,
+            "oos_win_rate": 0.2777777777777778,
+            "oos_profit_factor": 1.1743320816082727,
+            "oos_expectancy": 4.679757145242129,
+            "oos_max_drawdown": 416.29178740900716,
+            "oos_net_pnl": 252.70688584307496,
+            "oos_total_return": 0.025270688584307494,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 4,
+            "development": {
+              "label": "development",
+              "start": "2014-07-26T08:00:00+00:00",
+              "end": "2017-04-21T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-04-21T08:00:00+00:00",
+              "end": "2017-11-07T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-11-07T08:00:00+00:00",
+              "end": "2018-05-26T08:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.9135630075552433
+            },
+            "oos_trade_count": 55,
+            "oos_win_rate": 0.2545454545454545,
+            "oos_profit_factor": 1.1140225466105202,
+            "oos_expectancy": 3.5261202227215263,
+            "oos_max_drawdown": 575.1644346564408,
+            "oos_net_pnl": 193.93661224968395,
+            "oos_total_return": 0.019393661224968394,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 5,
+            "development": {
+              "label": "development",
+              "start": "2015-02-11T08:00:00+00:00",
+              "end": "2017-11-07T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-11-07T08:00:00+00:00",
+              "end": "2018-05-26T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-05-26T08:00:00+00:00",
+              "end": "2018-12-12T08:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.9222743833161805
+            },
+            "oos_trade_count": 54,
+            "oos_win_rate": 0.2037037037037037,
+            "oos_profit_factor": 0.8046368134212442,
+            "oos_expectancy": -5.629386860912103,
+            "oos_max_drawdown": 778.5773966536999,
+            "oos_net_pnl": -303.98689048925354,
+            "oos_total_return": -0.030398689048925353,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 6,
+            "development": {
+              "label": "development",
+              "start": "2015-08-30T08:00:00+00:00",
+              "end": "2018-05-26T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-05-26T08:00:00+00:00",
+              "end": "2018-12-12T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-12-12T08:00:00+00:00",
+              "end": "2019-06-30T08:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 0.9320414588102858
+            },
+            "oos_trade_count": 53,
+            "oos_win_rate": 0.32075471698113206,
+            "oos_profit_factor": 1.9171709384853328,
+            "oos_expectancy": 22.548576532652028,
+            "oos_max_drawdown": 364.1659036525307,
+            "oos_net_pnl": 1195.0745562305574,
+            "oos_total_return": 0.11950745562305574,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 7,
+            "development": {
+              "label": "development",
+              "start": "2016-03-17T08:00:00+00:00",
+              "end": "2018-12-12T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-12-12T08:00:00+00:00",
+              "end": "2019-06-30T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-06-30T08:00:00+00:00",
+              "end": "2020-01-16T08:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.0847952522508253
+            },
+            "oos_trade_count": 56,
+            "oos_win_rate": 0.21428571428571427,
+            "oos_profit_factor": 0.8727402138401379,
+            "oos_expectancy": -5.774547238725575,
+            "oos_max_drawdown": 1012.744162273857,
+            "oos_net_pnl": -323.37464536863223,
+            "oos_total_return": -0.032337464536863224,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 8,
+            "development": {
+              "label": "development",
+              "start": "2016-10-03T08:00:00+00:00",
+              "end": "2019-06-30T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-06-30T08:00:00+00:00",
+              "end": "2020-01-16T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-01-16T08:00:00+00:00",
+              "end": "2020-08-03T08:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.017281067935405
+            },
+            "oos_trade_count": 48,
+            "oos_win_rate": 0.3541666666666667,
+            "oos_profit_factor": 2.1847773311548964,
+            "oos_expectancy": 64.08004563865889,
+            "oos_max_drawdown": 1207.1083468287634,
+            "oos_net_pnl": 3075.842190655627,
+            "oos_total_return": 0.30758421906556266,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 9,
+            "development": {
+              "label": "development",
+              "start": "2017-04-21T08:00:00+00:00",
+              "end": "2020-01-16T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-01-16T08:00:00+00:00",
+              "end": "2020-08-03T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-08-03T08:00:00+00:00",
+              "end": "2021-02-19T08:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.3324842075531045
+            },
+            "oos_trade_count": 51,
+            "oos_win_rate": 0.35294117647058826,
+            "oos_profit_factor": 1.4489425783033048,
+            "oos_expectancy": 30.470814008648468,
+            "oos_max_drawdown": 1044.3764271230084,
+            "oos_net_pnl": 1554.0115144410718,
+            "oos_total_return": 0.15540115144410718,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 10,
+            "development": {
+              "label": "development",
+              "start": "2017-11-07T08:00:00+00:00",
+              "end": "2020-08-03T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-08-03T08:00:00+00:00",
+              "end": "2021-02-19T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2021-02-19T08:00:00+00:00",
+              "end": "2021-09-07T08:00:00+00:00"
+            },
+            "selected_candidate": "breakout_40",
+            "candidate_validation_scores": {
+              "breakout_40": 1.4341210491349041
+            },
+            "oos_trade_count": 57,
+            "oos_win_rate": 0.19298245614035087,
+            "oos_profit_factor": 0.9507162753691232,
+            "oos_expectancy": -2.963463600752865,
+            "oos_max_drawdown": 1343.1593287152755,
+            "oos_net_pnl": -168.9174252429133,
+            "oos_total_return": -0.01689174252429133,
+            "classification": "NEGATIVE_OOS_RESULT"
+          }
+        ],
+        "aggregate_oos": {
+          "windows_total": 11,
+          "windows_with_selection": 11,
+          "windows_without_selection": 0,
+          "total_oos_trades": 604,
+          "combined_oos_win_rate": 0.271523178807947,
+          "combined_oos_profit_factor": 1.1630100914933268,
+          "combined_oos_expectancy": 7.5441179666647935,
+          "worst_oos_max_drawdown": 1343.1593287152755
+        },
+        "windows_profitable_pct": 45.45454545454545,
+        "average_oos_net_pnl_per_window": 414.2406592605032,
+        "worst_oos_window": {
+          "window_index": 2,
+          "development": {
+            "label": "development",
+            "start": "2013-06-21T08:00:00+00:00",
+            "end": "2016-03-17T08:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2016-03-17T08:00:00+00:00",
+            "end": "2016-10-03T08:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2016-10-03T08:00:00+00:00",
+            "end": "2017-04-21T08:00:00+00:00"
+          },
+          "selected_candidate": "breakout_40",
+          "candidate_validation_scores": {
+            "breakout_40": 0.9405686326008681
+          },
+          "oos_trade_count": 62,
+          "oos_win_rate": 0.25806451612903225,
+          "oos_profit_factor": 0.7868721451106095,
+          "oos_expectancy": -7.490983114800341,
+          "oos_max_drawdown": 860.3006350229844,
+          "oos_net_pnl": -464.4409531176211,
+          "oos_total_return": -0.046444095311762114,
+          "classification": "NEGATIVE_OOS_RESULT"
+        },
+        "best_oos_window": {
+          "window_index": 8,
+          "development": {
+            "label": "development",
+            "start": "2016-10-03T08:00:00+00:00",
+            "end": "2019-06-30T08:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2019-06-30T08:00:00+00:00",
+            "end": "2020-01-16T08:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2020-01-16T08:00:00+00:00",
+            "end": "2020-08-03T08:00:00+00:00"
+          },
+          "selected_candidate": "breakout_40",
+          "candidate_validation_scores": {
+            "breakout_40": 1.017281067935405
+          },
+          "oos_trade_count": 48,
+          "oos_win_rate": 0.3541666666666667,
+          "oos_profit_factor": 2.1847773311548964,
+          "oos_expectancy": 64.08004563865889,
+          "oos_max_drawdown": 1207.1083468287634,
+          "oos_net_pnl": 3075.842190655627,
+          "oos_total_return": 0.30758421906556266,
+          "classification": "POSITIVE_OOS_RESULT"
+        },
+        "classification": "MIXED"
+      },
+      "momentum_20": {
+        "windows": [
+          {
+            "window_index": 0,
+            "development": {
+              "label": "development",
+              "start": "2012-05-17T08:00:00+00:00",
+              "end": "2015-02-11T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-02-11T08:00:00+00:00",
+              "end": "2015-08-30T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2015-08-30T08:00:00+00:00",
+              "end": "2016-03-17T08:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 1.0382696962570632
+            },
+            "oos_trade_count": 299,
+            "oos_win_rate": 0.3177257525083612,
+            "oos_profit_factor": 1.1405314576489682,
+            "oos_expectancy": 2.379918553584552,
+            "oos_max_drawdown": 784.3066056789976,
+            "oos_net_pnl": 711.5956475217811,
+            "oos_total_return": 0.0711595647521781,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 1,
+            "development": {
+              "label": "development",
+              "start": "2012-12-03T08:00:00+00:00",
+              "end": "2015-08-30T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-08-30T08:00:00+00:00",
+              "end": "2016-03-17T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-03-17T08:00:00+00:00",
+              "end": "2016-10-03T08:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 1.0629125309181657
+            },
+            "oos_trade_count": 312,
+            "oos_win_rate": 0.3141025641025641,
+            "oos_profit_factor": 1.0688787787960912,
+            "oos_expectancy": 1.2313670134241574,
+            "oos_max_drawdown": 759.5577517536803,
+            "oos_net_pnl": 384.18650818833714,
+            "oos_total_return": 0.038418650818833715,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 2,
+            "development": {
+              "label": "development",
+              "start": "2013-06-21T08:00:00+00:00",
+              "end": "2016-03-17T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-03-17T08:00:00+00:00",
+              "end": "2016-10-03T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-10-03T08:00:00+00:00",
+              "end": "2017-04-21T08:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 1.0258578132741136
+            },
+            "oos_trade_count": 311,
+            "oos_win_rate": 0.37942122186495175,
+            "oos_profit_factor": 1.1146596664956774,
+            "oos_expectancy": 1.7706618392762912,
+            "oos_max_drawdown": 618.2735437346473,
+            "oos_net_pnl": 550.6758320149265,
+            "oos_total_return": 0.05506758320149265,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 3,
+            "development": {
+              "label": "development",
+              "start": "2014-01-07T08:00:00+00:00",
+              "end": "2016-10-03T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-10-03T08:00:00+00:00",
+              "end": "2017-04-21T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-04-21T08:00:00+00:00",
+              "end": "2017-11-07T08:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 1.0330857299370229
+            },
+            "oos_trade_count": 288,
+            "oos_win_rate": 0.3506944444444444,
+            "oos_profit_factor": 1.136856945061459,
+            "oos_expectancy": 1.7265817495610287,
+            "oos_max_drawdown": 474.40770510523726,
+            "oos_net_pnl": 497.25554387357624,
+            "oos_total_return": 0.04972555438735762,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 4,
+            "development": {
+              "label": "development",
+              "start": "2014-07-26T08:00:00+00:00",
+              "end": "2017-04-21T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-04-21T08:00:00+00:00",
+              "end": "2017-11-07T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-11-07T08:00:00+00:00",
+              "end": "2018-05-26T08:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 1.0561032282664375
+            },
+            "oos_trade_count": 289,
+            "oos_win_rate": 0.314878892733564,
+            "oos_profit_factor": 1.0668855838314257,
+            "oos_expectancy": 0.9393160219621813,
+            "oos_max_drawdown": 444.79725812947436,
+            "oos_net_pnl": 271.4623303470704,
+            "oos_total_return": 0.02714623303470704,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 5,
+            "development": {
+              "label": "development",
+              "start": "2015-02-11T08:00:00+00:00",
+              "end": "2017-11-07T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-11-07T08:00:00+00:00",
+              "end": "2018-05-26T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-05-26T08:00:00+00:00",
+              "end": "2018-12-12T08:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 1.0478779246530368
+            },
+            "oos_trade_count": 372,
+            "oos_win_rate": 0.30376344086021506,
+            "oos_profit_factor": 0.8871845624957303,
+            "oos_expectancy": -1.2844193018766372,
+            "oos_max_drawdown": 678.5176320602441,
+            "oos_net_pnl": -477.803980298109,
+            "oos_total_return": -0.047780398029810905,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 6,
+            "development": {
+              "label": "development",
+              "start": "2015-08-30T08:00:00+00:00",
+              "end": "2018-05-26T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-05-26T08:00:00+00:00",
+              "end": "2018-12-12T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-12-12T08:00:00+00:00",
+              "end": "2019-06-30T08:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 1.070774380760619
+            },
+            "oos_trade_count": 300,
+            "oos_win_rate": 0.31,
+            "oos_profit_factor": 1.0746406352505742,
+            "oos_expectancy": 0.8525134063647606,
+            "oos_max_drawdown": 681.3604463428546,
+            "oos_net_pnl": 255.75402190942816,
+            "oos_total_return": 0.025575402190942818,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 7,
+            "development": {
+              "label": "development",
+              "start": "2016-03-17T08:00:00+00:00",
+              "end": "2018-12-12T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-12-12T08:00:00+00:00",
+              "end": "2019-06-30T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-06-30T08:00:00+00:00",
+              "end": "2020-01-16T08:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 1.0556897963598324
+            },
+            "oos_trade_count": 332,
+            "oos_win_rate": 0.3373493975903614,
+            "oos_profit_factor": 0.913449661284374,
+            "oos_expectancy": -1.601906715079542,
+            "oos_max_drawdown": 1673.997191566601,
+            "oos_net_pnl": -531.833029406408,
+            "oos_total_return": -0.053183302940640796,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 8,
+            "development": {
+              "label": "development",
+              "start": "2016-10-03T08:00:00+00:00",
+              "end": "2019-06-30T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-06-30T08:00:00+00:00",
+              "end": "2020-01-16T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-01-16T08:00:00+00:00",
+              "end": "2020-08-03T08:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 1.018069203877126
+            },
+            "oos_trade_count": 312,
+            "oos_win_rate": 0.358974358974359,
+            "oos_profit_factor": 1.1118853124833232,
+            "oos_expectancy": 3.2041939959347463,
+            "oos_max_drawdown": 1297.188861677365,
+            "oos_net_pnl": 999.7085267316409,
+            "oos_total_return": 0.09997085267316408,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 9,
+            "development": {
+              "label": "development",
+              "start": "2017-04-21T08:00:00+00:00",
+              "end": "2020-01-16T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-01-16T08:00:00+00:00",
+              "end": "2020-08-03T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-08-03T08:00:00+00:00",
+              "end": "2021-02-19T08:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 1.0318852083652759
+            },
+            "oos_trade_count": 329,
+            "oos_win_rate": 0.3069908814589666,
+            "oos_profit_factor": 1.1921513058467532,
+            "oos_expectancy": 5.93579971784922,
+            "oos_max_drawdown": 2023.5188387373819,
+            "oos_net_pnl": 1952.8781071723936,
+            "oos_total_return": 0.19528781071723936,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 10,
+            "development": {
+              "label": "development",
+              "start": "2017-11-07T08:00:00+00:00",
+              "end": "2020-08-03T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-08-03T08:00:00+00:00",
+              "end": "2021-02-19T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2021-02-19T08:00:00+00:00",
+              "end": "2021-09-07T08:00:00+00:00"
+            },
+            "selected_candidate": "momentum_20",
+            "candidate_validation_scores": {
+              "momentum_20": 1.0614543394219624
+            },
+            "oos_trade_count": 375,
+            "oos_win_rate": 0.32266666666666666,
+            "oos_profit_factor": 0.8031386470197663,
+            "oos_expectancy": -4.741501625138189,
+            "oos_max_drawdown": 2943.75591358347,
+            "oos_net_pnl": -1778.0631094268208,
+            "oos_total_return": -0.17780631094268207,
+            "classification": "NEGATIVE_OOS_RESULT"
+          }
+        ],
+        "aggregate_oos": {
+          "windows_total": 11,
+          "windows_with_selection": 11,
+          "windows_without_selection": 0,
+          "total_oos_trades": 3519,
+          "combined_oos_win_rate": 0.32821824381926684,
+          "combined_oos_profit_factor": 1.0380523160350517,
+          "combined_oos_expectancy": 0.8058585958021643,
+          "worst_oos_max_drawdown": 2943.75591358347
+        },
+        "windows_profitable_pct": 72.72727272727273,
+        "average_oos_net_pnl_per_window": 257.8014907843469,
+        "worst_oos_window": {
+          "window_index": 10,
+          "development": {
+            "label": "development",
+            "start": "2017-11-07T08:00:00+00:00",
+            "end": "2020-08-03T08:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2020-08-03T08:00:00+00:00",
+            "end": "2021-02-19T08:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2021-02-19T08:00:00+00:00",
+            "end": "2021-09-07T08:00:00+00:00"
+          },
+          "selected_candidate": "momentum_20",
+          "candidate_validation_scores": {
+            "momentum_20": 1.0614543394219624
+          },
+          "oos_trade_count": 375,
+          "oos_win_rate": 0.32266666666666666,
+          "oos_profit_factor": 0.8031386470197663,
+          "oos_expectancy": -4.741501625138189,
+          "oos_max_drawdown": 2943.75591358347,
+          "oos_net_pnl": -1778.0631094268208,
+          "oos_total_return": -0.17780631094268207,
+          "classification": "NEGATIVE_OOS_RESULT"
+        },
+        "best_oos_window": {
+          "window_index": 9,
+          "development": {
+            "label": "development",
+            "start": "2017-04-21T08:00:00+00:00",
+            "end": "2020-01-16T08:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2020-01-16T08:00:00+00:00",
+            "end": "2020-08-03T08:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2020-08-03T08:00:00+00:00",
+            "end": "2021-02-19T08:00:00+00:00"
+          },
+          "selected_candidate": "momentum_20",
+          "candidate_validation_scores": {
+            "momentum_20": 1.0318852083652759
+          },
+          "oos_trade_count": 329,
+          "oos_win_rate": 0.3069908814589666,
+          "oos_profit_factor": 1.1921513058467532,
+          "oos_expectancy": 5.93579971784922,
+          "oos_max_drawdown": 2023.5188387373819,
+          "oos_net_pnl": 1952.8781071723936,
+          "oos_total_return": 0.19528781071723936,
+          "classification": "POSITIVE_OOS_RESULT"
+        },
+        "classification": "MIXED"
+      },
+      "regime_filtered_breakout_40": {
+        "windows": [
+          {
+            "window_index": 0,
+            "development": {
+              "label": "development",
+              "start": "2012-05-17T08:00:00+00:00",
+              "end": "2015-02-11T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-02-11T08:00:00+00:00",
+              "end": "2015-08-30T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2015-08-30T08:00:00+00:00",
+              "end": "2016-03-17T08:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 1.1856190401500353
+            },
+            "oos_trade_count": 57,
+            "oos_win_rate": 0.2631578947368421,
+            "oos_profit_factor": 0.7996933343356966,
+            "oos_expectancy": -7.628865010022412,
+            "oos_max_drawdown": 1088.4519248653523,
+            "oos_net_pnl": -434.84530557127744,
+            "oos_total_return": -0.04348453055712774,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 1,
+            "development": {
+              "label": "development",
+              "start": "2012-12-03T08:00:00+00:00",
+              "end": "2015-08-30T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2015-08-30T08:00:00+00:00",
+              "end": "2016-03-17T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-03-17T08:00:00+00:00",
+              "end": "2016-10-03T08:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 1.106605758452525
+            },
+            "oos_trade_count": 55,
+            "oos_win_rate": 0.3090909090909091,
+            "oos_profit_factor": 1.0022396320987852,
+            "oos_expectancy": 0.09037309528929388,
+            "oos_max_drawdown": 675.9032665501636,
+            "oos_net_pnl": 4.9705202409111635,
+            "oos_total_return": 0.0004970520240911164,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 2,
+            "development": {
+              "label": "development",
+              "start": "2013-06-21T08:00:00+00:00",
+              "end": "2016-03-17T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-03-17T08:00:00+00:00",
+              "end": "2016-10-03T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2016-10-03T08:00:00+00:00",
+              "end": "2017-04-21T08:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.9391539904577821
+            },
+            "oos_trade_count": 62,
+            "oos_win_rate": 0.25806451612903225,
+            "oos_profit_factor": 0.7868721451106095,
+            "oos_expectancy": -7.490983114800341,
+            "oos_max_drawdown": 860.3006350229844,
+            "oos_net_pnl": -464.4409531176211,
+            "oos_total_return": -0.046444095311762114,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 3,
+            "development": {
+              "label": "development",
+              "start": "2014-01-07T08:00:00+00:00",
+              "end": "2016-10-03T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2016-10-03T08:00:00+00:00",
+              "end": "2017-04-21T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-04-21T08:00:00+00:00",
+              "end": "2017-11-07T08:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.9242396209634398
+            },
+            "oos_trade_count": 51,
+            "oos_win_rate": 0.3137254901960784,
+            "oos_profit_factor": 1.3935077732882777,
+            "oos_expectancy": 10.252542855089947,
+            "oos_max_drawdown": 306.94189720233953,
+            "oos_net_pnl": 522.8796856095873,
+            "oos_total_return": 0.052287968560958735,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 4,
+            "development": {
+              "label": "development",
+              "start": "2014-07-26T08:00:00+00:00",
+              "end": "2017-04-21T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-04-21T08:00:00+00:00",
+              "end": "2017-11-07T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2017-11-07T08:00:00+00:00",
+              "end": "2018-05-26T08:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.9312279864213846
+            },
+            "oos_trade_count": 56,
+            "oos_win_rate": 0.25,
+            "oos_profit_factor": 1.0507495385324124,
+            "oos_expectancy": 1.6076577946194572,
+            "oos_max_drawdown": 598.6036571933455,
+            "oos_net_pnl": 90.0288364986896,
+            "oos_total_return": 0.00900288364986896,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 5,
+            "development": {
+              "label": "development",
+              "start": "2015-02-11T08:00:00+00:00",
+              "end": "2017-11-07T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2017-11-07T08:00:00+00:00",
+              "end": "2018-05-26T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-05-26T08:00:00+00:00",
+              "end": "2018-12-12T08:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.9323772834521865
+            },
+            "oos_trade_count": 50,
+            "oos_win_rate": 0.22,
+            "oos_profit_factor": 0.8706792392726423,
+            "oos_expectancy": -3.7192218109723365,
+            "oos_max_drawdown": 736.1208367313629,
+            "oos_net_pnl": -185.96109054861682,
+            "oos_total_return": -0.01859610905486168,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 6,
+            "development": {
+              "label": "development",
+              "start": "2015-08-30T08:00:00+00:00",
+              "end": "2018-05-26T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-05-26T08:00:00+00:00",
+              "end": "2018-12-12T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2018-12-12T08:00:00+00:00",
+              "end": "2019-06-30T08:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 0.9522677426123175
+            },
+            "oos_trade_count": 49,
+            "oos_win_rate": 0.2857142857142857,
+            "oos_profit_factor": 1.7910378280671824,
+            "oos_expectancy": 21.5210462713636,
+            "oos_max_drawdown": 380.47891606495796,
+            "oos_net_pnl": 1054.5312672968164,
+            "oos_total_return": 0.10545312672968164,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 7,
+            "development": {
+              "label": "development",
+              "start": "2016-03-17T08:00:00+00:00",
+              "end": "2018-12-12T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2018-12-12T08:00:00+00:00",
+              "end": "2019-06-30T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2019-06-30T08:00:00+00:00",
+              "end": "2020-01-16T08:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 1.0994529425550246
+            },
+            "oos_trade_count": 51,
+            "oos_win_rate": 0.21568627450980393,
+            "oos_profit_factor": 0.9373332694048874,
+            "oos_expectancy": -2.89075991282903,
+            "oos_max_drawdown": 795.9807542800991,
+            "oos_net_pnl": -147.42875555428054,
+            "oos_total_return": -0.014742875555428055,
+            "classification": "NEGATIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 8,
+            "development": {
+              "label": "development",
+              "start": "2016-10-03T08:00:00+00:00",
+              "end": "2019-06-30T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2019-06-30T08:00:00+00:00",
+              "end": "2020-01-16T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-01-16T08:00:00+00:00",
+              "end": "2020-08-03T08:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 1.0382538576251061
+            },
+            "oos_trade_count": 48,
+            "oos_win_rate": 0.3541666666666667,
+            "oos_profit_factor": 2.1838708083126037,
+            "oos_expectancy": 64.05759452518187,
+            "oos_max_drawdown": 1207.1083468287634,
+            "oos_net_pnl": 3074.7645372087295,
+            "oos_total_return": 0.30747645372087296,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 9,
+            "development": {
+              "label": "development",
+              "start": "2017-04-21T08:00:00+00:00",
+              "end": "2020-01-16T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-01-16T08:00:00+00:00",
+              "end": "2020-08-03T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2020-08-03T08:00:00+00:00",
+              "end": "2021-02-19T08:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 1.359216536702412
+            },
+            "oos_trade_count": 50,
+            "oos_win_rate": 0.36,
+            "oos_profit_factor": 1.5001136374844282,
+            "oos_expectancy": 33.44176144044995,
+            "oos_max_drawdown": 1044.3764271230084,
+            "oos_net_pnl": 1672.0880720224977,
+            "oos_total_return": 0.16720880720224976,
+            "classification": "POSITIVE_OOS_RESULT"
+          },
+          {
+            "window_index": 10,
+            "development": {
+              "label": "development",
+              "start": "2017-11-07T08:00:00+00:00",
+              "end": "2020-08-03T08:00:00+00:00"
+            },
+            "validation": {
+              "label": "validation",
+              "start": "2020-08-03T08:00:00+00:00",
+              "end": "2021-02-19T08:00:00+00:00"
+            },
+            "out_of_sample": {
+              "label": "out_of_sample",
+              "start": "2021-02-19T08:00:00+00:00",
+              "end": "2021-09-07T08:00:00+00:00"
+            },
+            "selected_candidate": "regime_filtered_breakout_40",
+            "candidate_validation_scores": {
+              "regime_filtered_breakout_40": 1.4341066878021835
+            },
+            "oos_trade_count": 56,
+            "oos_win_rate": 0.19642857142857142,
+            "oos_profit_factor": 0.9747023679326173,
+            "oos_expectancy": -1.5102250967480282,
+            "oos_max_drawdown": 1343.1593287152755,
+            "oos_net_pnl": -84.57260541788958,
+            "oos_total_return": -0.008457260541788957,
+            "classification": "NEGATIVE_OOS_RESULT"
+          }
+        ],
+        "aggregate_oos": {
+          "windows_total": 11,
+          "windows_with_selection": 11,
+          "windows_without_selection": 0,
+          "total_oos_trades": 585,
+          "combined_oos_win_rate": 0.27350427350427353,
+          "combined_oos_profit_factor": 1.1844722546512294,
+          "combined_oos_expectancy": 8.721391809688114,
+          "worst_oos_max_drawdown": 1343.1593287152755
+        },
+        "windows_profitable_pct": 54.54545454545454,
+        "average_oos_net_pnl_per_window": 463.81947351523144,
+        "worst_oos_window": {
+          "window_index": 2,
+          "development": {
+            "label": "development",
+            "start": "2013-06-21T08:00:00+00:00",
+            "end": "2016-03-17T08:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2016-03-17T08:00:00+00:00",
+            "end": "2016-10-03T08:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2016-10-03T08:00:00+00:00",
+            "end": "2017-04-21T08:00:00+00:00"
+          },
+          "selected_candidate": "regime_filtered_breakout_40",
+          "candidate_validation_scores": {
+            "regime_filtered_breakout_40": 0.9391539904577821
+          },
+          "oos_trade_count": 62,
+          "oos_win_rate": 0.25806451612903225,
+          "oos_profit_factor": 0.7868721451106095,
+          "oos_expectancy": -7.490983114800341,
+          "oos_max_drawdown": 860.3006350229844,
+          "oos_net_pnl": -464.4409531176211,
+          "oos_total_return": -0.046444095311762114,
+          "classification": "NEGATIVE_OOS_RESULT"
+        },
+        "best_oos_window": {
+          "window_index": 8,
+          "development": {
+            "label": "development",
+            "start": "2016-10-03T08:00:00+00:00",
+            "end": "2019-06-30T08:00:00+00:00"
+          },
+          "validation": {
+            "label": "validation",
+            "start": "2019-06-30T08:00:00+00:00",
+            "end": "2020-01-16T08:00:00+00:00"
+          },
+          "out_of_sample": {
+            "label": "out_of_sample",
+            "start": "2020-01-16T08:00:00+00:00",
+            "end": "2020-08-03T08:00:00+00:00"
+          },
+          "selected_candidate": "regime_filtered_breakout_40",
+          "candidate_validation_scores": {
+            "regime_filtered_breakout_40": 1.0382538576251061
+          },
+          "oos_trade_count": 48,
+          "oos_win_rate": 0.3541666666666667,
+          "oos_profit_factor": 2.1838708083126037,
+          "oos_expectancy": 64.05759452518187,
+          "oos_max_drawdown": 1207.1083468287634,
+          "oos_net_pnl": 3074.7645372087295,
+          "oos_total_return": 0.30747645372087296,
+          "classification": "POSITIVE_OOS_RESULT"
+        },
+        "classification": "MIXED"
+      }
+    }
+  }
+}
