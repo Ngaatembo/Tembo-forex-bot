@@ -183,3 +183,10 @@ def test_walk_forward_has_no_execution_or_broker_dependency():
     content = path.read_text()
     for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
         assert token not in content, f"walk_forward.py references '{token}' — a real safety regression."
+
+
+def test_export_post_2022_script_has_no_execution_or_broker_dependency():
+    path = Path(__file__).resolve().parent.parent / "scripts" / "export_post_2022_historical_data.py"
+    content = path.read_text()
+    for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
+        assert token not in content, f"export script references '{token}' — a real safety regression."

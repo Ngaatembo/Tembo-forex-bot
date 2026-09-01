@@ -29,3 +29,9 @@ build/
 
 # Logs
 *.log
+
+# Post-2022 historical data exports (Experiment 3) — large, and
+# re-derivable by re-running the export script on Render. Metadata/
+# provenance JSON files are small and could be committed separately
+# if useful, but the raw CSVs themselves stay out of git.
+research/data/post_2022/*.csv
