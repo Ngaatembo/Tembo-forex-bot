@@ -20,6 +20,8 @@ from fastapi import APIRouter, HTTPException, Query
 
 from app.research.strategy_selector import select_strategy
 from app.research.validated_strategy_config import ValidatedStrategyConfig
+from app.news_engine.context import get_news_context, get_upcoming_macro_events
+from app.news_engine.macro_risk import compute_macro_event_risk
 
 router = APIRouter(tags=["decisions"])
 
@@ -79,6 +81,17 @@ async def get_decision(
         final_decision = "NO_TRADE"
         reason = selection.reason
 
+    # News/Macro context — threaded as SEPARATE informational fields,
+    # never blended into final_decision's own logic above. This
+    # endpoint never reaches the Risk Engine anyway (no live price
+    # feed), so nothing here can change final_decision's actual value
+    # today — but the real, functional Macro/Event Safety Gate lives
+    # in PaperTradingEngine (app/paper_trading/engine.py), which DOES
+    # block on HIGH macro risk before Risk Engine ever runs.
+    news_context = await get_news_context(instrument=instrument)
+    upcoming_events = await get_upcoming_macro_events()
+    macro_event_risk = compute_macro_event_risk(instrument, upcoming_events)
+
     return {
         "instrument": instrument,
         "timeframe": timeframe,
@@ -95,6 +108,15 @@ async def get_decision(
             for c in selection.considered
         ],
         "research_recommendation": selection.research_recommendation,
+        "news_context": {
+            "status": news_context.status, "freshness": news_context.freshness,
+            "provider": news_context.provider,
+            "relevant_news_count": len(news_context.relevant_news),
+        },
+        "macro_event_risk": {
+            "level": macro_event_risk.level, "reason": macro_event_risk.reason,
+            "triggering_event_count": len(macro_event_risk.triggering_events),
+        },
     }
 
 

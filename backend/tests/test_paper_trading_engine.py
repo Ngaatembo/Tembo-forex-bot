@@ -187,3 +187,46 @@ def test_deterministic_decision():
     d1 = e1.evaluate_and_maybe_open(instrument="XAU/USD", timeframe="h1", direction="LONG", entry_price=1900.0, stop_price=1860.0, current_prices={})
     d2 = e2.evaluate_and_maybe_open(instrument="XAU/USD", timeframe="h1", direction="LONG", entry_price=1900.0, stop_price=1860.0, current_prices={})
     assert d1.status == d2.status
+
+
+def test_high_macro_event_risk_blocks_trade_before_risk_engine():
+    """A candidate that would otherwise be APPROVED must be blocked
+    when HIGH macro event risk is supplied -- the safety gate runs
+    BEFORE Risk Engine, never after."""
+    from app.news_engine.models import MacroEventRisk, MACRO_RISK_HIGH
+
+    engine = make_engine([make_config(gate_status="PAPER_CANDIDATE", verdict="PROMISING")])
+    high_risk = MacroEventRisk(level=MACRO_RISK_HIGH, reason="US CPI in 30 minutes.", triggering_events=())
+
+    decision = engine.evaluate_and_maybe_open(
+        instrument="XAU/USD", timeframe="h1", direction="LONG", entry_price=1900.0,
+        stop_price=1860.0, current_prices={}, macro_event_risk=high_risk,
+    )
+    assert decision.status == "MACRO_EVENT_RISK_BLOCKED"
+    assert decision.status != "PAPER_TRADE_APPROVED"
+    assert decision.position is None
+
+
+def test_low_macro_event_risk_does_not_block_trade():
+    from app.news_engine.models import MacroEventRisk, MACRO_RISK_LOW
+
+    engine = make_engine([make_config(gate_status="PAPER_CANDIDATE", verdict="PROMISING")])
+    low_risk = MacroEventRisk(level=MACRO_RISK_LOW, reason="No relevant events soon.", triggering_events=())
+
+    decision = engine.evaluate_and_maybe_open(
+        instrument="XAU/USD", timeframe="h1", direction="LONG", entry_price=1900.0,
+        stop_price=1860.0, current_prices={}, macro_event_risk=low_risk,
+    )
+    assert decision.status == "PAPER_TRADE_APPROVED"
+
+
+def test_omitted_macro_event_risk_does_not_change_prior_behavior():
+    """Backward compatibility: every existing caller that doesn't pass
+    macro_event_risk at all must behave exactly as before."""
+    engine = make_engine([make_config(gate_status="PAPER_CANDIDATE", verdict="PROMISING")])
+
+    decision = engine.evaluate_and_maybe_open(
+        instrument="XAU/USD", timeframe="h1", direction="LONG", entry_price=1900.0,
+        stop_price=1860.0, current_prices={},
+    )
+    assert decision.status == "PAPER_TRADE_APPROVED"

@@ -7,9 +7,15 @@ app.risk_engine.risk_engine.evaluate_risk()'s own hierarchy.
     1. Instrument/timeframe validation
     2. Strategy selection (Phase 14 Selector)
     3. Research Gate (encoded in the Selector's own status)
-    4. Signal/stop validation (delegated to Risk Engine, stage 5)
-    5. Risk Engine (Phase 15) — includes the kill switch as ITS first stage
-    6. Paper execution
+    4. Macro/Event Safety Gate (Step 4, news_engine) — OPTIONAL,
+       caller-supplied. A HIGH MacroEventRisk blocks the trade here,
+       before Risk Engine ever runs. This layer can only ever
+       RESTRICT — it has no path to approve a trade on its own; a
+       missing/None macro_event_risk simply skips this stage
+       (backward compatible with every existing caller/test).
+    5. Signal/stop validation (delegated to Risk Engine, stage 6)
+    6. Risk Engine (Phase 15) — includes the kill switch as ITS first stage
+    7. Paper execution
 
 SECURITY: this module has no import of, and no code path to, the
 execution/broker layer. A PAPER_TRADE_APPROVED decision opens a
@@ -21,6 +27,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
+from app.news_engine.models import MACRO_RISK_HIGH, MacroEventRisk
 from app.paper_trading.account import PaperAccountState
 from app.paper_trading.models import PaperPosition, PaperTrade
 from app.research.instrument_adapter import InstrumentTimeframeInfo
@@ -33,7 +40,7 @@ _VALID_TIMEFRAMES = {"m5", "m15", "h1", "h4", "d1"}
 
 DECISION_STATES = frozenset({
     "INVALID_INPUT", "NO_VALIDATED_EDGE", "PROMISING_NOT_TRADEABLE", "RESEARCH_REQUIRED",
-    "RISK_REJECTED", "KILL_SWITCH_BLOCKED", "PAPER_TRADE_APPROVED",
+    "MACRO_EVENT_RISK_BLOCKED", "RISK_REJECTED", "KILL_SWITCH_BLOCKED", "PAPER_TRADE_APPROVED",
 })
 
 
@@ -75,6 +82,7 @@ class PaperTradingEngine:
         self, *, instrument: str, timeframe: str, direction: str, entry_price: float,
         stop_price: Optional[float], current_prices: dict, take_profit_price: Optional[float] = None,
         max_holding_periods: Optional[int] = None, current_regime: Optional[str] = None,
+        macro_event_risk: Optional[MacroEventRisk] = None,
     ) -> PaperTradeDecision:
         if not instrument or not timeframe:
             return PaperTradeDecision("INVALID_INPUT", "instrument and timeframe are both required.")
@@ -89,6 +97,13 @@ class PaperTradingEngine:
             return PaperTradeDecision("PROMISING_NOT_TRADEABLE", selection.reason)
         if selection.status == "RESEARCH_REQUIRED":
             return PaperTradeDecision("RESEARCH_REQUIRED", selection.reason)
+
+        # Macro/Event Safety Gate — sits between Research Gate and Risk
+        # Engine. Can only RESTRICT (block on HIGH risk); a None value
+        # or non-HIGH level simply passes through to Risk Engine as
+        # before. News/macro data can never independently approve a trade.
+        if macro_event_risk is not None and macro_event_risk.level == MACRO_RISK_HIGH:
+            return PaperTradeDecision("MACRO_EVENT_RISK_BLOCKED", macro_event_risk.reason)
 
         key = f"{instrument}:{timeframe_norm}"
         if key in self.account.open_positions:

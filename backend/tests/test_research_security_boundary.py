@@ -132,3 +132,31 @@ def test_markets_route_has_no_execution_or_broker_dependency():
     content = path.read_text()
     for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
         assert token not in content, f"markets.py references '{token}' — a real safety regression."
+
+
+def test_news_engine_has_no_execution_or_broker_dependency():
+    news_engine_dir = Path(__file__).resolve().parent.parent / "app" / "news_engine"
+    py_files = [f for f in news_engine_dir.rglob("*.py") if f.name != "__init__.py"]
+    assert py_files, "expected news_engine source files to exist"
+    for path in py_files:
+        content = path.read_text()
+        for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
+            assert token not in content, f"{path.relative_to(news_engine_dir)} references '{token}' — a real safety regression."
+
+
+def test_news_api_route_has_no_execution_or_broker_dependency():
+    path = Path(__file__).resolve().parent.parent / "app" / "api" / "routes" / "news.py"
+    content = path.read_text()
+    for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
+        assert token not in content, f"news.py references '{token}' — a real safety regression."
+
+
+def test_macro_event_risk_has_no_direction_field_structurally():
+    """Structural, not just textual: MacroEventRisk cannot express a
+    BUY/SELL signal because it has no field capable of holding one."""
+    import dataclasses
+    from app.news_engine.models import MacroEventRisk
+    field_names = {f.name for f in dataclasses.fields(MacroEventRisk)}
+    assert "direction" not in field_names
+    assert "signal" not in field_names
+    assert "action" not in field_names
