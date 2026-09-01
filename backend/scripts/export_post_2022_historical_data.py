@@ -13,6 +13,18 @@ per call and does not paginate internally, so this script calls it
 repeatedly with advancing date windows (a normal usage pattern for a
 capped API, not a modification to the provider).
 
+PERFORMANCE: all chunk requests, across all 3 instruments, run
+CONCURRENTLY under one shared, bounded semaphore (MAX_CONCURRENT_REQUESTS)
+instead of one at a time. Only ~27 total calls are ever needed for
+this date range, already well under Twelve Data's own confirmed
+60-calls/minute limit even if all 27 completed within the same
+minute — the bound exists as connection courtesy, not because
+concurrency risks the rate limit. The set of chunk date-range
+boundaries is unchanged from the original sequential version, and
+dedupe_and_sort() is order-independent, so which chunk happens to
+finish first has no effect on the final candle set — same dataset,
+faster wall-clock time.
+
 SECURITY: the API key is never printed, written to any output file,
 or logged. TwelveDataProviderError and its subclasses already redact
 the key from their own messages (see twelvedata.py); this script adds
@@ -45,7 +57,15 @@ INSTRUMENTS = {
     "XAU/USD": "XAUUSD_H1_2023plus",
 }
 CHUNK_DAYS = 150
-RATE_LIMIT_SLEEP_SECONDS = 1.5
+# Total calls needed across all 3 instruments (2023-present, 150-day
+# chunks) is ~27 -- already well under Twelve Data's own confirmed
+# 60-calls/minute limit even if every call somehow completed within
+# the same minute. This bound exists as connection courtesy, not
+# because concurrency risks the per-minute limit -- it deliberately
+# caps how many requests are ever in flight to Twelve Data at once,
+# same spirit as the original per-call sleep, just applied as a
+# concurrency limit instead of a serial delay.
+MAX_CONCURRENT_REQUESTS = 5
 OUTPUT_DIR = "../research/data/post_2022"
 
 
@@ -54,16 +74,40 @@ def end_of_last_complete_hour() -> datetime:
     return now.replace(minute=0, second=0, microsecond=0) - timedelta(hours=1)
 
 
-async def fetch_all_chunks(provider, instrument, start, end):
-    all_candles = []
+def chunk_ranges(start: datetime, end: datetime) -> list:
+    """Same chunk boundaries as before, computed up front rather than
+    inside a sequential loop -- identical date windows, just no longer
+    tied to fetching them one at a time."""
+    ranges = []
     chunk_start = start
     while chunk_start < end:
         chunk_end = min(chunk_start + timedelta(days=CHUNK_DAYS), end)
-        print(f"  fetching {instrument} {chunk_start.date()} to {chunk_end.date()}...")
-        candles = await provider.get_historical_data(instrument, "h1", chunk_start, chunk_end)
-        all_candles.extend(candles)
-        await asyncio.sleep(RATE_LIMIT_SLEEP_SECONDS)
+        ranges.append((chunk_start, chunk_end))
         chunk_start = chunk_end
+    return ranges
+
+
+async def fetch_all_chunks(provider, instrument, start, end, semaphore=None):
+    """Fetches every chunk for one instrument CONCURRENTLY (bounded by
+    semaphore), instead of one at a time. The set of chunk boundaries
+    is byte-for-byte identical to the original sequential version --
+    only the fetch SCHEDULING changed. dedupe_and_sort() (unchanged,
+    called by the caller) is order-independent, so which chunk happens
+    to complete first has no effect on the final candle set."""
+    if semaphore is None:
+        semaphore = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
+
+    async def fetch_one(chunk_start, chunk_end):
+        async with semaphore:
+            return await provider.get_historical_data(instrument, "h1", chunk_start, chunk_end)
+
+    ranges = chunk_ranges(start, end)
+    for chunk_start, chunk_end in ranges:
+        print(f"  queued {instrument} {chunk_start.date()} to {chunk_end.date()}")
+    results = await asyncio.gather(*(fetch_one(s, e) for s, e in ranges))
+    all_candles = []
+    for candles in results:
+        all_candles.extend(candles)
     return all_candles
 
 
@@ -93,12 +137,12 @@ def sha256_of_file(path):
     return h.hexdigest()
 
 
-async def export_instrument(provider, instrument, filename_base):
+async def export_instrument(provider, instrument, filename_base, semaphore):
     print(f"=== {instrument} ===")
     requested_start = START
     requested_end = end_of_last_complete_hour()
 
-    raw_candles = await fetch_all_chunks(provider, instrument, requested_start, requested_end)
+    raw_candles = await fetch_all_chunks(provider, instrument, requested_start, requested_end, semaphore=semaphore)
     candles = dedupe_and_sort(raw_candles)
 
     report = validate_candles(candles, timeframe="h1")
@@ -162,18 +206,26 @@ async def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     provider = TwelveDataProvider()
-    all_metadata = {}
-    for instrument, filename_base in INSTRUMENTS.items():
+    # ONE shared semaphore across all instruments AND all their chunks --
+    # this is the actual global concurrency bound, not per-instrument
+    # (which would silently allow 3x MAX_CONCURRENT_REQUESTS in flight
+    # if each instrument had its own).
+    semaphore = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
+
+    async def run_one(instrument, filename_base):
         try:
-            all_metadata[instrument] = await export_instrument(provider, instrument, filename_base)
+            return instrument, await export_instrument(provider, instrument, filename_base, semaphore)
         except TwelveDataProviderError as e:
             print(f"  FAILED for {instrument}: {e}")
-            all_metadata[instrument] = {"error": str(e)}
+            return instrument, {"error": str(e)}
         except Exception as e:
             key = settings.market_data_api_key
             msg = str(e).replace(key, "[REDACTED]") if key else str(e)
             print(f"  FAILED for {instrument}: {msg}")
-            all_metadata[instrument] = {"error": msg}
+            return instrument, {"error": msg}
+
+    results = await asyncio.gather(*(run_one(i, f) for i, f in INSTRUMENTS.items()))
+    all_metadata = dict(results)
 
     summary_path = f"{OUTPUT_DIR}/export_summary.json"
     with open(summary_path, "w") as f:
