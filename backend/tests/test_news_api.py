@@ -65,3 +65,13 @@ def test_decisions_endpoint_includes_news_and_macro_context():
 def test_decisions_macro_risk_unknown_when_calendar_unavailable():
     resp = client.get("/decisions", params={"instrument": "XAU/USD", "timeframe": "h1"})
     assert resp.json()["macro_event_risk"]["level"] == "UNKNOWN"
+
+
+def test_calendar_endpoint_exposes_error_detail_when_unavailable():
+    """New: mirrors /news's existing 'error' field -- so a future
+    UNAVAILABLE state is diagnosable, not a silent black box."""
+    resp = client.get("/calendar")
+    body = resp.json()
+    assert "error" in body
+    assert body["error"] is not None
+    assert "ECONOMIC_CALENDAR_PROVIDER" in body["error"]

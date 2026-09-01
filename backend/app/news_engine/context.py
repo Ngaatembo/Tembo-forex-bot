@@ -9,12 +9,15 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from app.core.config import get_settings
+from app.core.logging import get_logger
 from app.news_engine.cache import TTLCache
 from app.news_engine.interfaces import get_economic_calendar_provider, get_news_provider
 from app.news_engine.models import (
     CACHED, FRESH, NEWS_STATUS_CONFIRMED_NO_RELEVANT_NEWS, NEWS_STATUS_DEMO, NEWS_STATUS_LIVE,
     NEWS_STATUS_STALE, NEWS_STATUS_UNAVAILABLE, STALE, UNAVAILABLE, MacroEvent, NewsContext, NewsItem,
 )
+
+logger = get_logger(__name__)
 
 NEWS_CACHE_TTL_SECONDS = 12 * 60
 NEWS_CACHE_STALE_GRACE_SECONDS = 15 * 60
@@ -25,6 +28,7 @@ _news_cache: TTLCache = TTLCache(NEWS_CACHE_TTL_SECONDS, NEWS_CACHE_STALE_GRACE_
 _calendar_cache: TTLCache = TTLCache(CALENDAR_CACHE_TTL_SECONDS, CALENDAR_CACHE_STALE_GRACE_SECONDS)
 _last_successful_news_fetch: Optional[datetime] = None
 _last_successful_calendar_fetch: Optional[datetime] = None
+_last_calendar_error: Optional[str] = None
 
 
 def _build_context(items: list, instrument: Optional[str], data_freshness: str, provider_name: str) -> NewsContext:
@@ -86,12 +90,23 @@ async def get_news_context(instrument: Optional[str] = None) -> NewsContext:
 async def get_upcoming_macro_events(lookahead_hours: float = 48) -> Optional[list]:
     """Returns None (not an empty list) when the calendar is genuinely
     unavailable — callers (e.g. macro_risk.py) must treat that as
-    UNKNOWN risk, never as 'no events'."""
-    global _last_successful_calendar_fetch
+    UNKNOWN risk, never as 'no events'.
+
+    IMPORTANT, found during a real production investigation:
+    ECONOMIC_CALENDAR_PROVIDER and ECONOMIC_CALENDAR_API_KEY are BOTH
+    separate settings from NEWS_PROVIDER/NEWS_API_KEY — getting news
+    working does not automatically configure the calendar. If either
+    is missing/wrong, this returns None exactly as if a real API call
+    had failed, by design (fail closed) — but every such case is now
+    LOGGED (with any API key redacted) so a silent failure is never
+    invisible again.
+    """
+    global _last_successful_calendar_fetch, _last_calendar_error
     settings = get_settings()
     provider_name = settings.economic_calendar_provider
 
     if provider_name == "mock":
+        _last_calendar_error = "ECONOMIC_CALENDAR_PROVIDER is 'mock' (the default) — set it to 'finnhub' explicitly to enable real calendar data."
         return None
 
     cached_events, freshness = _calendar_cache.get("upcoming")
@@ -104,9 +119,21 @@ async def get_upcoming_macro_events(lookahead_hours: float = 48) -> Optional[lis
         events = await provider.get_upcoming_events(now, now + timedelta(hours=lookahead_hours))
         _calendar_cache.set("upcoming", events)
         _last_successful_calendar_fetch = now
+        _last_calendar_error = None
         return events
-    except Exception:
+    except Exception as e:
+        api_key = getattr(settings, "economic_calendar_api_key", None)
+        message = str(e)
+        if api_key:
+            message = message.replace(api_key, "[REDACTED]")
+        _last_calendar_error = message
+        logger.warning("Economic calendar fetch failed: %s", message)
+
         cached_events, freshness = _calendar_cache.get("upcoming")
         if cached_events is not None and freshness == STALE:
             return cached_events
         return None
+
+
+def get_last_calendar_error() -> Optional[str]:
+    return _last_calendar_error

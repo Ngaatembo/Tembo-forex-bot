@@ -391,3 +391,95 @@ async def test_provider_failure_yields_unavailable_not_confirmed_no_news(monkeyp
     assert result.error is not None
     get_settings.cache_clear()
     context_module._news_cache._store.clear()
+
+
+# ---- Investigation: why /calendar returns UNAVAILABLE in production ----
+
+@pytest.mark.asyncio
+async def test_calendar_provider_left_as_mock_returns_none_even_if_key_is_set(monkeypatch):
+    """Root cause hypothesis #1: ECONOMIC_CALENDAR_PROVIDER is a
+    SEPARATE setting from NEWS_PROVIDER. Getting news working does
+    NOT automatically configure calendar -- confirmed here directly:
+    even with a real-looking key present, provider='mock' (the
+    default) means the calendar is never actually queried."""
+    from app.core.config import get_settings
+    get_settings.cache_clear()
+    monkeypatch.setenv("ECONOMIC_CALENDAR_PROVIDER", "mock")
+    monkeypatch.setenv("ECONOMIC_CALENDAR_API_KEY", "a_real_looking_key_here")
+    from app.news_engine.context import get_upcoming_macro_events
+    result = await get_upcoming_macro_events()
+    assert result is None
+    get_settings.cache_clear()
+
+
+@pytest.mark.asyncio
+async def test_calendar_provider_finnhub_but_missing_key_yields_unavailable_with_logged_error(monkeypatch, caplog):
+    """Root cause hypothesis #2: ECONOMIC_CALENDAR_API_KEY is a
+    SEPARATE variable from NEWS_API_KEY. Setting the provider name
+    alone is not enough."""
+    from app.core.config import get_settings
+    get_settings.cache_clear()
+    monkeypatch.setenv("ECONOMIC_CALENDAR_PROVIDER", "finnhub")
+    monkeypatch.delenv("ECONOMIC_CALENDAR_API_KEY", raising=False)
+
+    import app.news_engine.context as context_module
+    context_module._calendar_cache._store.clear()
+
+    from app.news_engine.context import get_upcoming_macro_events
+    import logging
+    with caplog.at_level(logging.WARNING):
+        result = await get_upcoming_macro_events()
+    assert result is None
+    # The fix: this failure must now be LOGGED, not silently swallowed.
+    assert any("calendar" in r.message.lower() for r in caplog.records)
+    get_settings.cache_clear()
+    context_module._calendar_cache._store.clear()
+
+
+@pytest.mark.asyncio
+async def test_calendar_fetch_failure_is_logged_with_key_redacted(monkeypatch, caplog):
+    """Any real failure (auth/endpoint/parsing) must be logged for
+    diagnosis -- and must NEVER include the raw key in the log line."""
+    from app.core.config import get_settings
+    get_settings.cache_clear()
+    monkeypatch.setenv("ECONOMIC_CALENDAR_PROVIDER", "finnhub")
+    monkeypatch.setenv("ECONOMIC_CALENDAR_API_KEY", "super_secret_test_key_123")
+
+    import app.news_engine.context as context_module
+    context_module._calendar_cache._store.clear()
+
+    from app.news_engine.providers.finnhub_calendar import FinnhubEconomicCalendarProvider
+
+    with patch("app.news_engine.context.get_economic_calendar_provider") as mock_get_provider:
+        mock_provider = AsyncMock()
+        mock_provider.get_upcoming_events = AsyncMock(side_effect=RuntimeError("simulated failure containing super_secret_test_key_123"))
+        mock_get_provider.return_value = mock_provider
+
+        from app.news_engine.context import get_upcoming_macro_events
+        import logging
+        with caplog.at_level(logging.WARNING):
+            result = await get_upcoming_macro_events()
+
+    assert result is None
+    log_text = " ".join(r.message for r in caplog.records)
+    assert "super_secret_test_key_123" not in log_text
+    assert "[REDACTED]" in log_text or "calendar" in log_text.lower()
+    get_settings.cache_clear()
+    context_module._calendar_cache._store.clear()
+
+
+@pytest.mark.asyncio
+async def test_calendar_provider_handles_plain_list_response_shape(calendar_provider):
+    """Defensive robustness: Finnhub's exact response envelope for this
+    specific endpoint was not confirmed with 100% certainty (see
+    finnhub_calendar.py's own docstring) -- this proves both the
+    wrapped {"economicCalendar": [...]} shape AND a plain top-level
+    list [...] are handled correctly, whichever the real API returns."""
+    fake_body = [
+        {"actual": None, "prev": 1.0, "country": "US", "estimate": 1.0, "event": "CPI YoY", "impact": "high", "time": "2026-09-15 12:30:00"},
+    ]
+    fake_resp = mock_response(200, fake_body)
+    with patch.object(calendar_provider._client, "get", new=AsyncMock(return_value=fake_resp)):
+        events = await calendar_provider.get_upcoming_events(datetime.now(timezone.utc), datetime.now(timezone.utc) + timedelta(days=2))
+    assert len(events) == 1
+    assert events[0].event_name == "CPI YoY"

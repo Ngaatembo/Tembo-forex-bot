@@ -10,7 +10,7 @@ from urllib.parse import unquote
 from fastapi import APIRouter
 
 from app.core.config import get_settings
-from app.news_engine.context import get_news_context, get_upcoming_macro_events
+from app.news_engine.context import get_news_context, get_upcoming_macro_events, get_last_calendar_error
 
 router = APIRouter(tags=["news"])
 
@@ -60,8 +60,8 @@ async def get_news_for_instrument(instrument: str) -> dict:
 async def get_calendar() -> dict:
     events = await get_upcoming_macro_events()
     if events is None:
-        return {"status": "UNAVAILABLE", "events": []}
-    return {"status": "LIVE", "events": [_macro_event_to_dict(e) for e in events]}
+        return {"status": "UNAVAILABLE", "events": [], "error": get_last_calendar_error()}
+    return {"status": "LIVE", "events": [_macro_event_to_dict(e) for e in events], "error": None}
 
 
 @router.get("/calendar/{currency}")
@@ -69,9 +69,9 @@ async def get_calendar_for_currency(currency: str) -> dict:
     currency = currency.upper()
     events = await get_upcoming_macro_events()
     if events is None:
-        return {"currency": currency, "status": "UNAVAILABLE", "events": []}
+        return {"currency": currency, "status": "UNAVAILABLE", "events": [], "error": get_last_calendar_error()}
     filtered = [e for e in events if e.currency == currency]
-    return {"currency": currency, "status": "LIVE", "events": [_macro_event_to_dict(e) for e in filtered]}
+    return {"currency": currency, "status": "LIVE", "events": [_macro_event_to_dict(e) for e in filtered], "error": None}
 
 
 @router.get("/system/data-status")
