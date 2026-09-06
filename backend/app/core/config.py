@@ -71,6 +71,17 @@ class Settings(BaseSettings):
     secret_key: str = "change-me-in-env"
     access_token_expire_minutes: int = 60
 
+    # --- Temporary admin research-data download (Experiment 3) ---
+    # No real user-auth system exists yet (see app/core/security.py's
+    # own docstring: JWT/password scaffolding only, never wired into
+    # any route). Deliberately a SEPARATE secret from secret_key
+    # above -- that key exists for JWT *signing*; reusing a signing
+    # secret as a static bearer-comparison token would weaken it.
+    # None by default -- the endpoint fails closed until this is
+    # explicitly set. Remove this setting and its route once
+    # Experiment 3's data has been retrieved.
+    admin_download_token: Optional[str] = None
+
 
 @lru_cache
 def get_settings() -> Settings:

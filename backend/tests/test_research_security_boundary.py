@@ -190,3 +190,21 @@ def test_export_post_2022_script_has_no_execution_or_broker_dependency():
     content = path.read_text()
     for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
         assert token not in content, f"export script references '{token}' — a real safety regression."
+
+
+def test_admin_data_route_has_no_execution_or_broker_dependency():
+    path = Path(__file__).resolve().parent.parent / "app" / "api" / "routes" / "admin_data.py"
+    content = path.read_text()
+    for token in FORBIDDEN_EXECUTION_TOKENS + FORBIDDEN_BROKER_TOKENS:
+        assert token not in content, f"admin_data.py references '{token}' — a real safety regression."
+
+
+def test_admin_data_route_never_exposes_a_directory_listing():
+    """Structural check: the route module defines exactly one GET
+    endpoint, parameterized by an allowlisted filename -- never a
+    bare directory-listing route."""
+    import re
+    path = Path(__file__).resolve().parent.parent / "app" / "api" / "routes" / "admin_data.py"
+    content = path.read_text()
+    get_routes = re.findall(r'@router\.get\("([^"]+)"\)', content)
+    assert get_routes == ["/research-data/{filename}"]
