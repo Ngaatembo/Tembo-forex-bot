@@ -386,8 +386,19 @@ async def live_decision(
         }
 
     from app.live_engine.candlesticks import detect_candlestick_patterns
+    from app.news_engine.context import get_upcoming_macro_events
+    from app.news_engine.macro_risk import compute_macro_event_risk
     from app.signal_engine.decision_engine import evaluate_trade_decision
     from app.technical_engine.features import calculate_feature_snapshots
+
+    macro_events = await get_upcoming_macro_events(
+        lookahead_hours=2,
+        lookback_hours=0,
+    )
+    macro_risk = compute_macro_event_risk(
+        instrument,
+        macro_events,
+    )
 
     snapshots = calculate_feature_snapshots(candles)
     if not snapshots:
@@ -397,7 +408,11 @@ async def live_decision(
         )
 
     patterns = detect_candlestick_patterns(candles)
-    decision = evaluate_trade_decision(snapshots[-1], patterns)
+    decision = evaluate_trade_decision(
+        snapshots[-1],
+        patterns,
+        macro_risk_level=macro_risk.level,
+    )
 
     return {
         "instrument": instrument,
@@ -406,6 +421,11 @@ async def live_decision(
         "status": "available",
         "decision": decision.decision,
         "methodology": decision.methodology,
+        "macro_risk": {
+            "level": macro_risk.level,
+            "reason": macro_risk.reason,
+            "triggering_event_count": len(macro_risk.triggering_events),
+        },
         "data_quality": {
             "is_clean": validation.is_clean,
             "candle_count": len(candles),
