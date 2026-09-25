@@ -36,6 +36,17 @@ def test_hammer_requires_downtrend_context_and_confirmation():
     assert hammer.direction == "BULLISH"
     assert hammer.confirmed is False
 
+    confirmation_price = candles[-1].close
+    candles.append(candle(
+        confirmation_price,
+        confirmation_price + 0.0010,
+        confirmation_price + 0.0001,
+        confirmation_price + 0.0007,
+    ))
+    confirmed = detect_candlestick_patterns(candles)
+    confirmed_hammer = next(p for p in confirmed if p.name == "HAMMER" and p.confirmed)
+    assert confirmed_hammer.confirmation_required is True
+
 
 def test_bullish_engulfing_requires_downtrend_and_engulfs_body():
     candles = downtrend()
@@ -70,3 +81,8 @@ def test_pattern_detector_never_looks_ahead():
     hammer = next(p for p in patterns if p.name == "HAMMER")
     assert hammer.confirmation_required is True
     assert hammer.confirmed is False
+
+    p = candles[-1].close
+    candles.append(candle(p, p + 0.0010, p + 0.0001, p + 0.0007))
+    confirmed = detect_candlestick_patterns(candles)
+    assert any(p.name == "HAMMER" and p.confirmed for p in confirmed)

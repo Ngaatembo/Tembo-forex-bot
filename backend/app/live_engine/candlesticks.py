@@ -72,12 +72,40 @@ def trend_context(candles: list[Any], lookback: int = 10) -> str:
     return "SIDEWAYS"
 
 
-def _confirmation(candles: list[Any], direction: str) -> bool:
-    if len(candles) < 2:
-        return False
-    previous = candles[-2]
-    current = candles[-1]
-    return current.close > previous.close if direction == "BULLISH" else current.close < previous.close
+def _single_reversal_shape(candle: Any, context: str) -> tuple[str, str, tuple[str, ...]] | None:
+    body = _body(candle)
+    upper = _upper(candle)
+    lower = _lower(candle)
+
+    if lower >= 2 * body and upper <= body:
+        if context == "DOWN":
+            return (
+                "HAMMER",
+                "BULLISH",
+                ("lower_shadow>=2x_body", "small_upper_shadow", "downtrend_context"),
+            )
+        if context == "UP":
+            return (
+                "HANGING_MAN",
+                "BEARISH",
+                ("lower_shadow>=2x_body", "small_upper_shadow", "uptrend_context"),
+            )
+
+    if upper >= 2 * body and lower <= body:
+        if context == "UP":
+            return (
+                "SHOOTING_STAR",
+                "BEARISH",
+                ("upper_shadow>=2x_body", "small_lower_shadow", "uptrend_context"),
+            )
+        if context == "DOWN":
+            return (
+                "INVERTED_HAMMER",
+                "BULLISH",
+                ("upper_shadow>=2x_body", "small_lower_shadow", "downtrend_context"),
+            )
+
+    return None
 
 
 def detect_candlestick_patterns(candles: list[Any]) -> list[PatternObservation]:
@@ -115,7 +143,7 @@ def detect_candlestick_patterns(candles: list[Any]) -> list[PatternObservation]:
             observations.append(
                 PatternObservation(
                     "HAMMER", "BULLISH", context,
-                    _confirmation(candles, "BULLISH"), True, "CONTEXTUAL",
+                    False, True, "CONTEXTUAL",
                     ("lower_shadow>=2x_body", "small_upper_shadow", "downtrend_context"),
                     "21 Candlesticks + Japanese candlestick introduction.",
                 )
@@ -124,7 +152,7 @@ def detect_candlestick_patterns(candles: list[Any]) -> list[PatternObservation]:
             observations.append(
                 PatternObservation(
                     "HANGING_MAN", "BEARISH", context,
-                    _confirmation(candles, "BEARISH"), True, "CONTEXTUAL",
+                    False, True, "CONTEXTUAL",
                     ("lower_shadow>=2x_body", "small_upper_shadow", "uptrend_context"),
                     "21 Candlesticks + Japanese candlestick introduction.",
                 )
@@ -150,6 +178,27 @@ def detect_candlestick_patterns(candles: list[Any]) -> list[PatternObservation]:
                     "Japanese candlestick introduction.",
                 )
             )
+
+    # A reversal candle is not confirmed by itself. When the current
+    # candle is the confirmation candle, report the immediately preceding
+    # reversal pattern as confirmed. This preserves the source's "next day"
+    # requirement without looking into the future.
+    if len(candles) >= 3:
+        prior = candles[-2]
+        prior_context = trend_context(candles[:-2])
+        prior_shape = _single_reversal_shape(prior, prior_context)
+        if prior_shape is not None:
+            name, direction, evidence = prior_shape
+            confirms = current.close > prior.close if direction == "BULLISH" else current.close < prior.close
+            if confirms:
+                observations.append(
+                    PatternObservation(
+                        name, direction, prior_context,
+                        True, True, "CONFIRMED",
+                        evidence + ("next_candle_confirmation",),
+                        "21 Candlesticks + Japanese candlestick introduction.",
+                    )
+                )
 
     if len(candles) >= 2:
         previous = candles[-2]
