@@ -95,6 +95,10 @@ def get_market_data_provider(provider_name: str) -> MarketDataProvider:
         from app.data_engine.providers.twelvedata import TwelveDataProvider
 
         return TwelveDataProvider()
+    if provider_name == "mt5_bridge":
+        from app.data_engine.providers.mt5_bridge import MT5BridgeProvider
+
+        return MT5BridgeProvider()
     raise NotImplementedError(
         f"Market data provider '{provider_name}' is not implemented yet. "
         "Falling back is intentionally not automatic — set "
