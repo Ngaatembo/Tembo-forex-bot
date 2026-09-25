@@ -49,6 +49,8 @@ def analyze_split(df: pd.DataFrame, start: int, end: int) -> dict:
     for i in range(max(20, start), end):
         patterns = detect_candlestick_patterns(candles[: i + 1])
         for pattern in patterns:
+            if pattern.direction == "NEUTRAL":
+                continue
             if pattern.confirmation_required and not pattern.confirmed:
                 continue
             entry_index = i + 1

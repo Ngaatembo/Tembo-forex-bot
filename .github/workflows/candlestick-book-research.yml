@@ -28,7 +28,10 @@ jobs:
       - run: pip install -r requirements.txt
       - run: pytest -q tests/test_candlestick_engine.py
       - run: python scripts/run_candlestick_book_research.py --output research/results/candlestick_book_research.json
+      - run: python scripts/run_candlestick_context_research.py
       - uses: actions/upload-artifact@v4
         with:
           name: candlestick-book-research
-          path: backend/research/results/candlestick_book_research.json
+          path: |
+            backend/research/results/candlestick_book_research.json
+            backend/research/results/candlestick_context_research.json
