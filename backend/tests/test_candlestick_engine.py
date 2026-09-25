@@ -86,3 +86,16 @@ def test_pattern_detector_never_looks_ahead():
     candles.append(candle(p, p + 0.0010, p + 0.0001, p + 0.0007))
     confirmed = detect_candlestick_patterns(candles)
     assert any(p.name == "HAMMER" and p.confirmed for p in confirmed)
+
+
+def test_research_cost_helper_is_monotonic():
+    from scripts.run_candlestick_book_research import net_return
+    low = net_return(0.0010, 1.1000, 0.5)
+    high = net_return(0.0010, 1.1000, 2.0)
+    assert low > high
+
+
+def test_research_wilson_interval_contains_observed_rate():
+    from scripts.run_candlestick_book_research import wilson_interval
+    low, high = wilson_interval(55, 100)
+    assert low < 0.55 < high
