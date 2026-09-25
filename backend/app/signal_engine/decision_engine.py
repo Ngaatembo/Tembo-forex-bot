@@ -187,7 +187,7 @@ def evaluate_trade_decision(
         )
 
     rr = abs(target - entry) / abs(entry - stop)
-    if rr < MIN_RISK_REWARD:
+    if rr < MIN_RISK_REWARD - 1e-9:
         rejection_reasons.append("Risk/reward is below the minimum threshold.")
 
     if rejection_reasons:
