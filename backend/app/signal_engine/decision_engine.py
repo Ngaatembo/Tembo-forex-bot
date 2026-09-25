@@ -14,6 +14,7 @@ from typing import Any
 
 from app.live_engine.candlesticks import PatternObservation
 from app.technical_engine.models import FeatureSnapshot
+from app.news_engine.models import MACRO_RISK_HIGH, MACRO_RISK_MEDIUM, MACRO_RISK_UNKNOWN
 
 
 @dataclass(frozen=True)
@@ -144,6 +145,7 @@ def _directional_factors(
 def evaluate_trade_decision(
     feature: FeatureSnapshot,
     patterns: list[PatternObservation],
+    macro_risk_level: str | None = None,
 ) -> TradeDecision:
     if feature.close <= 0:
         return TradeDecision("NO_TRADE", "NONE", 0, None, None, None, None, (), ("Invalid/non-positive price.",))
@@ -152,6 +154,11 @@ def evaluate_trade_decision(
         return TradeDecision("NO_TRADE", "NONE", 0, feature.close, None, None, None, (), ("ATR is unavailable or invalid.",))
 
     factors, rejection_reasons = _directional_factors(feature, patterns)
+
+    if macro_risk_level in {MACRO_RISK_HIGH, MACRO_RISK_MEDIUM, MACRO_RISK_UNKNOWN}:
+        rejection_reasons.append(
+            f"Macro risk is {macro_risk_level}; the news/calendar layer can restrict but never authorize a trade."
+        )
 
     buy_score = sum(f.score for f in factors if f.direction == "BUY")
     sell_score = sum(f.score for f in factors if f.direction == "SELL")
