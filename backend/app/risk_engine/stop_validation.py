@@ -4,6 +4,7 @@ auditable rejection reason instead.
 """
 
 from dataclasses import dataclass
+from math import isfinite
 from typing import Optional
 
 
@@ -16,7 +17,7 @@ class StopValidationResult:
 def validate_stop(direction: str, entry_price: float, stop_price: Optional[float]) -> StopValidationResult:
     if stop_price is None:
         return StopValidationResult(False, "Missing stop-loss — a trade proposal without a stop is never valid.")
-    if entry_price <= 0 or stop_price <= 0:
+    if not isfinite(entry_price) or not isfinite(stop_price) or entry_price <= 0 or stop_price <= 0:
         return StopValidationResult(False, f"Entry ({entry_price}) and stop ({stop_price}) prices must both be positive.")
 
     if direction == "LONG":
