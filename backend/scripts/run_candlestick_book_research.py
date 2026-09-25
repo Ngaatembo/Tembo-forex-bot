@@ -94,6 +94,9 @@ def analyze_split(df: pd.DataFrame, start: int, end: int) -> dict:
                     "horizon": horizon,
                     "signed_return": signed_return,
                     "entry_price": entry,
+                    "estimated_cost_low": (COST_SCENARIOS_PIPS["low"] * PIP_SIZE) / entry,
+                    "estimated_cost_base": (COST_SCENARIOS_PIPS["base"] * PIP_SIZE) / entry,
+                    "estimated_cost_high": (COST_SCENARIOS_PIPS["high"] * PIP_SIZE) / entry,
                 })
 
     if not rows:
