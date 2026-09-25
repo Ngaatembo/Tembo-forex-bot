@@ -93,6 +93,7 @@ def analyze_split(df: pd.DataFrame, start: int, end: int) -> dict:
                     "direction": pattern.direction,
                     "horizon": horizon,
                     "signed_return": signed_return,
+                    "entry_price": entry,
                 })
 
     if not rows:
