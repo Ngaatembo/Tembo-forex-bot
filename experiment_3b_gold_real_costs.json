@@ -1,0 +1,1223 @@
+{
+ "generated_at": "2026-09-25T17:34:21.728435+00:00",
+ "experiment": "3B \u2014 gold with realistic costs + frozen forward test 2024\u20132026",
+ "position_size_oz": 8.298216860650118,
+ "cost_tiers_usd_per_oz": {
+  "ORIGINAL_FOREX_TIER": {
+   "spread": 0.0001,
+   "slippage": 2e-05
+  },
+  "LOW": {
+   "spread": 0.2,
+   "slippage": 0.02
+  },
+  "BASE": {
+   "spread": 0.35,
+   "slippage": 0.05
+  },
+  "HIGH": {
+   "spread": 0.6,
+   "slippage": 0.1
+  }
+ },
+ "exit_rule": "ATR 2x stop, max 100 candles (unchanged)",
+ "method_note": "No parameters chosen on 2024+ data. Historical results do not guarantee future profit.",
+ "history_2012_2022": {
+  "period": [
+   "2012-05-17T08:00:00+00:00",
+   "2022-03-04T23:00:00+00:00"
+  ],
+  "candles": 57600,
+  "strategies": {
+   "breakout_20": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 1577,
+     "win_rate": 0.2872542802790108,
+     "profit_factor": 1.076986375469191,
+     "expectancy_per_trade": 3.001807632738227,
+     "avg_gross_pnl_per_trade": 3.0022651133814597,
+     "avg_cost_per_trade": 0.0004574806432387183,
+     "net_pnl": 4733.850636828184,
+     "total_return": 0.4733850636828184,
+     "max_drawdown_percent": 0.24417674656688276
+    },
+    "LOW": {
+     "trades": 1577,
+     "win_rate": 0.2828154724159797,
+     "profit_factor": 1.040558705004195,
+     "expectancy_per_trade": 1.6147049596145808,
+     "avg_gross_pnl_per_trade": 2.398957490312215,
+     "avg_cost_per_trade": 0.7842525306976345,
+     "net_pnl": 2546.389721312194,
+     "total_return": 0.2546389721312194,
+     "max_drawdown_percent": 0.3364565707586384
+    },
+    "BASE": {
+     "trades": 1577,
+     "win_rate": 0.27710843373493976,
+     "profit_factor": 1.0098741892855827,
+     "expectancy_per_trade": 0.4002817070655807,
+     "avg_gross_pnl_per_trade": 1.8707552021243878,
+     "avg_cost_per_trade": 1.470473495058807,
+     "net_pnl": 631.2442520424207,
+     "total_return": 0.06312442520424208,
+     "max_drawdown_percent": 0.4234834573217165
+    },
+    "HIGH": {
+     "trades": 1577,
+     "win_rate": 0.2733037412809131,
+     "profit_factor": 0.9611178851692845,
+     "expectancy_per_trade": -1.6237570471818759,
+     "avg_gross_pnl_per_trade": 0.9904180551450574,
+     "avg_cost_per_trade": 2.614175102326933,
+     "net_pnl": -2560.6648634058183,
+     "total_return": -0.2560664863405818,
+     "max_drawdown_percent": 0.5943640225679602
+    }
+   },
+   "breakout_30": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 1159,
+     "win_rate": 0.28472821397756687,
+     "profit_factor": 1.1647359604226633,
+     "expectancy_per_trade": 6.722333438553233,
+     "avg_gross_pnl_per_trade": 6.722726368787605,
+     "avg_cost_per_trade": 0.0003929302343763715,
+     "net_pnl": 7791.184455283197,
+     "total_return": 0.7791184455283198,
+     "max_drawdown_percent": 0.2022107912665797
+    },
+    "LOW": {
+     "trades": 1159,
+     "win_rate": 0.2812769628990509,
+     "profit_factor": 1.129658297962342,
+     "expectancy_per_trade": 5.390527412066957,
+     "avg_gross_pnl_per_trade": 6.064122099080985,
+     "avg_cost_per_trade": 0.6735946870140237,
+     "net_pnl": 6247.621270585603,
+     "total_return": 0.6247621270585604,
+     "max_drawdown_percent": 0.2546203170865807
+    },
+    "BASE": {
+     "trades": 1159,
+     "win_rate": 0.27696289905090593,
+     "profit_factor": 1.0999761801574948,
+     "expectancy_per_trade": 4.224516966129586,
+     "avg_gross_pnl_per_trade": 5.4875070042815235,
+     "avg_cost_per_trade": 1.2629900381519354,
+     "net_pnl": 4896.215163744189,
+     "total_return": 0.4896215163744189,
+     "max_drawdown_percent": 0.30294432258839976,
+     "direction_split": {
+      "LONG": {
+       "trades": 587,
+       "net_pnl": 2398.1969963490546,
+       "profit_factor": 1.100986318027083
+      },
+      "SHORT": {
+       "trades": 572,
+       "net_pnl": 2498.018167395144,
+       "profit_factor": 1.0990252397984623
+      }
+     },
+     "by_half_year": {
+      "2012-H1": {
+       "trades": 12,
+       "net_pnl": 223.34
+      },
+      "2012-H2": {
+       "trades": 59,
+       "net_pnl": 124.52
+      },
+      "2013-H1": {
+       "trades": 51,
+       "net_pnl": 1923.72
+      },
+      "2013-H2": {
+       "trades": 55,
+       "net_pnl": 1071.25
+      },
+      "2014-H1": {
+       "trades": 58,
+       "net_pnl": -77.29
+      },
+      "2014-H2": {
+       "trades": 63,
+       "net_pnl": -868.76
+      },
+      "2015-H1": {
+       "trades": 55,
+       "net_pnl": -25.06
+      },
+      "2015-H2": {
+       "trades": 58,
+       "net_pnl": -595.52
+      },
+      "2016-H1": {
+       "trades": 68,
+       "net_pnl": -527.01
+      },
+      "2016-H2": {
+       "trades": 68,
+       "net_pnl": -961.57
+      },
+      "2017-H1": {
+       "trades": 59,
+       "net_pnl": 461.15
+      },
+      "2017-H2": {
+       "trades": 57,
+       "net_pnl": -189.84
+      },
+      "2018-H1": {
+       "trades": 69,
+       "net_pnl": -409.71
+      },
+      "2018-H2": {
+       "trades": 61,
+       "net_pnl": -284.48
+      },
+      "2019-H1": {
+       "trades": 57,
+       "net_pnl": 800.48
+      },
+      "2019-H2": {
+       "trades": 58,
+       "net_pnl": -376.72
+      },
+      "2020-H1": {
+       "trades": 52,
+       "net_pnl": 2510.39
+      },
+      "2020-H2": {
+       "trades": 54,
+       "net_pnl": 2565.44
+      },
+      "2021-H1": {
+       "trades": 52,
+       "net_pnl": 984.75
+      },
+      "2021-H2": {
+       "trades": 71,
+       "net_pnl": -1492.52
+      },
+      "2022-H1": {
+       "trades": 22,
+       "net_pnl": 39.65
+      }
+     },
+     "bootstrap_95ci_total_pnl": [
+      -4298.536839748512,
+      14519.838779919644
+     ]
+    },
+    "HIGH": {
+     "trades": 1159,
+     "win_rate": 0.27351164797238997,
+     "profit_factor": 1.0525629313365679,
+     "expectancy_per_trade": 2.2811662229014846,
+     "avg_gross_pnl_per_trade": 4.5264818462828424,
+     "avg_cost_per_trade": 2.245315623381356,
+     "net_pnl": 2643.8716523428207,
+     "total_return": 0.2643871652342821,
+     "max_drawdown_percent": 0.39325429826799596
+    }
+   },
+   "breakout_40": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 993,
+     "win_rate": 0.2678751258811682,
+     "profit_factor": 1.1461494500138045,
+     "expectancy_per_trade": 6.271754562864573,
+     "avg_gross_pnl_per_trade": 6.272120754066079,
+     "avg_cost_per_trade": 0.0003661912015071486,
+     "net_pnl": 6227.852280924521,
+     "total_return": 0.6227852280924522,
+     "max_drawdown_percent": 0.1756276629265492
+    },
+    "LOW": {
+     "trades": 993,
+     "win_rate": 0.2648539778449144,
+     "profit_factor": 1.1135902368433477,
+     "expectancy_per_trade": 4.962854337875691,
+     "avg_gross_pnl_per_trade": 5.59061068286207,
+     "avg_cost_per_trade": 0.6277563449863747,
+     "net_pnl": 4928.114357510562,
+     "total_return": 0.4928114357510562,
+     "max_drawdown_percent": 0.22200012482882972
+    },
+    "BASE": {
+     "trades": 993,
+     "win_rate": 0.2618328298086606,
+     "profit_factor": 1.0860059891063365,
+     "expectancy_per_trade": 3.8168981665754473,
+     "avg_gross_pnl_per_trade": 4.993941313425493,
+     "avg_cost_per_trade": 1.177043146850047,
+     "net_pnl": 3790.1798794094193,
+     "total_return": 0.37901798794094194,
+     "max_drawdown_percent": 0.26446984724318967,
+     "direction_split": {
+      "LONG": {
+       "trades": 507,
+       "net_pnl": 1894.5960664038494,
+       "profit_factor": 1.088090545465285
+      },
+      "SHORT": {
+       "trades": 486,
+       "net_pnl": 1895.5838130055693,
+       "profit_factor": 1.0840188211931658
+      }
+     },
+     "by_half_year": {
+      "2012-H1": {
+       "trades": 12,
+       "net_pnl": -138.26
+      },
+      "2012-H2": {
+       "trades": 51,
+       "net_pnl": 384.56
+      },
+      "2013-H1": {
+       "trades": 42,
+       "net_pnl": 2126.31
+      },
+      "2013-H2": {
+       "trades": 48,
+       "net_pnl": -65.95
+      },
+      "2014-H1": {
+       "trades": 50,
+       "net_pnl": 401.7
+      },
+      "2014-H2": {
+       "trades": 51,
+       "net_pnl": -775.35
+      },
+      "2015-H1": {
+       "trades": 52,
+       "net_pnl": -253.71
+      },
+      "2015-H2": {
+       "trades": 49,
+       "net_pnl": -185.77
+      },
+      "2016-H1": {
+       "trades": 54,
+       "net_pnl": -618.81
+      },
+      "2016-H2": {
+       "trades": 55,
+       "net_pnl": -481.8
+      },
+      "2017-H1": {
+       "trades": 52,
+       "net_pnl": 126.72
+      },
+      "2017-H2": {
+       "trades": 50,
+       "net_pnl": -57.52
+      },
+      "2018-H1": {
+       "trades": 52,
+       "net_pnl": -4.29
+      },
+      "2018-H2": {
+       "trades": 52,
+       "net_pnl": -485.58
+      },
+      "2019-H1": {
+       "trades": 48,
+       "net_pnl": 1023.22
+      },
+      "2019-H2": {
+       "trades": 52,
+       "net_pnl": -505.06
+      },
+      "2020-H1": {
+       "trades": 44,
+       "net_pnl": 2010.15
+      },
+      "2020-H2": {
+       "trades": 47,
+       "net_pnl": 1872.98
+      },
+      "2021-H1": {
+       "trades": 50,
+       "net_pnl": 455.8
+      },
+      "2021-H2": {
+       "trades": 62,
+       "net_pnl": -1137.82
+      },
+      "2022-H1": {
+       "trades": 20,
+       "net_pnl": 98.65
+      }
+     },
+     "bootstrap_95ci_total_pnl": [
+      -4880.241847455406,
+      13039.511659063424
+     ]
+    },
+    "HIGH": {
+     "trades": 993,
+     "win_rate": 0.2598187311178248,
+     "profit_factor": 1.041881611610217,
+     "expectancy_per_trade": 1.9069712144091897,
+     "avg_gross_pnl_per_trade": 3.999492364364962,
+     "avg_cost_per_trade": 2.0925211499557714,
+     "net_pnl": 1893.6224159083254,
+     "total_return": 0.18936224159083254,
+     "max_drawdown_percent": 0.34681883994704193
+    }
+   },
+   "breakout_50": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 857,
+     "win_rate": 0.25787631271878647,
+     "profit_factor": 1.1347556868009048,
+     "expectancy_per_trade": 5.993833572512436,
+     "avg_gross_pnl_per_trade": 5.994190095668829,
+     "avg_cost_per_trade": 0.0003565231563945828,
+     "net_pnl": 5136.715371643158,
+     "total_return": 0.5136715371643158,
+     "max_drawdown_percent": 0.14890082409498615
+    },
+    "LOW": {
+     "trades": 857,
+     "win_rate": 0.2555425904317386,
+     "profit_factor": 1.1036778779194119,
+     "expectancy_per_trade": 4.693215409305878,
+     "avg_gross_pnl_per_trade": 5.304397962682497,
+     "avg_cost_per_trade": 0.6111825533766148,
+     "net_pnl": 4022.0856057751375,
+     "total_return": 0.40220856057751375,
+     "max_drawdown_percent": 0.1571262224078596
+    },
+    "BASE": {
+     "trades": 857,
+     "win_rate": 0.25204200700116686,
+     "profit_factor": 1.0773317343972457,
+     "expectancy_per_trade": 3.5545102718349124,
+     "avg_gross_pnl_per_trade": 4.700477559416642,
+     "avg_cost_per_trade": 1.145967287581732,
+     "net_pnl": 3046.21530296252,
+     "total_return": 0.304621530296252,
+     "max_drawdown_percent": 0.18116693274523354,
+     "direction_split": {
+      "LONG": {
+       "trades": 441,
+       "net_pnl": 1543.0466831217905,
+       "profit_factor": 1.0808133621312968
+      },
+      "SHORT": {
+       "trades": 416,
+       "net_pnl": 1503.1686198407274,
+       "profit_factor": 1.0740565626956247
+      }
+     },
+     "by_half_year": {
+      "2012-H1": {
+       "trades": 9,
+       "net_pnl": 35.28
+      },
+      "2012-H2": {
+       "trades": 47,
+       "net_pnl": -539.38
+      },
+      "2013-H1": {
+       "trades": 40,
+       "net_pnl": 1190.9
+      },
+      "2013-H2": {
+       "trades": 47,
+       "net_pnl": -636.69
+      },
+      "2014-H1": {
+       "trades": 42,
+       "net_pnl": 514.35
+      },
+      "2014-H2": {
+       "trades": 43,
+       "net_pnl": -684.36
+      },
+      "2015-H1": {
+       "trades": 42,
+       "net_pnl": 12.32
+      },
+      "2015-H2": {
+       "trades": 42,
+       "net_pnl": -44.39
+      },
+      "2016-H1": {
+       "trades": 46,
+       "net_pnl": 96.14
+      },
+      "2016-H2": {
+       "trades": 38,
+       "net_pnl": 0.76
+      },
+      "2017-H1": {
+       "trades": 45,
+       "net_pnl": 467.24
+      },
+      "2017-H2": {
+       "trades": 45,
+       "net_pnl": 47.45
+      },
+      "2018-H1": {
+       "trades": 49,
+       "net_pnl": -463.76
+      },
+      "2018-H2": {
+       "trades": 43,
+       "net_pnl": -103.82
+      },
+      "2019-H1": {
+       "trades": 40,
+       "net_pnl": 836.8
+      },
+      "2019-H2": {
+       "trades": 49,
+       "net_pnl": -717.91
+      },
+      "2020-H1": {
+       "trades": 38,
+       "net_pnl": 2059.25
+      },
+      "2020-H2": {
+       "trades": 40,
+       "net_pnl": 1852.9
+      },
+      "2021-H1": {
+       "trades": 40,
+       "net_pnl": 529.73
+      },
+      "2021-H2": {
+       "trades": 55,
+       "net_pnl": -1566.19
+      },
+      "2022-H1": {
+       "trades": 17,
+       "net_pnl": 159.58
+      }
+     },
+     "bootstrap_95ci_total_pnl": [
+      -5080.824115317417,
+      11689.701436762447
+     ]
+    },
+    "HIGH": {
+     "trades": 857,
+     "win_rate": 0.24970828471411902,
+     "profit_factor": 1.0351487471610985,
+     "expectancy_per_trade": 1.6566683760507774,
+     "avg_gross_pnl_per_trade": 3.6939435539739867,
+     "avg_cost_per_trade": 2.0372751779232083,
+     "net_pnl": 1419.7647982755163,
+     "total_return": 0.14197647982755163,
+     "max_drawdown_percent": 0.24124404387663506
+    }
+   },
+   "breakout_60": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 808,
+     "win_rate": 0.23514851485148514,
+     "profit_factor": 1.0672355934278586,
+     "expectancy_per_trade": 3.1408703759095062,
+     "avg_gross_pnl_per_trade": 3.1411924453166074,
+     "avg_cost_per_trade": 0.00032206940710191725,
+     "net_pnl": 2537.823263734881,
+     "total_return": 0.2537823263734881,
+     "max_drawdown_percent": 0.19653827503863433
+    },
+    "LOW": {
+     "trades": 808,
+     "win_rate": 0.23514851485148514,
+     "profit_factor": 1.0393490461430193,
+     "expectancy_per_trade": 1.8697667709150434,
+     "avg_gross_pnl_per_trade": 2.4218857541181884,
+     "avg_cost_per_trade": 0.5521189832031492,
+     "net_pnl": 1510.7715508993551,
+     "total_return": 0.15107715508993552,
+     "max_drawdown_percent": 0.24599197407979984
+    },
+    "BASE": {
+     "trades": 808,
+     "win_rate": 0.23391089108910892,
+     "profit_factor": 1.0156965672686697,
+     "expectancy_per_trade": 0.7569019453949843,
+     "avg_gross_pnl_per_trade": 1.7921250389014145,
+     "avg_cost_per_trade": 1.035223093506428,
+     "net_pnl": 611.5767718791474,
+     "total_return": 0.06115767718791474,
+     "max_drawdown_percent": 0.2992156577843042
+    },
+    "HIGH": {
+     "trades": 808,
+     "win_rate": 0.23143564356435645,
+     "profit_factor": 0.977775515827381,
+     "expectancy_per_trade": -1.0978727638043009,
+     "avg_gross_pnl_per_trade": 0.7425238468739125,
+     "avg_cost_per_trade": 1.8403966106782106,
+     "net_pnl": -887.0811931538751,
+     "total_return": -0.08870811931538751,
+     "max_drawdown_percent": 0.3910045006301149
+    }
+   },
+   "regime_filtered_breakout_40": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 977,
+     "win_rate": 0.26816786079836236,
+     "profit_factor": 1.1538677603285519,
+     "expectancy_per_trade": 6.661811008932942,
+     "avg_gross_pnl_per_trade": 6.662177251626177,
+     "avg_cost_per_trade": 0.00036624269323432804,
+     "net_pnl": 6508.589355727484,
+     "total_return": 0.6508589355727484,
+     "max_drawdown_percent": 0.16794460546358125
+    },
+    "LOW": {
+     "trades": 977,
+     "win_rate": 0.26509723643807576,
+     "profit_factor": 1.1214552734863632,
+     "expectancy_per_trade": 5.3528666739238,
+     "avg_gross_pnl_per_trade": 5.9807112904424296,
+     "avg_cost_per_trade": 0.6278446165186274,
+     "net_pnl": 5229.750740423553,
+     "total_return": 0.5229750740423553,
+     "max_drawdown_percent": 0.20528355216368818
+    },
+    "BASE": {
+     "trades": 977,
+     "win_rate": 0.26202661207778916,
+     "profit_factor": 1.0939851736714097,
+     "expectancy_per_trade": 4.206871883828192,
+     "avg_gross_pnl_per_trade": 5.3840805398012135,
+     "avg_cost_per_trade": 1.1772086559730208,
+     "net_pnl": 4110.113830500144,
+     "total_return": 0.4110113830500144,
+     "max_drawdown_percent": 0.24645596445098716
+    },
+    "HIGH": {
+     "trades": 977,
+     "win_rate": 0.2599795291709314,
+     "profit_factor": 1.0500262017139315,
+     "expectancy_per_trade": 2.296880567003002,
+     "avg_gross_pnl_per_trade": 4.389695955399617,
+     "avg_cost_per_trade": 2.092815388396614,
+     "net_pnl": 2244.052313961933,
+     "total_return": 0.2244052313961933,
+     "max_drawdown_percent": 0.3253884517353181
+    }
+   },
+   "momentum_20": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 5673,
+     "win_rate": 0.3248722016569716,
+     "profit_factor": 1.0456043209865462,
+     "expectancy_per_trade": 0.8728787516203564,
+     "avg_gross_pnl_per_trade": 0.8738066364938307,
+     "avg_cost_per_trade": 0.0009278848734694727,
+     "net_pnl": 4951.841157942282,
+     "total_return": 0.49518411579422816,
+     "max_drawdown_percent": 0.1801484063777033
+    },
+    "LOW": {
+     "trades": 5673,
+     "win_rate": 0.2954345143662965,
+     "profit_factor": 0.9548489894134002,
+     "expectancy_per_trade": -0.9171923450086027,
+     "avg_gross_pnl_per_trade": 0.6734674369299073,
+     "avg_cost_per_trade": 1.5906597819385082,
+     "net_pnl": -5203.232173233803,
+     "total_return": -0.5203232173233803,
+     "max_drawdown_percent": 0.6721607529976699
+    },
+    "BASE": {
+     "trades": 5673,
+     "win_rate": 0.2719901286797109,
+     "profit_factor": 0.883847993784874,
+     "expectancy_per_trade": -2.484418769975864,
+     "avg_gross_pnl_per_trade": 0.49806832116034416,
+     "avg_cost_per_trade": 2.982487091136212,
+     "net_pnl": -14094.107682073078,
+     "total_return": -1.4094107682073078,
+     "max_drawdown_percent": 1.435174663208333
+    },
+    "HIGH": {
+     "trades": 5673,
+     "win_rate": 0.24202362065926317,
+     "profit_factor": 0.7808612763145703,
+     "expectancy_per_trade": -5.096462811586857,
+     "avg_gross_pnl_per_trade": 0.2057364615445336,
+     "avg_cost_per_trade": 5.302199273131376,
+     "net_pnl": -28912.233530132242,
+     "total_return": -2.891223353013224,
+     "max_drawdown_percent": 2.8288109358089657
+    }
+   },
+   "sma_crossover_5_20": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 3614,
+     "win_rate": 0.3616491422246818,
+     "profit_factor": 1.2084692025484867,
+     "expectancy_per_trade": 5.186509620816143,
+     "avg_gross_pnl_per_trade": 5.187671371177477,
+     "avg_cost_per_trade": 0.0011617503613313548,
+     "net_pnl": 18744.04576962954,
+     "total_return": 1.8744045769629543,
+     "max_drawdown_percent": 0.08215738291739758
+    },
+    "LOW": {
+     "trades": 3614,
+     "win_rate": 0.3467072495849474,
+     "profit_factor": 1.122156704950321,
+     "expectancy_per_trade": 3.1960993246232685,
+     "avg_gross_pnl_per_trade": 5.187671371177477,
+     "avg_cost_per_trade": 1.9915720465542173,
+     "net_pnl": 11550.702959188493,
+     "total_return": 1.1550702959188492,
+     "max_drawdown_percent": 0.12163584947661277
+    },
+    "BASE": {
+     "trades": 3614,
+     "win_rate": 0.33729939125622577,
+     "profit_factor": 1.0532197883685646,
+     "expectancy_per_trade": 1.4534737838864378,
+     "avg_gross_pnl_per_trade": 5.187671371177477,
+     "avg_cost_per_trade": 3.734197587291046,
+     "net_pnl": 5252.854254965586,
+     "total_return": 0.5252854254965585,
+     "max_drawdown_percent": 0.2810021813755848
+    },
+    "HIGH": {
+     "trades": 3614,
+     "win_rate": 0.3187603763143331,
+     "profit_factor": 0.9504181061912794,
+     "expectancy_per_trade": -1.450902117340355,
+     "avg_gross_pnl_per_trade": 5.187671371177477,
+     "avg_cost_per_trade": 6.638573488517832,
+     "net_pnl": -5243.560252068042,
+     "total_return": -0.5243560252068042,
+     "max_drawdown_percent": 0.7561513544083938
+    }
+   }
+  },
+  "buy_and_hold_BASE": {
+   "entry": 1552.95,
+   "exit": 1969.74,
+   "net_pnl": 3454.8796077630714,
+   "note": "Holding the same 8.3 oz position for the whole period, for context only."
+  }
+ },
+ "forward_2024_2026": {
+  "period": [
+   "2024-01-01T23:00:00+00:00",
+   "2026-09-15T23:00:00+00:00"
+  ],
+  "candles": 15453,
+  "strategies": {
+   "breakout_20": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 406,
+     "win_rate": 0.3054187192118227,
+     "profit_factor": 1.2546656289968547,
+     "expectancy_per_trade": 32.314445122434485,
+     "avg_gross_pnl_per_trade": 32.3149000936351,
+     "avg_cost_per_trade": 0.00045497120062168287,
+     "net_pnl": 13119.6647197084,
+     "total_return": 1.31196647197084,
+     "max_drawdown_percent": 0.3301244349447912
+    },
+    "LOW": {
+     "trades": 406,
+     "win_rate": 0.3054187192118227,
+     "profit_factor": 1.242267416012375,
+     "expectancy_per_trade": 30.929492145401213,
+     "avg_gross_pnl_per_trade": 31.70944277447198,
+     "avg_cost_per_trade": 0.7799506290707903,
+     "net_pnl": 12557.373811032892,
+     "total_return": 1.2557373811032893,
+     "max_drawdown_percent": 0.3432310784210611
+    },
+    "BASE": {
+     "trades": 406,
+     "win_rate": 0.30049261083743845,
+     "profit_factor": 1.231523070842922,
+     "expectancy_per_trade": 29.716950974812224,
+     "avg_gross_pnl_per_trade": 31.179358404320652,
+     "avg_cost_per_trade": 1.4624074295084368,
+     "net_pnl": 12065.082095773763,
+     "total_return": 1.2065082095773763,
+     "max_drawdown_percent": 0.3551833177594367
+    },
+    "HIGH": {
+     "trades": 406,
+     "win_rate": 0.30049261083743845,
+     "profit_factor": 1.2138652634777438,
+     "expectancy_per_trade": 27.696049023836647,
+     "avg_gross_pnl_per_trade": 30.29588445407117,
+     "avg_cost_per_trade": 2.5998354302345263,
+     "net_pnl": 11244.595903677679,
+     "total_return": 1.1244595903677679,
+     "max_drawdown_percent": 0.3761695041082512
+    }
+   },
+   "breakout_30": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 317,
+     "win_rate": 0.2902208201892745,
+     "profit_factor": 1.2731952399333624,
+     "expectancy_per_trade": 37.22912861202748,
+     "avg_gross_pnl_per_trade": 37.22954640237823,
+     "avg_cost_per_trade": 0.00041779035076507494,
+     "net_pnl": 11801.633770012711,
+     "total_return": 1.1801633770012712,
+     "max_drawdown_percent": 0.34457258393397383
+    },
+    "LOW": {
+     "trades": 317,
+     "win_rate": 0.2902208201892745,
+     "profit_factor": 1.2617762844706564,
+     "expectancy_per_trade": 35.87602634442375,
+     "avg_gross_pnl_per_trade": 36.59223837378539,
+     "avg_cost_per_trade": 0.7162120293616212,
+     "net_pnl": 11372.70035118233,
+     "total_return": 1.137270035118233,
+     "max_drawdown_percent": 0.350428861762086
+    },
+    "BASE": {
+     "trades": 317,
+     "win_rate": 0.2902208201892745,
+     "profit_factor": 1.2518844358964338,
+     "expectancy_per_trade": 34.69137081120767,
+     "avg_gross_pnl_per_trade": 36.03426836626134,
+     "avg_cost_per_trade": 1.3428975550536824,
+     "net_pnl": 10997.16454715283,
+     "total_return": 1.099716454715283,
+     "max_drawdown_percent": 0.35569932660604375,
+     "direction_split": {
+      "LONG": {
+       "trades": 167,
+       "net_pnl": 15638.03529020314,
+       "profit_factor": 1.8070327894598495
+      },
+      "SHORT": {
+       "trades": 150,
+       "net_pnl": -4640.8707430503055,
+       "profit_factor": 0.8088789580920114
+      }
+     },
+     "by_half_year": {
+      "2024-H1": {
+       "trades": 70,
+       "net_pnl": -1400.16
+      },
+      "2024-H2": {
+       "trades": 58,
+       "net_pnl": 2241.29
+      },
+      "2025-H1": {
+       "trades": 58,
+       "net_pnl": 905.31
+      },
+      "2025-H2": {
+       "trades": 55,
+       "net_pnl": 3667.26
+      },
+      "2026-H1": {
+       "trades": 48,
+       "net_pnl": 5554.81
+      },
+      "2026-H2": {
+       "trades": 28,
+       "net_pnl": 28.66
+      }
+     },
+     "bootstrap_95ci_total_pnl": [
+      -6924.566901694995,
+      30687.13803032339
+     ]
+    },
+    "HIGH": {
+     "trades": 317,
+     "win_rate": 0.2870662460567823,
+     "profit_factor": 1.2356035090005713,
+     "expectancy_per_trade": 32.716944922519936,
+     "avg_gross_pnl_per_trade": 35.10431835372395,
+     "avg_cost_per_trade": 2.3873734312040304,
+     "net_pnl": 10371.27154043882,
+     "total_return": 1.037127154043882,
+     "max_drawdown_percent": 0.36479568645264693
+    }
+   },
+   "breakout_40": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 272,
+     "win_rate": 0.27941176470588236,
+     "profit_factor": 1.3784649769643065,
+     "expectancy_per_trade": 53.21125766494525,
+     "avg_gross_pnl_per_trade": 53.21165488106143,
+     "avg_cost_per_trade": 0.00039721611618937766,
+     "net_pnl": 14473.462084865108,
+     "total_return": 1.4473462084865107,
+     "max_drawdown_percent": 0.323429528875392
+    },
+    "LOW": {
+     "trades": 272,
+     "win_rate": 0.27941176470588236,
+     "profit_factor": 1.3669324859952077,
+     "expectancy_per_trade": 51.875780168416135,
+     "avg_gross_pnl_per_trade": 52.55672208139383,
+     "avg_cost_per_trade": 0.6809419129776711,
+     "net_pnl": 14110.212205809188,
+     "total_return": 1.4110212205809187,
+     "max_drawdown_percent": 0.32699839260838637
+    },
+    "BASE": {
+     "trades": 272,
+     "win_rate": 0.27941176470588236,
+     "profit_factor": 1.356939552823632,
+     "expectancy_per_trade": 50.706555311118166,
+     "avg_gross_pnl_per_trade": 51.9833213979518,
+     "avg_cost_per_trade": 1.2767660868336244,
+     "net_pnl": 13792.183044624142,
+     "total_return": 1.3792183044624142,
+     "max_drawdown_percent": 0.33018175740623273,
+     "direction_split": {
+      "LONG": {
+       "trades": 149,
+       "net_pnl": 15446.750068174228,
+       "profit_factor": 1.8142931717820414
+      },
+      "SHORT": {
+       "trades": 123,
+       "net_pnl": -1654.5670235500806,
+       "profit_factor": 0.9158862497259893
+      }
+     },
+     "by_half_year": {
+      "2024-H1": {
+       "trades": 62,
+       "net_pnl": -1623.08
+      },
+      "2024-H2": {
+       "trades": 49,
+       "net_pnl": 2716.75
+      },
+      "2025-H1": {
+       "trades": 48,
+       "net_pnl": 2541.24
+      },
+      "2025-H2": {
+       "trades": 43,
+       "net_pnl": 5483.83
+      },
+      "2026-H1": {
+       "trades": 47,
+       "net_pnl": 3768.49
+      },
+      "2026-H2": {
+       "trades": 23,
+       "net_pnl": 904.96
+      }
+     },
+     "bootstrap_95ci_total_pnl": [
+      -3909.433948680935,
+      33576.80342232563
+     ]
+    },
+    "HIGH": {
+     "trades": 272,
+     "win_rate": 0.2757352941176471,
+     "profit_factor": 1.3404740905774097,
+     "expectancy_per_trade": 48.75784721562701,
+     "avg_gross_pnl_per_trade": 51.02765359221777,
+     "avg_cost_per_trade": 2.2698063765907714,
+     "net_pnl": 13262.134442650547,
+     "total_return": 1.3262134442650548,
+     "max_drawdown_percent": 0.3356134712001073
+    }
+   },
+   "breakout_50": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 244,
+     "win_rate": 0.2459016393442623,
+     "profit_factor": 1.3055239339452291,
+     "expectancy_per_trade": 43.477816012750026,
+     "avg_gross_pnl_per_trade": 43.47820643705176,
+     "avg_cost_per_trade": 0.00039042430175720424,
+     "net_pnl": 10608.587107111007,
+     "total_return": 1.0608587107111007,
+     "max_drawdown_percent": 0.33847550630485174
+    },
+    "LOW": {
+     "trades": 244,
+     "win_rate": 0.2459016393442623,
+     "profit_factor": 1.2944417859886985,
+     "expectancy_per_trade": 42.148156675536555,
+     "avg_gross_pnl_per_trade": 42.81745547806862,
+     "avg_cost_per_trade": 0.6692988025320608,
+     "net_pnl": 10284.15022883092,
+     "total_return": 1.028415022883092,
+     "max_drawdown_percent": 0.34235854370019875
+    },
+    "BASE": {
+     "trades": 244,
+     "win_rate": 0.2459016393442623,
+     "profit_factor": 1.2848455115863655,
+     "expectancy_per_trade": 40.98402567905864,
+     "avg_gross_pnl_per_trade": 42.23896093380646,
+     "avg_cost_per_trade": 1.2549352547478216,
+     "net_pnl": 10000.102265690308,
+     "total_return": 1.0000102265690307,
+     "max_drawdown_percent": 0.34582570222207565,
+     "direction_split": {
+      "LONG": {
+       "trades": 137,
+       "net_pnl": 14338.287237779063,
+       "profit_factor": 1.8358637738002552
+      },
+      "SHORT": {
+       "trades": 107,
+       "net_pnl": -4338.184972088749,
+       "profit_factor": 0.7583621626030437
+      }
+     },
+     "by_half_year": {
+      "2024-H1": {
+       "trades": 52,
+       "net_pnl": -1351.39
+      },
+      "2024-H2": {
+       "trades": 45,
+       "net_pnl": 764.3
+      },
+      "2025-H1": {
+       "trades": 46,
+       "net_pnl": 448.37
+      },
+      "2025-H2": {
+       "trades": 40,
+       "net_pnl": 5058.38
+      },
+      "2026-H1": {
+       "trades": 40,
+       "net_pnl": 4118.02
+      },
+      "2026-H2": {
+       "trades": 21,
+       "net_pnl": 962.42
+      }
+     },
+     "bootstrap_95ci_total_pnl": [
+      -5822.379765120506,
+      27076.021643925007
+     ]
+    },
+    "HIGH": {
+     "trades": 244,
+     "win_rate": 0.2459016393442623,
+     "profit_factor": 1.2690679337131534,
+     "expectancy_per_trade": 39.04380735160079,
+     "avg_gross_pnl_per_trade": 41.27480336003912,
+     "avg_cost_per_trade": 2.2309960084383285,
+     "net_pnl": 9526.688993790593,
+     "total_return": 0.9526688993790593,
+     "max_drawdown_percent": 0.35174940413303474
+    }
+   },
+   "breakout_60": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 223,
+     "win_rate": 0.23766816143497757,
+     "profit_factor": 1.4411359607653609,
+     "expectancy_per_trade": 61.418397667662504,
+     "avg_gross_pnl_per_trade": 61.418757133020925,
+     "avg_cost_per_trade": 0.00035946535843783947,
+     "net_pnl": 13696.302679888739,
+     "total_return": 1.3696302679888739,
+     "max_drawdown_percent": 0.27269727564327356
+    },
+    "LOW": {
+     "trades": 223,
+     "win_rate": 0.23766816143497757,
+     "profit_factor": 1.4292171947274062,
+     "expectancy_per_trade": 60.115259088089466,
+     "avg_gross_pnl_per_trade": 60.73148541639719,
+     "avg_cost_per_trade": 0.6162263283077047,
+     "net_pnl": 13405.702776643951,
+     "total_return": 1.340570277664395,
+     "max_drawdown_percent": 0.277733928671411
+    },
+    "BASE": {
+     "trades": 223,
+     "win_rate": 0.23766816143497757,
+     "profit_factor": 1.41889757989125,
+     "expectancy_per_trade": 58.97434729908512,
+     "avg_gross_pnl_per_trade": 60.12977166466173,
+     "avg_cost_per_trade": 1.155424365576658,
+     "net_pnl": 13151.27944769598,
+     "total_return": 1.315127944769598,
+     "max_drawdown_percent": 0.28223558959726525
+    },
+    "HIGH": {
+     "trades": 223,
+     "win_rate": 0.23766816143497757,
+     "profit_factor": 1.4019329619736478,
+     "expectancy_per_trade": 57.072827650749154,
+     "avg_gross_pnl_per_trade": 59.126915411772366,
+     "avg_cost_per_trade": 2.054087761023207,
+     "net_pnl": 12727.240566117061,
+     "total_return": 1.2727240566117062,
+     "max_drawdown_percent": 0.289936467877608
+    }
+   },
+   "regime_filtered_breakout_40": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 272,
+     "win_rate": 0.27941176470588236,
+     "profit_factor": 1.3784649769643065,
+     "expectancy_per_trade": 53.21125766494525,
+     "avg_gross_pnl_per_trade": 53.21165488106143,
+     "avg_cost_per_trade": 0.00039721611618937766,
+     "net_pnl": 14473.462084865108,
+     "total_return": 1.4473462084865107,
+     "max_drawdown_percent": 0.323429528875392
+    },
+    "LOW": {
+     "trades": 272,
+     "win_rate": 0.27941176470588236,
+     "profit_factor": 1.3669324859952077,
+     "expectancy_per_trade": 51.875780168416135,
+     "avg_gross_pnl_per_trade": 52.55672208139383,
+     "avg_cost_per_trade": 0.6809419129776711,
+     "net_pnl": 14110.212205809188,
+     "total_return": 1.4110212205809187,
+     "max_drawdown_percent": 0.32699839260838637
+    },
+    "BASE": {
+     "trades": 272,
+     "win_rate": 0.27941176470588236,
+     "profit_factor": 1.356939552823632,
+     "expectancy_per_trade": 50.706555311118166,
+     "avg_gross_pnl_per_trade": 51.9833213979518,
+     "avg_cost_per_trade": 1.2767660868336244,
+     "net_pnl": 13792.183044624142,
+     "total_return": 1.3792183044624142,
+     "max_drawdown_percent": 0.33018175740623273
+    },
+    "HIGH": {
+     "trades": 272,
+     "win_rate": 0.2757352941176471,
+     "profit_factor": 1.3404740905774097,
+     "expectancy_per_trade": 48.75784721562701,
+     "avg_gross_pnl_per_trade": 51.02765359221777,
+     "avg_cost_per_trade": 2.2698063765907714,
+     "net_pnl": 13262.134442650547,
+     "total_return": 1.3262134442650548,
+     "max_drawdown_percent": 0.3356134712001073
+    }
+   },
+   "momentum_20": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 1535,
+     "win_rate": 0.34071661237785017,
+     "profit_factor": 1.1311732229129368,
+     "expectancy_per_trade": 7.929708228675794,
+     "avg_gross_pnl_per_trade": 7.9306686594305456,
+     "avg_cost_per_trade": 0.000960430754743436,
+     "net_pnl": 12172.102131017344,
+     "total_return": 1.2172102131017344,
+     "max_drawdown_percent": 0.3117588146549131
+    },
+    "LOW": {
+     "trades": 1535,
+     "win_rate": 0.3289902280130293,
+     "profit_factor": 1.0992119130981601,
+     "expectancy_per_trade": 6.111756935341135,
+     "avg_gross_pnl_per_trade": 7.758209656567931,
+     "avg_cost_per_trade": 1.646452721226799,
+     "net_pnl": 9381.546895748643,
+     "total_return": 0.9381546895748643,
+     "max_drawdown_percent": 0.36023112452245354
+    },
+    "BASE": {
+     "trades": 1535,
+     "win_rate": 0.3166123778501629,
+     "profit_factor": 1.0721665333829533,
+     "expectancy_per_trade": 4.5201210994345695,
+     "avg_gross_pnl_per_trade": 7.6072199517350585,
+     "avg_cost_per_trade": 3.0870988523004925,
+     "net_pnl": 6938.385887632065,
+     "total_return": 0.6938385887632065,
+     "max_drawdown_percent": 0.41262535591057
+    },
+    "HIGH": {
+     "trades": 1535,
+     "win_rate": 0.3035830618892508,
+     "profit_factor": 1.0290018906415093,
+     "expectancy_per_trade": 1.8673947062631133,
+     "avg_gross_pnl_per_trade": 7.35557044368103,
+     "avg_cost_per_trade": 5.488175737417919,
+     "net_pnl": 2866.450874113879,
+     "total_return": 0.2866450874113879,
+     "max_drawdown_percent": 0.5413209228187464
+    }
+   },
+   "sma_crossover_5_20": {
+    "ORIGINAL_FOREX_TIER": {
+     "trades": 961,
+     "win_rate": 0.3600416233090531,
+     "profit_factor": 1.2596609385400201,
+     "expectancy_per_trade": 22.86302483004841,
+     "avg_gross_pnl_per_trade": 22.864186580409733,
+     "avg_cost_per_trade": 0.001161750361330595,
+     "net_pnl": 21971.36686167652,
+     "total_return": 2.197136686167652,
+     "max_drawdown_percent": 0.2778073310143578
+    },
+    "LOW": {
+     "trades": 961,
+     "win_rate": 0.3517169614984391,
+     "profit_factor": 1.2336497375638156,
+     "expectancy_per_trade": 20.872614533851575,
+     "avg_gross_pnl_per_trade": 22.864186580409733,
+     "avg_cost_per_trade": 1.9915720465581668,
+     "net_pnl": 20058.582567031364,
+     "total_return": 2.0058582567031364,
+     "max_drawdown_percent": 0.3211403000211483
+    },
+    "BASE": {
+     "trades": 961,
+     "win_rate": 0.3485952133194589,
+     "profit_factor": 1.2114579366737304,
+     "expectancy_per_trade": 19.129988993111635,
+     "avg_gross_pnl_per_trade": 22.864186580409733,
+     "avg_cost_per_trade": 3.7341975872980955,
+     "net_pnl": 18383.91942238028,
+     "total_return": 1.8383919422380282,
+     "max_drawdown_percent": 0.3670553891953064
+    },
+    "HIGH": {
+     "trades": 961,
+     "win_rate": 0.3433922996878252,
+     "profit_factor": 1.1756593256686756,
+     "expectancy_per_trade": 16.225613091886412,
+     "avg_gross_pnl_per_trade": 22.864186580409733,
+     "avg_cost_per_trade": 6.638573488523332,
+     "net_pnl": 15592.814181302841,
+     "total_return": 1.559281418130284,
+     "max_drawdown_percent": 0.45493794431315226
+    }
+   }
+  },
+  "buy_and_hold_BASE": {
+   "entry": 2064.101,
+   "exit": 4283.561,
+   "net_pnl": 18413.82619595121,
+   "note": "Holding the same 8.3 oz position for the whole period, for context only."
+  }
+ }
+}
