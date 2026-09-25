@@ -8,6 +8,8 @@ on:
       - "backend/app/api/routes/live.py"
       - "backend/tests/test_decision_engine.py"
       - "backend/tests/test_live_decision_api.py"
+      - "backend/app/news_engine/context.py"
+      - "backend/app/news_engine/macro_risk.py"
       - ".github/workflows/multi-factor-decision.yml"
 
 jobs:
