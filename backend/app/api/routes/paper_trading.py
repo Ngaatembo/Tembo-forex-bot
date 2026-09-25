@@ -110,3 +110,11 @@ async def get_events() -> list[dict]:
             "exit_reason": t["exit_reason"], "realized_pnl": t["realized_pnl"], "timestamp": t["exit_time"],
         })
     return events
+
+
+@router.get("/validation")
+async def get_paper_validation() -> dict:
+    """Run a deterministic, synthetic safety validation suite in memory."""
+    from app.paper_trading.validation import run_paper_validation_suite
+
+    return run_paper_validation_suite()
