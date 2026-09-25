@@ -322,3 +322,98 @@ async def live_multi_timeframe_analysis(
             "into a BUY/SELL instruction by this endpoint."
         ),
     }
+
+
+@router.get("/decision")
+async def live_decision(
+    instrument: str = Query("EUR/USD"),
+    timeframe: str = Query("h1"),
+) -> dict:
+    """Return a read-only multi-factor decision from verified completed candles."""
+    if instrument not in INSTRUMENTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid instrument {instrument!r}. Must be one of {INSTRUMENTS}.",
+        )
+
+    selected_timeframe = timeframe.lower()
+    if selected_timeframe not in TIMEFRAMES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid timeframe {timeframe!r}. Must be one of {TIMEFRAMES}.",
+        )
+
+    settings = get_settings()
+    if settings.market_data_provider == "mock":
+        return {
+            "instrument": instrument,
+            "timeframe": selected_timeframe,
+            "provider": "mock",
+            "status": "waiting",
+            "decision": "NO_TRADE",
+            "message": "Decision engine is waiting for verified live candles; mock data cannot authorize a trade.",
+            "trade_plan": None,
+        }
+
+    try:
+        provider = get_market_data_provider(settings.market_data_provider)
+        candles = normalize_candles(
+            await provider.get_candles(instrument, selected_timeframe, limit=200)
+        )
+        validation = validate_candles(candles, timeframe=selected_timeframe)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Decision data is unavailable: {exc}",
+        ) from exc
+
+    if len(candles) < 50 or not validation.is_clean:
+        return {
+            "instrument": instrument,
+            "timeframe": selected_timeframe,
+            "provider": settings.market_data_provider,
+            "status": "rejected",
+            "decision": "NO_TRADE",
+            "message": "Decision engine refused insufficient or invalid candle data.",
+            "data_quality": {
+                "is_clean": validation.is_clean,
+                "candle_count": len(candles),
+                "ohlc_violations": len(validation.ohlc_violations),
+                "duplicate_timestamps": len(validation.duplicate_timestamps),
+                "unexpected_gaps": len(validation.unexpected_gaps),
+            },
+            "trade_plan": None,
+        }
+
+    from app.live_engine.candlesticks import detect_candlestick_patterns
+    from app.signal_engine.decision_engine import evaluate_trade_decision
+    from app.technical_engine.features import calculate_feature_snapshots
+
+    snapshots = calculate_feature_snapshots(candles)
+    if not snapshots:
+        raise HTTPException(
+            status_code=503,
+            detail="Decision engine could not calculate technical features.",
+        )
+
+    patterns = detect_candlestick_patterns(candles)
+    decision = evaluate_trade_decision(snapshots[-1], patterns)
+
+    return {
+        "instrument": instrument,
+        "timeframe": selected_timeframe,
+        "provider": settings.market_data_provider,
+        "status": "available",
+        "decision": decision.decision,
+        "methodology": decision.methodology,
+        "data_quality": {
+            "is_clean": validation.is_clean,
+            "candle_count": len(candles),
+            "last_candle": candles[-1].timestamp.isoformat(),
+        },
+        "trade_plan": decision.to_dict(),
+        "execution": {
+            "enabled": False,
+            "note": "This endpoint produces analysis only. It does not place orders.",
+        },
+    }
