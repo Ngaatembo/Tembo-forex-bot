@@ -1,0 +1,27 @@
+name: Hypothesis Registry Tests
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "backend/app/research/hypothesis.py"
+      - "backend/app/research/hypothesis_registry.py"
+      - "backend/tests/test_hypothesis_registry.py"
+      - "backend/tests/test_hypothesis_provenance.py"
+      - ".github/workflows/hypothesis-registry-tests.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      PYTHONPATH: ${{ github.workspace }}/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: pytest -q tests/test_hypothesis_registry.py tests/test_hypothesis_provenance.py
