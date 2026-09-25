@@ -24,6 +24,8 @@ size. The caller (risk_engine.py) is responsible for turning that
 into an INSUFFICIENT_ACCOUNT_DATA / INVALID_INSTRUMENT decision.
 """
 
+from math import isfinite
+
 from app.research.instrument_adapter import InstrumentTimeframeInfo
 from app.risk_engine.risk_models import PositionSizingDetail
 
@@ -32,14 +34,16 @@ def compute_position_size(
     *, equity: float, risk_pct: float, entry_price: float, stop_price: float,
     instrument_info: InstrumentTimeframeInfo | None = None,
 ) -> PositionSizingDetail:
-    if equity <= 0:
-        raise ValueError("equity must be positive.")
-    if not (0 < risk_pct <= 1):
-        raise ValueError("risk_pct must be in (0, 1].")
+    if not isfinite(equity) or equity <= 0:
+        raise ValueError("equity must be finite and positive.")
+    if not isfinite(risk_pct) or not (0 < risk_pct <= 1):
+        raise ValueError("risk_pct must be finite and in (0, 1].")
+    if not isfinite(entry_price) or not isfinite(stop_price) or entry_price <= 0 or stop_price <= 0:
+        raise ValueError("entry_price and stop_price must be finite and positive.")
 
     stop_distance = abs(entry_price - stop_price)
-    if stop_distance <= 0:
-        raise ValueError("stop_distance must be positive — entry and stop cannot be equal.")
+    if not isfinite(stop_distance) or stop_distance <= 0:
+        raise ValueError("stop_distance must be finite and positive — entry and stop cannot be equal.")
 
     risk_amount = equity * risk_pct
 
@@ -59,6 +63,14 @@ def compute_position_size(
 
     final_size = raw_size
     if instrument_info is not None:
+        if instrument_info.tick_size is not None and instrument_info.tick_size <= 0:
+            raise ValueError("tick_size must be positive when supplied.")
+        if instrument_info.tick_value is not None and (not isfinite(instrument_info.tick_value) or instrument_info.tick_value <= 0):
+            raise ValueError("tick_value must be finite and positive when supplied.")
+        if instrument_info.minimum_position_size is not None and (not isfinite(instrument_info.minimum_position_size) or instrument_info.minimum_position_size < 0):
+            raise ValueError("minimum_position_size must be finite and non-negative when supplied.")
+        if instrument_info.position_increment is not None and (not isfinite(instrument_info.position_increment) or instrument_info.position_increment < 0):
+            raise ValueError("position_increment must be finite and non-negative when supplied.")
         if instrument_info.minimum_position_size is not None:
             if final_size < instrument_info.minimum_position_size:
                 final_size = 0.0

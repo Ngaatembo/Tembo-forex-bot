@@ -103,3 +103,60 @@ def test_risk_limits_reject_non_finite_values():
     except ValueError:
         return
     raise AssertionError("non-finite risk configuration must be rejected")
+
+
+def test_account_data_rejects_non_finite_secondary_state():
+    from math import nan
+    from app.risk_engine.account_limits import account_data_valid
+    from app.risk_engine.risk_models import AccountState
+
+    assert not account_data_valid(AccountState(
+        equity=10000, peak_equity=10000, daily_start_equity=10000,
+        daily_realized_pnl=nan, kill_switch_active=False,
+    ))[0]
+    assert not account_data_valid(AccountState(
+        equity=10000, peak_equity=10000, daily_start_equity=10000,
+        total_open_risk_pct=nan, kill_switch_active=False,
+    ))[0]
+    assert not account_data_valid(AccountState(
+        equity=10000, peak_equity=10000, daily_start_equity=10000,
+        open_positions_count=-1, kill_switch_active=False,
+    ))[0]
+
+
+def test_independent_risk_limits_fail_closed_on_non_finite_inputs():
+    from math import nan
+    from app.risk_engine.account_limits import (
+        check_daily_loss, check_exposure, check_per_trade_risk, check_total_open_risk,
+    )
+    from app.risk_engine.risk_models import AccountState, RiskLimitsConfig
+
+    limits = RiskLimitsConfig()
+    account = AccountState(
+        equity=10000, peak_equity=10000, daily_start_equity=10000,
+        total_open_risk_pct=0.0, kill_switch_active=False,
+    )
+    assert not check_per_trade_risk(nan, limits)[0]
+    assert not check_total_open_risk(account, nan, limits)[0]
+    bad_pnl = AccountState(
+        equity=10000, peak_equity=10000, daily_start_equity=10000,
+        daily_realized_pnl=nan, kill_switch_active=False,
+    )
+    assert not check_daily_loss(bad_pnl, limits)[0]
+    assert not check_exposure(nan, 1.0, account, limits)[0]
+
+
+def test_position_sizing_rejects_non_finite_inputs():
+    from math import nan
+    from app.risk_engine.position_sizing import compute_position_size
+    with __import__("pytest").raises(ValueError):
+        compute_position_size(equity=10000, risk_pct=0.01, entry_price=nan, stop_price=1.0)
+
+def test_suite_contains_input_hardening_checks():
+    from app.paper_trading.validation import run_paper_validation_suite
+
+    result = run_paper_validation_suite()
+    names = {check["name"] for check in result["checks"]}
+    assert "invalid_direction_is_blocked" in names
+    assert "invalid_take_profit_is_blocked" in names
+    assert result["status"] == "PASS"

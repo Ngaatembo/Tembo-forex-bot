@@ -200,6 +200,45 @@ def run_paper_validation_suite() -> dict:
         and closed[0].realized_pnl < 0
         and not lifecycle.account.open_positions
     )
+    invalid_inputs = _engine(_config())
+    invalid_direction = invalid_inputs.evaluate_and_maybe_open(
+        instrument="XAU/USD",
+        timeframe="h1",
+        direction="SIDEWAYS",
+        entry_price=1900.0,
+        stop_price=1860.0,
+        current_prices={},
+    )
+    checks.append(
+        _check(
+            "invalid_direction_is_blocked",
+            "INVALID_INPUT",
+            invalid_direction.status,
+            invalid_direction.status == "INVALID_INPUT" and invalid_direction.position is None,
+            invalid_direction.reason,
+        )
+    )
+
+    invalid_tp = _engine(_config())
+    invalid_take_profit = invalid_tp.evaluate_and_maybe_open(
+        instrument="XAU/USD",
+        timeframe="h1",
+        direction="LONG",
+        entry_price=1900.0,
+        stop_price=1860.0,
+        take_profit_price=1890.0,
+        current_prices={},
+    )
+    checks.append(
+        _check(
+            "invalid_take_profit_is_blocked",
+            "INVALID_INPUT",
+            invalid_take_profit.status,
+            invalid_take_profit.status == "INVALID_INPUT" and invalid_take_profit.position is None,
+            invalid_take_profit.reason,
+        )
+    )
+
     checks.append(
         _check(
             "paper_position_stop_lifecycle",

@@ -25,6 +25,7 @@ broker.
 
 from dataclasses import dataclass
 from datetime import datetime
+from math import isfinite
 from typing import Optional
 
 from app.news_engine.models import MACRO_RISK_HIGH, MacroEventRisk
@@ -89,6 +90,21 @@ class PaperTradingEngine:
         timeframe_norm = timeframe.lower()
         if timeframe_norm not in _VALID_TIMEFRAMES:
             return PaperTradeDecision("INVALID_INPUT", f"Invalid timeframe {timeframe!r}. Must be one of {sorted(_VALID_TIMEFRAMES)}.")
+        if direction not in {"LONG", "SHORT"}:
+            return PaperTradeDecision("INVALID_INPUT", "direction must be 'LONG' or 'SHORT'.")
+        if not isfinite(entry_price) or entry_price <= 0:
+            return PaperTradeDecision("INVALID_INPUT", "entry_price must be finite and positive.")
+        if max_holding_periods is not None and (
+            not isinstance(max_holding_periods, int) or isinstance(max_holding_periods, bool) or max_holding_periods <= 0
+        ):
+            return PaperTradeDecision("INVALID_INPUT", "max_holding_periods must be a positive integer when supplied.")
+        if take_profit_price is not None:
+            if not isfinite(take_profit_price) or take_profit_price <= 0:
+                return PaperTradeDecision("INVALID_INPUT", "take_profit_price must be finite and positive when supplied.")
+            if direction == "LONG" and take_profit_price <= entry_price:
+                return PaperTradeDecision("INVALID_INPUT", "LONG take-profit must be above entry.")
+            if direction == "SHORT" and take_profit_price >= entry_price:
+                return PaperTradeDecision("INVALID_INPUT", "SHORT take-profit must be below entry.")
 
         selection = select_strategy(instrument, timeframe_norm, self.configs, current_regime)
         if selection.status == "NO_VALIDATED_EDGE":
@@ -97,6 +113,12 @@ class PaperTradingEngine:
             return PaperTradeDecision("PROMISING_NOT_TRADEABLE", selection.reason)
         if selection.status == "RESEARCH_REQUIRED":
             return PaperTradeDecision("RESEARCH_REQUIRED", selection.reason)
+        if selection.status != "TRADEABLE":
+            return PaperTradeDecision(
+                "RESEARCH_REQUIRED",
+                f"Strategy Selector returned unexpected status '{selection.status}'. "
+                "Tembo refuses to assume an unknown state is tradeable.",
+            )
 
         # Macro/Event Safety Gate — sits between Research Gate and Risk
         # Engine. Can only RESTRICT (block on HIGH risk); a None value
