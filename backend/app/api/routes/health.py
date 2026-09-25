@@ -78,6 +78,11 @@ async def health_check() -> dict:
 
     if settings.market_data_provider == "mock":
         market_data_status = "mock"
+    elif settings.market_data_provider == "mt5_bridge":
+        if not settings.mt5_bridge_url or not settings.mt5_bridge_token:
+            market_data_status = "unavailable"
+        else:
+            market_data_status = _market_data_status(settings.market_data_provider)
     elif not settings.market_data_api_key:
         market_data_status = "unavailable"
     else:
