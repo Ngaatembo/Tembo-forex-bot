@@ -10,6 +10,8 @@ on:
       - "backend/tests/test_live_decision_api.py"
       - "backend/app/news_engine/context.py"
       - "backend/app/news_engine/macro_risk.py"
+      - "backend/app/risk_engine/**"
+      - "backend/tests/test_risk_engine_security_boundary.py"
       - ".github/workflows/multi-factor-decision.yml"
 
 jobs:
