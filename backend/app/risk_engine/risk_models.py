@@ -4,6 +4,7 @@ produces and consumes. Pure data, no logic here.
 """
 
 from dataclasses import asdict, dataclass
+from math import isfinite
 from typing import Optional
 
 RISK_DECISION_STATES = frozenset({
@@ -36,7 +37,7 @@ class RiskLimitsConfig:
             ("max_drawdown_pct", self.max_drawdown_pct),
             ("max_exposure_pct", self.max_exposure_pct),
         ):
-            if not (0 < value <= 1):
+            if not isfinite(value) or not (0 < value <= 1):
                 raise ValueError(f"{name} must be in (0, 1], got {value}")
         if self.max_simultaneous_positions <= 0:
             raise ValueError("max_simultaneous_positions must be positive.")
