@@ -70,3 +70,36 @@ def test_risk_engine_uses_central_kill_switch(monkeypatch):
     )
     assert result.state == "KILL_SWITCH_ACTIVE"
     assert calls == [(True, False)]
+
+
+def test_account_data_rejects_non_finite_values():
+    from math import nan
+    from app.risk_engine.account_limits import account_data_valid
+    from app.risk_engine.risk_models import AccountState
+
+    for account in (
+        AccountState(equity=nan, peak_equity=10000, daily_start_equity=10000, kill_switch_active=False),
+        AccountState(equity=10000, peak_equity=nan, daily_start_equity=10000, kill_switch_active=False),
+        AccountState(equity=10000, peak_equity=10000, daily_start_equity=nan, kill_switch_active=False),
+    ):
+        valid, _ = account_data_valid(account)
+        assert not valid
+
+
+def test_stop_validation_rejects_non_finite_prices():
+    from math import inf, nan
+    from app.risk_engine.stop_validation import validate_stop
+
+    assert not validate_stop("LONG", nan, 1.0).valid
+    assert not validate_stop("LONG", 1.0, inf).valid
+
+
+def test_risk_limits_reject_non_finite_values():
+    from math import nan
+    from app.risk_engine.risk_models import RiskLimitsConfig
+
+    try:
+        RiskLimitsConfig(max_risk_per_trade_pct=nan)
+    except ValueError:
+        return
+    raise AssertionError("non-finite risk configuration must be rejected")
