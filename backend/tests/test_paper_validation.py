@@ -9,5 +9,5 @@ def test_paper_validation_suite_passes():
     assert result["persistent_state_changed"] is False
     assert result["real_broker_contacted"] is False
     assert result["execution_enabled"] is False
-    assert len(result["checks"]) == 6
+    assert len(result["checks"]) == 8
     assert all(check["passed"] for check in result["checks"])
