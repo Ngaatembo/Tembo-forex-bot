@@ -14,6 +14,7 @@ import argparse
 import json
 from pathlib import Path
 from types import SimpleNamespace
+from math import sqrt
 
 import pandas as pd
 
@@ -23,6 +24,8 @@ DATA_URL = "https://raw.githubusercontent.com/ejtraderLabs/historical-data/main/
 HORIZONS = (1, 3, 6, 12)
 # Sensitivity assumptions only; these are not broker-specific quotes.
 COST_SCENARIOS_PIPS = {"low": 0.5, "base": 1.0, "high": 2.0}
+PIP_SIZE = 0.0001
+MIN_CANDIDATE_COUNT = 30
 
 
 def load_data(source: str) -> pd.DataFrame:
@@ -42,6 +45,22 @@ def candles_from_frame(df: pd.DataFrame):
         )
         for row in df.itertuples()
     ]
+
+
+def wilson_interval(successes: int, observations: int, z: float = 1.959963984540054) -> tuple[float, float]:
+    if observations <= 0 or successes < 0 or successes > observations:
+        raise ValueError("Invalid successes/observations.")
+    p = successes / observations
+    denominator = 1 + (z * z / observations)
+    centre = (p + z * z / (2 * observations)) / denominator
+    margin = z * sqrt((p * (1 - p) / observations) + (z * z / (4 * observations * observations))) / denominator
+    return max(0.0, centre - margin), min(1.0, centre + margin)
+
+
+def net_return(signed_return: float, entry_price: float, cost_pips: float) -> float:
+    if entry_price <= 0 or cost_pips < 0:
+        raise ValueError("Invalid entry price or cost.")
+    return signed_return - ((cost_pips * PIP_SIZE) / entry_price)
 
 
 def analyze_split(df: pd.DataFrame, start: int, end: int) -> dict:
