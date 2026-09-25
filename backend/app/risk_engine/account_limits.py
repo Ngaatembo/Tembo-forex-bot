@@ -3,15 +3,17 @@ Account-level risk limit checks. Each function is independent and
 fails closed — a missing/invalid input never passes silently.
 """
 
+from math import isfinite
+
 from app.risk_engine.risk_models import AccountState, RiskLimitsConfig
 
 
 def account_data_valid(account: AccountState) -> tuple[bool, str]:
-    if account.equity is None or account.equity <= 0:
+    if account.equity is None or not isfinite(account.equity) or account.equity <= 0:
         return False, "Account equity is missing or non-positive."
-    if account.peak_equity is None or account.peak_equity <= 0:
+    if account.peak_equity is None or not isfinite(account.peak_equity) or account.peak_equity <= 0:
         return False, "Peak equity (required for drawdown calculation) is missing or non-positive."
-    if account.daily_start_equity is None or account.daily_start_equity <= 0:
+    if account.daily_start_equity is None or not isfinite(account.daily_start_equity) or account.daily_start_equity <= 0:
         return False, "Daily start equity (required for daily-loss calculation) is missing or non-positive."
     return True, "Account data valid."
 
