@@ -6,6 +6,7 @@ Run with:
 """
 
 from contextlib import asynccontextmanager
+import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,13 +18,19 @@ from app.database.init import initialize_database
 
 settings = get_settings()
 configure_logging("DEBUG" if settings.debug else "INFO")
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    # Bootstrap the foundational Render PostgreSQL schema before serving API
-    # traffic. create_all is idempotent and never removes existing data.
-    await initialize_database()
+    # Bootstrap the foundational Render PostgreSQL schema when a database is
+    # configured. A database outage must not prevent the read-only dashboard
+    # from starting; /health reports database availability separately.
+    try:
+        await initialize_database()
+        logger.info("Database schema initialization/check completed.")
+    except Exception:
+        logger.exception("Database schema initialization failed; starting API in degraded database mode.")
     yield
 
 
