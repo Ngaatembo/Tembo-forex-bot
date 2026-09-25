@@ -11,7 +11,15 @@ from app.core.config import get_settings
 
 settings = get_settings()
 
-engine = create_async_engine(settings.database_url, echo=settings.debug, future=True)
+# Render provides a standard postgresql:// connection string. SQLAlchemy's
+# async engine needs the asyncpg dialect explicitly.
+database_url = settings.database_url
+if database_url.startswith("postgres://"):
+    database_url = "postgresql+asyncpg://" + database_url[len("postgres://"):]
+elif database_url.startswith("postgresql://"):
+    database_url = "postgresql+asyncpg://" + database_url[len("postgresql://"):]
+
+engine = create_async_engine(database_url, echo=settings.debug, future=True)
 
 AsyncSessionLocal = async_sessionmaker(
     bind=engine, expire_on_commit=False, class_=AsyncSession
