@@ -1,5 +1,7 @@
 name: Candlestick Book Research
 
+# Research gate: tests and out-of-sample evidence run before book-derived logic is promoted.
+
 on:
   workflow_dispatch:
   push:
