@@ -1,0 +1,54 @@
+name: Apply uploaded bundle
+
+# Upload ONE .zip to the top of the repo (GitHub website -> Add file -> Upload files), or into incoming/.
+# This workflow unpacks it into the repo, applies _delete.txt if present, removes the zip and commits.
+on:
+  push:
+    branches: [main]
+    paths: ['*.zip', 'incoming/**']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-upload
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unpack bundles
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          zips=(*.zip incoming/*.zip)
+          if [ ${#zips[@]} -eq 0 ]; then echo "No .zip found - nothing to do"; exit 0; fi
+          for z in "${zips[@]}"; do
+            echo "=== Unpacking $z"
+            unzip -Z1 "$z"
+            # Refuse absolute paths, "..", .git/ and .github/ (GitHub blocks bot edits to workflows anyway)
+            if unzip -Z1 "$z" | grep -E '(^/|(^|/)\.\.(/|$)|^\.git/|^\.github/)'; then
+              echo "::error::Unsafe path inside $z - nothing applied"; exit 1
+            fi
+            unzip -o -q "$z" -d .
+            if [ -f _delete.txt ]; then
+              while IFS= read -r p || [ -n "$p" ]; do
+                p="${p%$'\r'}"; [ -z "$p" ] && continue
+                case "$p" in
+                  /*|*..*|.git*|.github*) echo "Skipping unsafe delete: $p" ;;
+                  *) echo "Deleting $p"; git rm -r -q --ignore-unmatch -- "$p" ;;
+                esac
+              done < _delete.txt
+              rm -f _delete.txt
+            fi
+            git rm -q -- "$z"
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Apply uploaded bundle: $(for z in "${zips[@]}"; do basename "$z"; done | tr '\n' ' ')"
+          git push
