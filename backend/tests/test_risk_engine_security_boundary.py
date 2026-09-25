@@ -37,10 +37,11 @@ def test_risk_engine_uses_central_kill_switch(monkeypatch):
     from app.research.strategy_selector import SelectionResult
 
     calls = []
+    original_check = risk_engine.check_kill_switch
 
     def fake_check(*, kill_switch_active, manually_triggered=False):
         calls.append((kill_switch_active, manually_triggered))
-        return risk_engine.check_kill_switch(
+        return original_check(
             kill_switch_active=kill_switch_active,
             manually_triggered=manually_triggered,
         )
