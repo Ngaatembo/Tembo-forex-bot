@@ -1,15 +1,34 @@
-"""Read-only contract for the live trading cockpit.
+"""Read-only contracts for the live trading cockpit.
 
-It deliberately exposes no order-placement operation. Until an MT5
-terminal/bridge is connected and verified, missing market data produces
-NO_TRADE rather than fabricated prices or signals.
+The live cockpit is deliberately fail-closed: mock data is labelled as
+mock and never exposed as a live quote, while real providers must return
+validated candles before the cockpit can use them.
 """
-from fastapi import APIRouter, Query
+
+from fastapi import APIRouter, HTTPException, Query
+
 from app.api.routes.health import health_check
 from app.core.config import get_settings
+from app.data_engine.market_data import get_market_data_provider
+from app.data_engine.normalizer import normalize_candles
+from app.data_engine.validator import validate_candles
 
 router = APIRouter(prefix="/live", tags=["live"])
+
 INSTRUMENTS = ("EUR/USD", "GBP/USD", "XAU/USD")
+TIMEFRAMES = ("m5", "m15", "h1", "h4", "d1")
+
+
+def _candle_payload(candle) -> dict:
+    return {
+        "timestamp": candle.timestamp.isoformat(),
+        "open": candle.open,
+        "high": candle.high,
+        "low": candle.low,
+        "close": candle.close,
+        "volume": candle.volume,
+    }
+
 
 @router.get("/overview")
 async def live_overview(
@@ -19,36 +38,58 @@ async def live_overview(
     settings = get_settings()
     health = await health_check()
     selected = instrument if instrument in INSTRUMENTS else "EUR/USD"
+    selected_timeframe = timeframe.lower() if timeframe.lower() in TIMEFRAMES else "h1"
     provider = settings.market_data_provider
     data_status = health["market_data"]
     decision = "NO_TRADE"
-    reason = "Live market data is not verified, so Tembo fails closed instead of inventing an entry."
+    reason = (
+        "Live market data is not verified, so Tembo fails closed instead of "
+        "inventing an entry."
+    )
     return {
         "mode": "MT5_DEMO_READY" if settings.mt5_bridge_url else "PREPARING",
         "mt5": {
-            "status": "configured" if settings.mt5_bridge_url and settings.mt5_bridge_token else "not_connected",
-            "message": "Bridge configuration exists; terminal connectivity will be verified when the bridge is deployed."
-            if settings.mt5_bridge_url else "Waiting for the MT5 bridge URL and token.",
+            "status": (
+                "configured"
+                if settings.mt5_bridge_url and settings.mt5_bridge_token
+                else "not_connected"
+            ),
+            "message": (
+                "Bridge configuration exists; terminal connectivity will be "
+                "verified when the bridge is deployed."
+                if settings.mt5_bridge_url
+                else "Waiting for the MT5 bridge URL and token."
+            ),
         },
         "execution": {
             "enabled": bool(settings.enable_live_execution),
-            "note": "Execution remains disabled until MT5 demo connectivity and safety tests are completed.",
+            "note": (
+                "Execution remains disabled until MT5 demo connectivity and "
+                "safety tests are completed."
+            ),
         },
         "market_data": {"provider": provider, "status": data_status},
         "context": {
             "news": health["news_service"],
-            "calendar": "configured" if settings.economic_calendar_provider != "mock" else "mock",
+            "calendar": (
+                "configured"
+                if settings.economic_calendar_provider != "mock"
+                else "mock"
+            ),
         },
-        "instruments": [{
-            "instrument": symbol,
-            "timeframe": timeframe,
-            "provider": provider,
-            "data_status": data_status,
-            "current_price": None,
-            "last_update": None,
-            "decision": decision,
-            "reason": reason,
-        } for symbol in INSTRUMENTS],
+        "instruments": [
+            {
+                "instrument": symbol,
+                "timeframe": selected_timeframe,
+                "provider": provider,
+                "data_status": data_status,
+                "current_price": None,
+                "last_update": None,
+                "decision": decision,
+                "reason": reason,
+            }
+            for symbol in INSTRUMENTS
+        ],
         "trade_plan": {
             "instrument": selected,
             "decision": decision,
@@ -57,4 +98,99 @@ async def live_overview(
             "take_profit": None,
             "reason": reason,
         },
+    }
+
+
+@router.get("/market")
+async def live_market(
+    instrument: str = Query("EUR/USD"),
+    timeframe: str = Query("h1"),
+    limit: int = Query(120, ge=20, le=500),
+) -> dict:
+    """Return chart-ready quote/candle data without fabricating mock prices."""
+
+    if instrument not in INSTRUMENTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid instrument {instrument!r}. Must be one of {INSTRUMENTS}.",
+        )
+
+    selected_timeframe = timeframe.lower()
+    if selected_timeframe not in TIMEFRAMES:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"Invalid timeframe {timeframe!r}. "
+                f"Must be one of {TIMEFRAMES}."
+            ),
+        )
+
+    settings = get_settings()
+
+    if settings.market_data_provider == "mock":
+        return {
+            "instrument": instrument,
+            "timeframe": selected_timeframe,
+            "provider": "mock",
+            "status": "mock",
+            "current_price": None,
+            "last_update": None,
+            "candles": [],
+            "data_quality": {
+                "is_clean": False,
+                "ohlc_violations": 0,
+                "duplicate_timestamps": 0,
+                "unexpected_gaps": 0,
+            },
+            "message": "Mock market data is intentionally not displayed as a live quote.",
+        }
+
+    try:
+        provider = get_market_data_provider(settings.market_data_provider)
+        current_price = await provider.get_current_price(instrument)
+        candles = await provider.get_candles(
+            instrument, selected_timeframe, limit=limit
+        )
+        candles = normalize_candles(candles)
+        validation = validate_candles(candles, timeframe=selected_timeframe)
+        metadata = await provider.get_instrument_metadata(instrument)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Live market data is unavailable: {exc}",
+        ) from exc
+
+    if not candles:
+        raise HTTPException(
+            status_code=503,
+            detail="Live provider returned no completed candles.",
+        )
+
+    if not validation.is_clean:
+        raise HTTPException(
+            status_code=503,
+            detail="Live provider returned invalid candle data; Tembo refused to display it.",
+        )
+
+    return {
+        "instrument": instrument,
+        "timeframe": selected_timeframe,
+        "provider": settings.market_data_provider,
+        "status": "available",
+        "current_price": current_price,
+        "last_update": candles[-1].timestamp.isoformat(),
+        "instrument_metadata": {
+            "symbol": metadata.symbol,
+            "display_name": metadata.display_name,
+            "pip_size": metadata.pip_size,
+            "asset_class": metadata.asset_class,
+        },
+        "candles": [_candle_payload(candle) for candle in candles],
+        "data_quality": {
+            "is_clean": validation.is_clean,
+            "ohlc_violations": len(validation.ohlc_violations),
+            "duplicate_timestamps": len(validation.duplicate_timestamps),
+            "unexpected_gaps": len(validation.unexpected_gaps),
+        },
+        "message": "Live provider data verified and normalized.",
     }
