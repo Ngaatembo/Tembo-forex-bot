@@ -1,0 +1,27 @@
+name: Multi Factor Decision Engine
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "backend/app/signal_engine/decision_engine.py"
+      - "backend/app/api/routes/live.py"
+      - "backend/tests/test_decision_engine.py"
+      - "backend/tests/test_live_decision_api.py"
+      - ".github/workflows/multi-factor-decision.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      PYTHONPATH: ${{ github.workspace }}/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: pytest -q tests/test_decision_engine.py tests/test_live_decision_api.py tests/test_candlestick_engine.py tests/test_rule_evaluation.py
