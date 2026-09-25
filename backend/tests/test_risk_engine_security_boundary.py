@@ -29,3 +29,29 @@ def test_risk_decision_is_pure_data_no_execute_method():
     assert not hasattr(RiskDecision, "execute")
     assert not hasattr(RiskDecision, "place_order")
     assert not hasattr(RiskDecision, "send")
+
+
+def test_risk_engine_uses_central_kill_switch(monkeypatch):
+    from app.risk_engine import risk_engine
+
+    calls = []
+
+    def fake_check(*, kill_switch_active, manually_triggered=False):
+        calls.append((kill_switch_active, manually_triggered))
+        return risk_engine.check_kill_switch(kill_switch_active=kill_switch_active, manually_triggered=manually_triggered)
+
+    monkeypatch.setattr(risk_engine, "check_kill_switch", fake_check)
+
+    account = AccountState(
+        equity=10000,
+        peak_equity=10000,
+        daily_start_equity=10000,
+        kill_switch_active=True,
+    )
+    result = evaluate_risk(
+        selection_result=TRADEABLE_SELECTION,
+        account=account,
+        limits=RiskLimitsConfig(),
+    )
+    assert result.state == "KILL_SWITCH_ACTIVE"
+    assert calls == [(True, False)]
