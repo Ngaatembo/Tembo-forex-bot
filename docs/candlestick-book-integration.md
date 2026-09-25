@@ -49,3 +49,8 @@ The research experiment is deliberately separated from live execution:
 
 A positive historical result is evidence to investigate further, not proof of
 future profitability.
+
+
+## Research gate update
+
+The empirical study now treats transaction-cost sensitivity and out-of-sample persistence as mandatory evidence before a book-derived hypothesis can be considered for further research. Cost values are sensitivity assumptions, not broker-specific quotes.
