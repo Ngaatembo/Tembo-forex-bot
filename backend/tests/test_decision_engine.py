@@ -68,3 +68,13 @@ def test_weak_evidence_is_rejected():
     result = evaluate_trade_decision(feature(rsi_14=75.0), [])
     assert result.decision == "NO_TRADE"
     assert any("below" in reason.lower() for reason in result.rejection_reasons)
+
+
+def test_macro_risk_restricts_even_strong_technical_evidence():
+    result = evaluate_trade_decision(
+        feature(),
+        [candle("BULLISH_ENGULFING", "BULLISH")],
+        macro_risk_level="HIGH",
+    )
+    assert result.decision == "NO_TRADE"
+    assert any("macro risk" in reason.lower() for reason in result.rejection_reasons)
