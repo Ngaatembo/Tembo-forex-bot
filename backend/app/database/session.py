@@ -4,6 +4,7 @@ Async SQLAlchemy engine/session setup for PostgreSQL.
 
 from collections.abc import AsyncGenerator
 
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.core.config import get_settings
@@ -26,7 +27,7 @@ async def check_database_health() -> bool:
     """Used by the /health endpoint. Never raises — returns False on failure."""
     try:
         async with engine.connect() as conn:
-            await conn.execute("SELECT 1")
+            await conn.execute(text("SELECT 1"))
         return True
     except Exception:
         return False
