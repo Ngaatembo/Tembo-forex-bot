@@ -194,3 +194,131 @@ async def live_market(
         },
         "message": "Live provider data verified and normalized.",
     }
+
+
+@router.get("/analysis")
+async def live_analysis(
+    instrument: str = Query("EUR/USD"),
+    timeframe: str = Query("h1"),
+) -> dict:
+    """Analyze verified completed candles; never returns a trade direction."""
+    if instrument not in INSTRUMENTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid instrument {instrument!r}. Must be one of {INSTRUMENTS}.",
+        )
+
+    selected_timeframe = timeframe.lower()
+    if selected_timeframe not in TIMEFRAMES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid timeframe {timeframe!r}. Must be one of {TIMEFRAMES}.",
+        )
+
+    settings = get_settings()
+    if settings.market_data_provider == "mock":
+        return {
+            "instrument": instrument,
+            "timeframe": selected_timeframe,
+            "provider": "mock",
+            "status": "waiting",
+            "message": "Technical analysis is waiting for verified live candles.",
+            "analysis": None,
+        }
+
+    try:
+        provider = get_market_data_provider(settings.market_data_provider)
+        candles = await provider.get_candles(
+            instrument, selected_timeframe, limit=200
+        )
+        candles = normalize_candles(candles)
+        validation = validate_candles(candles, timeframe=selected_timeframe)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Live analysis data is unavailable: {exc}",
+        ) from exc
+
+    if not candles or not validation.is_clean:
+        raise HTTPException(
+            status_code=503,
+            detail="Live analysis refused unverified candle data.",
+        )
+
+    from app.live_engine.analysis import analyze_candles
+
+    result = analyze_candles(candles)
+    return {
+        "instrument": instrument,
+        "timeframe": selected_timeframe,
+        "provider": settings.market_data_provider,
+        "status": result["status"],
+        "message": (
+            "Deterministic technical analysis of verified completed candles. "
+            "This endpoint does not produce BUY/SELL decisions."
+        ),
+        "data_quality": {
+            "is_clean": validation.is_clean,
+            "ohlc_violations": len(validation.ohlc_violations),
+            "duplicate_timestamps": len(validation.duplicate_timestamps),
+            "unexpected_gaps": len(validation.unexpected_gaps),
+        },
+        "analysis": result,
+    }
+
+
+@router.get("/analysis/multi-timeframe")
+async def live_multi_timeframe_analysis(
+    instrument: str = Query("EUR/USD"),
+) -> dict:
+    """Summarize the same deterministic analysis across all cockpit timeframes."""
+    if instrument not in INSTRUMENTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid instrument {instrument!r}. Must be one of {INSTRUMENTS}.",
+        )
+
+    settings = get_settings()
+    if settings.market_data_provider == "mock":
+        return {
+            "instrument": instrument,
+            "provider": "mock",
+            "status": "waiting",
+            "timeframes": {tf: None for tf in TIMEFRAMES},
+            "message": "Multi-timeframe analysis is waiting for verified live candles.",
+        }
+
+    from app.live_engine.analysis import analyze_candles
+
+    results: dict[str, dict] = {}
+    for tf in TIMEFRAMES:
+        try:
+            provider = get_market_data_provider(settings.market_data_provider)
+            candles = normalize_candles(
+                await provider.get_candles(instrument, tf, limit=200)
+            )
+            validation = validate_candles(candles, timeframe=tf)
+            if not candles or not validation.is_clean:
+                results[tf] = {
+                    "status": "rejected",
+                    "reason": "Candle data failed validation.",
+                }
+                continue
+            results[tf] = analyze_candles(candles)
+        except Exception as exc:
+            results[tf] = {
+                "status": "unavailable",
+                "reason": f"Provider error: {exc}",
+            }
+
+    available = [value for value in results.values() if value.get("status") == "available"]
+    return {
+        "instrument": instrument,
+        "provider": settings.market_data_provider,
+        "status": "available" if available else "waiting",
+        "timeframes": results,
+        "message": (
+            "Multi-timeframe technical context only. No timeframe is converted "
+            "into a BUY/SELL instruction by this endpoint."
+        ),
+    }
