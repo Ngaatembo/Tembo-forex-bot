@@ -21,20 +21,21 @@ class Settings(BaseSettings):
     debug: bool = True
 
     # --- CORS ---
-    # Comma-separated list of frontend origins allowed to call this API.
-    # The frontend NEVER needs a secret to be in this list -- CORS is
-    # about which origins the browser permits to receive responses, not
-    # authentication. Defaults to common local-dev ports; set the real
-    # Vercel URL here in production via the CORS_ALLOWED_ORIGINS env var.
     cors_allowed_origins: str = "http://localhost:3000,http://localhost:5173"
 
     # --- Database ---
     database_url: str = "postgresql+asyncpg://user:password@localhost:5432/ai_trading"
 
     # --- Market data provider ---
-    market_data_provider: str = "mock"  # mock | oanda | ig | fxcm | interactive_brokers
+    # mock | oanda | twelvedata | mt5_bridge
+    market_data_provider: str = "mock"
     market_data_api_key: Optional[str] = None
     market_data_account_id: Optional[str] = None
+
+    # MT5 runs in its own terminal/bridge process, not inside Render.
+    # The bridge URL/token are intentionally separate from broker credentials.
+    mt5_bridge_url: Optional[str] = None
+    mt5_bridge_token: Optional[str] = None
 
     # --- News provider ---
     news_provider: str = "mock"
@@ -50,9 +51,6 @@ class Settings(BaseSettings):
     ai_model: str = "claude-sonnet-5"
 
     # --- Risk / safety ---
-    # Hard safety switch. Must be explicitly and deliberately set to true
-    # in a production environment to allow the live broker adapter to be
-    # constructed at all. Defaults to false everywhere, including prod.
     enable_live_execution: bool = False
 
     max_risk_per_trade_pct: float = 1.0
@@ -72,14 +70,6 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
 
     # --- Temporary admin research-data download (Experiment 3) ---
-    # No real user-auth system exists yet (see app/core/security.py's
-    # own docstring: JWT/password scaffolding only, never wired into
-    # any route). Deliberately a SEPARATE secret from secret_key
-    # above -- that key exists for JWT *signing*; reusing a signing
-    # secret as a static bearer-comparison token would weaken it.
-    # None by default -- the endpoint fails closed until this is
-    # explicitly set. Remove this setting and its route once
-    # Experiment 3's data has been retrieved.
     admin_download_token: Optional[str] = None
 
 
