@@ -5,14 +5,11 @@ SECURITY-CRITICAL DESIGN PRINCIPLE: a Hypothesis can only ever contain
 JSON-safe data — strings, numbers, and Condition objects built from a
 closed, validated set of feature names and comparison operators. There
 is no field anywhere in this model that can hold a Python expression,
-a callable, a SQL string, or any other executable payload. This is
-what makes "AI proposes, deterministic engine evaluates" safe: even a
-malicious or broken AI proposal can only ever produce data that either
-validates into this narrow schema or is rejected — it can never
-produce code that runs.
+a callable, a SQL string, or any other executable payload.
 
-See rule_evaluation.py for the evaluator (also free of any eval-style dynamic execution)
-evaluator that turns a RuleSet into a boolean per candle.
+Book/source provenance is metadata only. It records which source claims
+informed a hypothesis and how they were operationalized; it never
+changes evaluation semantics or executes source text.
 """
 
 from __future__ import annotations
@@ -22,10 +19,6 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 
-# The ONLY feature fields a condition may reference — deliberately a
-# closed allowlist (Phase 5's FeatureSnapshot fields), not an open
-# string. Any condition naming a field outside this set is rejected at
-# construction time, before it ever reaches an evaluator.
 ALLOWED_CONDITION_FIELDS = frozenset({
     "close", "sma_10", "sma_50", "sma_50_slope", "sma_distance", "sma_distance_pct",
     "rsi_14", "atr_14", "atr_percent",
@@ -58,12 +51,7 @@ class HypothesisStatus(str, Enum):
 
 @dataclass(frozen=True)
 class Condition:
-    """
-    One deterministic comparison: field OP value, or field OP compare_field.
-    Exactly one of `value` / `compare_field` must be set — never both,
-    never neither. This is the ONLY way a threshold enters the system;
-    there is no free-text expression field anywhere in this dataclass.
-    """
+    """One deterministic comparison: field OP value, or field OP compare_field."""
     field: str
     operator: str
     value: float | None = None
@@ -108,6 +96,39 @@ class RuleSet:
 
 
 @dataclass(frozen=True)
+class HypothesisProvenance:
+    """
+    Non-executable provenance linking a hypothesis to source material.
+
+    source_id and claim_id refer to records in the project's source/claim
+    registries. mapping_note describes Tembo's operationalization; it is
+    documentation, not an evaluator instruction.
+    """
+    source_id: str
+    claim_id: str
+    mapping_note: str
+
+    def __post_init__(self):
+        if not self.source_id.strip():
+            raise ValueError("source_id must not be empty.")
+        if not self.claim_id.strip():
+            raise ValueError("claim_id must not be empty.")
+        if not self.mapping_note.strip():
+            raise ValueError("mapping_note must not be empty.")
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+    @staticmethod
+    def from_dict(d: dict) -> "HypothesisProvenance":
+        return HypothesisProvenance(
+            source_id=d["source_id"],
+            claim_id=d["claim_id"],
+            mapping_note=d["mapping_note"],
+        )
+
+
+@dataclass(frozen=True)
 class Hypothesis:
     id: str
     name: str
@@ -117,12 +138,13 @@ class Hypothesis:
     timeframe: str
     entry_long: RuleSet
     entry_short: RuleSet
-    risk_conditions: dict  # small JSON-safe dict, e.g. {"exit_config": "baseline"} — no code
+    risk_conditions: dict
     rationale: str
     data_requirements: tuple[str, ...]
     status: HypothesisStatus = HypothesisStatus.DRAFT
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     version: int = 1
+    provenance: tuple[HypothesisProvenance, ...] = ()
 
     def to_dict(self) -> dict:
         d = asdict(self)
@@ -131,6 +153,7 @@ class Hypothesis:
         d["entry_long"] = self.entry_long.to_dict()
         d["entry_short"] = self.entry_short.to_dict()
         d["data_requirements"] = list(self.data_requirements)
+        d["provenance"] = [p.to_dict() for p in self.provenance]
         return d
 
     @staticmethod
@@ -147,6 +170,9 @@ class Hypothesis:
             status=HypothesisStatus(d.get("status", "draft")),
             created_at=d.get("created_at", datetime.now(timezone.utc).isoformat()),
             version=d.get("version", 1),
+            provenance=tuple(
+                HypothesisProvenance.from_dict(p) for p in d.get("provenance", [])
+            ),
         )
 
 
