@@ -1,0 +1,30 @@
+name: Candlestick Book Research
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "backend/app/live_engine/candlesticks.py"
+      - "backend/scripts/run_candlestick_book_research.py"
+      - "backend/tests/test_candlestick_engine.py"
+      - "docs/candlestick-book-integration.md"
+      - ".github/workflows/candlestick-book-research.yml"
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: pytest -q tests/test_candlestick_engine.py
+      - run: python scripts/run_candlestick_book_research.py --output research/results/candlestick_book_research.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: candlestick-book-research
+          path: backend/research/results/candlestick_book_research.json
