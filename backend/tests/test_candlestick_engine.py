@@ -99,3 +99,23 @@ def test_research_wilson_interval_contains_observed_rate():
     from scripts.run_candlestick_book_research import wilson_interval
     low, high = wilson_interval(55, 100)
     assert low < 0.55 < high
+
+
+
+def test_analysis_includes_candlestick_evidence_without_trade_signal():
+    from datetime import datetime, timedelta, timezone
+    from app.data_engine.market_data import Candle
+    from app.live_engine.analysis import analyze_candles
+
+    candles = []
+    price = 1.1000
+    start = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    for i in range(60):
+        close = price + 0.0005
+        candles.append(Candle("EUR/USD", "h1", start + timedelta(hours=i), price, close + 0.0001, price - 0.0001, close))
+        price = close
+
+    result = analyze_candles(candles)
+    assert "candlestick_patterns" in result
+    assert isinstance(result["candlestick_patterns"], list)
+    assert "decision" not in result
