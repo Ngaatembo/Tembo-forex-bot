@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "purpose": "Traceable registry of external sources used to generate research hypotheses. This file records source provenance; it does not assert that any source-derived method is profitable.",
+  "promotion_rule": "A source claim must become a structured hypothesis and pass Tembo's research pipeline before it can influence production decisions.",
+  "sources": [
+    {
+      "source_id": "BOOK_MARKET_WIZARDS",
+      "title": "Market Wizards",
+      "author": "Jack D. Schwager",
+      "source_type": "practitioner_book",
+      "use_in_tembo": [
+        "Extract practitioner reasoning and risk-management hypotheses",
+        "Generate ideas for testing rather than copy a trader's method"
+      ],
+      "status": "SOURCE_FOR_HYPOTHESES"
+    },
+    {
+      "source_id": "BOOK_CANDLESTICK_MATERIAL",
+      "title": "Japanese candlestick material used by Tembo",
+      "author": "Steve Nison / source material as documented in the repository",
+      "source_type": "candlestick_book_material",
+      "use_in_tembo": [
+        "Define qualitative candlestick concepts",
+        "Generate contextual pattern hypotheses"
+      ],
+      "status": "SOURCE_FOR_HYPOTHESES"
+    }
+  ]
+}
