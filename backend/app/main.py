@@ -5,15 +5,27 @@ Run with:
     uvicorn app.main:app --reload
 """
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import admin_data, backtest, decisions, health, market_data, markets, news, paper_trading, research, strategy, technical_analysis
 from app.core.config import get_settings
 from app.core.logging import configure_logging
+from app.database.init import initialize_database
 
 settings = get_settings()
 configure_logging("DEBUG" if settings.debug else "INFO")
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    # Bootstrap the foundational Render PostgreSQL schema before serving API
+    # traffic. create_all is idempotent and never removes existing data.
+    await initialize_database()
+    yield
+
 
 app = FastAPI(
     title=settings.app_name,
@@ -22,17 +34,16 @@ app = FastAPI(
         "and paper trading. Not an autonomous trading system. See README.md."
     ),
     version="0.1.0",
+    lifespan=lifespan,
 )
 
-# CORS: allows the frontend (a different origin -- e.g. Vercel) to call
-# this API from the browser. This is NOT a secret or an auth mechanism --
-# it never exposes credentials, it only controls which origins the
-# browser permits to read responses. No API key of any kind lives here.
+# CORS: allows the deployed frontend to call this API from the browser.
+# This is not an authentication mechanism and no API credentials live here.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[o.strip() for o in settings.cors_allowed_origins.split(",") if o.strip()],
     allow_credentials=False,
-    allow_methods=["GET"],  # every route in this API is GET-only -- see the security-boundary tests
+    allow_methods=["GET"],
     allow_headers=["*"],
 )
 
