@@ -10,6 +10,7 @@ from dataclasses import asdict
 from typing import Any
 
 from app.data_engine.market_data import Candle
+from app.live_engine.candlesticks import detect_candlestick_patterns, observations_to_dict
 from app.technical_engine.features import calculate_feature_snapshots
 
 
@@ -107,6 +108,7 @@ def analyze_candles(candles: list[Candle]) -> dict[str, Any]:
         momentum_state = "NEUTRAL"
 
     swing_highs, swing_lows = _confirmed_swings(candles)
+    candle_patterns = detect_candlestick_patterns(candles)
     resistance = snapshot.recent_high
     support = snapshot.recent_low
     if swing_highs:
@@ -143,6 +145,7 @@ def analyze_candles(candles: list[Candle]) -> dict[str, Any]:
             "rolling_range": _round(snapshot.rolling_range),
         },
         "market_structure": _structure(candles),
+        "candlestick_patterns": observations_to_dict(candle_patterns),
         "feature_snapshot": {
             key: value for key, value in asdict(snapshot).items()
         },
