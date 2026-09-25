@@ -39,6 +39,7 @@ from app.risk_engine.account_limits import (
     check_per_trade_risk, check_position_limit, check_total_open_risk,
 )
 from app.risk_engine.position_sizing import compute_position_size
+from app.risk_engine.kill_switch import check_kill_switch
 from app.risk_engine.risk_models import AccountState, RiskDecision, RiskLimitsConfig
 from app.risk_engine.stop_validation import validate_stop
 
@@ -53,8 +54,9 @@ def evaluate_risk(
     stop_price: Optional[float] = None,
     instrument_info: Optional[InstrumentTimeframeInfo] = None,
 ) -> RiskDecision:
-    if account.kill_switch_active:
-        return RiskDecision("KILL_SWITCH_ACTIVE", "Account-level kill switch is active — no trading permitted.", hierarchy_stage="kill_switch")
+    kill_switch = check_kill_switch(kill_switch_active=account.kill_switch_active)
+    if not kill_switch.allowed:
+        return RiskDecision("KILL_SWITCH_ACTIVE", kill_switch.reason, hierarchy_stage="kill_switch")
 
     valid, reason = account_data_valid(account)
     if not valid:
