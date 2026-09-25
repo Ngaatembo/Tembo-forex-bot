@@ -11,7 +11,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import admin_data, backtest, decisions, health, market_data, markets, news, paper_trading, research, strategy, technical_analysis
+from app.api.routes import admin_data, backtest, decisions, health, live, market_data, markets, news, paper_trading, research, strategy, technical_analysis
 from app.core.config import get_settings
 from app.core.logging import configure_logging
 from app.database.init import initialize_database
@@ -55,6 +55,7 @@ app.add_middleware(
 )
 
 app.include_router(health.router, tags=["system"])
+app.include_router(live.router)
 app.include_router(market_data.router)
 app.include_router(markets.router)
 app.include_router(technical_analysis.router)
