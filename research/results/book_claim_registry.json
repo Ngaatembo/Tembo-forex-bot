@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "purpose": "Traceable extraction of source-derived concepts. Claims here describe what Tembo is testing; they are not assertions of profitability.",
+  "claims": [
+    {
+      "claim_id": "CANDLE_001",
+      "source_id": "BOOK_CANDLESTICK_MATERIAL",
+      "concept": "Doji",
+      "source_supported_concept": "A doji represents a candle with little or no real body; the exact numeric threshold used by Tembo is an operationalization.",
+      "tembo_operationalization": "body / total_range <= 0.10",
+      "implementation": "backend/app/live_engine/candlesticks.py",
+      "hypothesis_status": "EVIDENCE_ONLY",
+      "profitability_status": "UNVALIDATED"
+    },
+    {
+      "claim_id": "CANDLE_002",
+      "source_id": "BOOK_CANDLESTICK_MATERIAL",
+      "concept": "Hammer / Hanging Man",
+      "source_supported_concept": "The same basic long-lower-shadow geometry is interpreted in different prior-trend contexts; confirmation is required before treating a reversal indication as confirmed.",
+      "tembo_operationalization": "lower_shadow >= 2x body and upper_shadow <= body, with prior-trend context and next-candle confirmation.",
+      "implementation": "backend/app/live_engine/candlesticks.py",
+      "hypothesis_status": "EVIDENCE_ONLY",
+      "profitability_status": "UNVALIDATED"
+    },
+    {
+      "claim_id": "CANDLE_003",
+      "source_id": "BOOK_CANDLESTICK_MATERIAL",
+      "concept": "Shooting Star / Inverted Hammer",
+      "source_supported_concept": "The same basic long-upper-shadow geometry is interpreted according to prior-trend context; confirmation is required for reversal interpretation.",
+      "tembo_operationalization": "upper_shadow >= 2x body and lower_shadow <= body, with prior-trend context and next-candle confirmation.",
+      "implementation": "backend/app/live_engine/candlesticks.py",
+      "hypothesis_status": "EVIDENCE_ONLY",
+      "profitability_status": "UNVALIDATED"
+    },
+    {
+      "claim_id": "CANDLE_004",
+      "source_id": "BOOK_CANDLESTICK_MATERIAL",
+      "concept": "Engulfing patterns",
+      "source_supported_concept": "Bullish and bearish engulfing patterns are contextual reversal formations rather than standalone trade authorization.",
+      "tembo_operationalization": "body-engulfing geometry plus prior-trend context.",
+      "implementation": "backend/app/live_engine/candlesticks.py",
+      "hypothesis_status": "EVIDENCE_ONLY",
+      "profitability_status": "UNVALIDATED"
+    },
+    {
+      "claim_id": "CANDLE_005",
+      "source_id": "BOOK_CANDLESTICK_MATERIAL",
+      "concept": "Three-candle reversal formations",
+      "source_supported_concept": "Morning Star and Evening Star are multi-candle reversal formations whose meaning depends on the surrounding structure.",
+      "tembo_operationalization": "three-candle geometry encoded in the detector; thresholds are explicitly Tembo operationalizations.",
+      "implementation": "backend/app/live_engine/candlesticks.py",
+      "hypothesis_status": "EVIDENCE_ONLY",
+      "profitability_status": "UNVALIDATED"
+    },
+    {
+      "claim_id": "MW_001",
+      "source_id": "BOOK_MARKET_WIZARDS",
+      "concept": "Practitioner-method diversity and risk discipline",
+      "source_supported_concept": "The book is used as practitioner evidence and a source of research questions, not as proof that one universal strategy works.",
+      "tembo_operationalization": "No direct trading rule created from this claim.",
+      "implementation": "docs/tembo-research-knowledge-framework.md",
+      "hypothesis_status": "METHODOLOGY_ONLY",
+      "profitability_status": "NOT_APPLICABLE"
+    }
+  ]
+}
