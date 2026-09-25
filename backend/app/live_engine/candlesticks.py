@@ -164,7 +164,7 @@ def detect_candlestick_patterns(candles: list[Any]) -> list[PatternObservation]:
             observations.append(
                 PatternObservation(
                     "SHOOTING_STAR", "BEARISH", context,
-                    _confirmation(candles, "BEARISH"), True, "CONTEXTUAL",
+                    False, True, "CONTEXTUAL",
                     ("upper_shadow>=2x_body", "small_lower_shadow", "uptrend_context"),
                     "21 Candlesticks + Japanese candlestick introduction.",
                 )
@@ -173,7 +173,7 @@ def detect_candlestick_patterns(candles: list[Any]) -> list[PatternObservation]:
             observations.append(
                 PatternObservation(
                     "INVERTED_HAMMER", "BULLISH", context,
-                    _confirmation(candles, "BULLISH"), True, "CONTEXTUAL",
+                    False, True, "CONTEXTUAL",
                     ("upper_shadow>=2x_body", "small_lower_shadow", "downtrend_context"),
                     "Japanese candlestick introduction.",
                 )
