@@ -33,12 +33,17 @@ def test_risk_decision_is_pure_data_no_execute_method():
 
 def test_risk_engine_uses_central_kill_switch(monkeypatch):
     from app.risk_engine import risk_engine
+    from app.risk_engine.risk_models import AccountState, RiskLimitsConfig
+    from app.research.strategy_selector import SelectionResult
 
     calls = []
 
     def fake_check(*, kill_switch_active, manually_triggered=False):
         calls.append((kill_switch_active, manually_triggered))
-        return risk_engine.check_kill_switch(kill_switch_active=kill_switch_active, manually_triggered=manually_triggered)
+        return risk_engine.check_kill_switch(
+            kill_switch_active=kill_switch_active,
+            manually_triggered=manually_triggered,
+        )
 
     monkeypatch.setattr(risk_engine, "check_kill_switch", fake_check)
 
@@ -48,8 +53,17 @@ def test_risk_engine_uses_central_kill_switch(monkeypatch):
         daily_start_equity=10000,
         kill_switch_active=True,
     )
-    result = evaluate_risk(
-        selection_result=TRADEABLE_SELECTION,
+    selection = SelectionResult(
+        instrument="XAU/USD",
+        timeframe="h1",
+        status="TRADEABLE",
+        selected_config_id="test-config",
+        reason="test",
+        considered=(),
+        research_recommendation=None,
+    )
+    result = risk_engine.evaluate_risk(
+        selection_result=selection,
         account=account,
         limits=RiskLimitsConfig(),
     )
