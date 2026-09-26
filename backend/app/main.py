@@ -7,6 +7,7 @@ Run with:
 
 from contextlib import asynccontextmanager
 import logging
+import asyncio
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,6 +17,8 @@ from app.api.routes.live import router as live_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
 from app.database.init import initialize_database
+from app.database.session import AsyncSessionLocal
+from app.paper_trading.runtime import run_paper_cycle
 
 settings = get_settings()
 configure_logging("DEBUG" if settings.debug else "INFO")
@@ -32,7 +35,31 @@ async def lifespan(_: FastAPI):
         logger.info("Database schema initialization/check completed.")
     except Exception:
         logger.exception("Database schema initialization failed; starting API in degraded database mode.")
-    yield
+    paper_task = None
+    if settings.enable_paper_runtime:
+        async def _paper_loop():
+            while True:
+                try:
+                    async with AsyncSessionLocal() as session:
+                        await run_paper_cycle(session)
+                        logger.info("Paper runtime cycle completed.")
+                except asyncio.CancelledError:
+                    raise
+                except Exception:
+                    logger.exception("Paper runtime cycle failed; no broker action was attempted.")
+                await asyncio.sleep(max(60, settings.paper_runtime_interval_seconds))
+
+        paper_task = asyncio.create_task(_paper_loop())
+        logger.info("Paper runtime enabled: interval=%ss; execution remains disabled.", max(60, settings.paper_runtime_interval_seconds))
+    try:
+        yield
+    finally:
+        if paper_task is not None:
+            paper_task.cancel()
+            try:
+                await paper_task
+            except asyncio.CancelledError:
+                pass
 
 
 app = FastAPI(
