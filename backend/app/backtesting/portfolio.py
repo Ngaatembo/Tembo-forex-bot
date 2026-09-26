@@ -160,7 +160,7 @@ class Portfolio:
 
         return None
 
-    def close_position_at_price(self, *, exact_price: float, timestamp: datetime, reason: str) -> Trade:
+    def close_position_at_price(self, *, exact_price: float, timestamp: datetime, reason: str, apply_costs: bool = False) -> Trade:
         """
         Phase 6 addition. Closes at an EXACT price (the stop/target
         level itself) rather than deriving execution price from a mid
@@ -174,13 +174,20 @@ class Portfolio:
             raise RuntimeError("close_position_at_price called with no open position.")
         pos = self.position
         sign = 1 if pos.direction == "LONG" else -1
-        pnl = (exact_price - pos.entry_exec_price) * pos.size * sign
+        if apply_costs:
+            is_buy_side = pos.direction == "SHORT"
+            exec_price = self._execution_price(exact_price, is_buy_side=is_buy_side)
+        else:
+            exec_price = exact_price
+        gross_pnl = (exact_price - pos.entry_mid_price) * pos.size * sign
+        pnl = (exec_price - pos.entry_exec_price) * pos.size * sign
+        transaction_costs = gross_pnl - pnl
 
         trade = Trade(
             trade_id=self._next_trade_id, symbol=self.config.symbol, direction=pos.direction,
             signal_timestamp=pos.signal_timestamp, entry_timestamp=pos.entry_timestamp,
-            entry_price=pos.entry_exec_price, exit_timestamp=timestamp, exit_price=exact_price,
-            size=pos.size, gross_pnl=pnl, transaction_costs=0.0, net_pnl=pnl,
+            entry_price=pos.entry_exec_price, exit_timestamp=timestamp, exit_price=exec_price,
+            size=pos.size, gross_pnl=gross_pnl, transaction_costs=transaction_costs, net_pnl=pnl,
             return_pct=pnl / (pos.entry_exec_price * pos.size),
             entry_reason=pos.entry_reason, exit_reason=reason,
         )
