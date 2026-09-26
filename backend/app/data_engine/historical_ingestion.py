@@ -16,6 +16,8 @@ import asyncio
 from datetime import datetime, timedelta, timezone
 
 from sqlalchemy.dialects.postgresql import insert
+
+from app.core.logging import get_logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.data_engine.market_data import Candle, MarketDataProvider
@@ -25,6 +27,7 @@ from app.database.models import MarketCandle
 H1_WINDOW_DAYS = 150
 MIN_REQUEST_SPACING_SECONDS = 8.0
 SUPPORTED_HISTORICAL_INSTRUMENTS = ("EUR/USD", "GBP/USD", "XAU/USD")
+logger = get_logger(__name__)
 
 # A historical provider can occasionally return an isolated malformed bar.
 # We never repair its prices. We may quarantine a very small number of bad
@@ -80,13 +83,15 @@ async def ingest_instrument(
     report = validate_candles(candles, timeframe="h1")
 
     bad_timestamps = {
-        item.split(":", 1)[1].strip().rstrip(")") 
-        for item in report.ohlc_violations
+        c.timestamp.isoformat()
+        for c in candles
+        if c.high < max(c.open, c.close, c.low)
+        or c.low > min(c.open, c.close, c.high)
+        or c.open <= 0
+        or c.high <= 0
+        or c.low <= 0
+        or c.close <= 0
     }
-    bad_timestamps.update(
-        item.split(":", 1)[1].strip().rstrip(")")
-        for item in report.negative_or_zero_price
-    )
 
     if bad_timestamps:
         bad_ratio = len(bad_timestamps) / max(len(candles), 1)
@@ -109,7 +114,6 @@ async def ingest_instrument(
             c for c in candles
             if c.timestamp.isoformat() not in bad_timestamps
         ]
-        logger = __import__("logging").getLogger(__name__)
         logger.warning(
             "Historical data quarantined malformed candles: symbol=%s "
             "quarantined=%d total=%d ratio=%.4f",
