@@ -230,3 +230,38 @@ def test_omitted_macro_event_risk_does_not_change_prior_behavior():
         stop_price=1860.0, current_prices={},
     )
     assert decision.status == "PAPER_TRADE_APPROVED"
+
+
+def test_tick_does_not_advance_holding_period_without_new_candle():
+    engine = make_engine([make_config(gate_status="PAPER_CANDIDATE", verdict="PROMISING")])
+    engine.evaluate_and_maybe_open(
+        instrument="XAU/USD", timeframe="h1", direction="LONG",
+        entry_price=1900.0, stop_price=1860.0, current_prices={},
+        max_holding_periods=2,
+    )
+    closed = engine.tick(
+        current_prices={"XAU/USD:h1": 1905.0},
+        current_time=NOW,
+        advance_holding_period_keys=set(),
+    )
+    assert closed == []
+    position = engine.account.get_position("XAU/USD:h1")
+    assert position is not None
+    assert position.periods_held == 0
+
+
+def test_tick_advances_holding_period_only_for_new_candle_keys():
+    engine = make_engine([make_config(gate_status="PAPER_CANDIDATE", verdict="PROMISING")])
+    engine.evaluate_and_maybe_open(
+        instrument="XAU/USD", timeframe="h1", direction="LONG",
+        entry_price=1900.0, stop_price=1860.0, current_prices={},
+        max_holding_periods=2,
+    )
+    engine.tick(
+        current_prices={"XAU/USD:h1": 1905.0},
+        current_time=NOW,
+        advance_holding_period_keys={"XAU/USD:h1"},
+    )
+    position = engine.account.get_position("XAU/USD:h1")
+    assert position is not None
+    assert position.periods_held == 1
