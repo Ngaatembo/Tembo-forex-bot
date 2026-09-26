@@ -244,76 +244,106 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
             "realized_pnl": trade.realized_pnl,
         })
 
-    # Re-evaluate entries after exits. The existing live decision endpoint is
-    # the sole source of signal + strategy/risk eligibility.
+    # Entry decisions are candle-driven. The runtime may poll every 15 minutes
+    # for exit protection, but a strategy decision is evaluated only once per
+    # newly completed candle for each instrument/timeframe. This prevents
+    # repeatedly re-running the same H1 signal and wasting provider calls.
     for instrument in INSTRUMENTS:
         for timeframe in TIMEFRAMES:
             key = f"{instrument}:{timeframe}"
             if key in account.open_positions:
                 continue
             try:
+                candles = normalize_candles(
+                    await provider.get_candles(instrument, timeframe, limit=2)
+                )
+                validation = validate_candles(candles, timeframe=timeframe)
+                if not validation.is_clean or not candles:
+                    cycle_results.append({
+                        "instrument": instrument, "timeframe": timeframe,
+                        "status": "UNAVAILABLE",
+                        "reason": validation.reason if hasattr(validation, "reason") else "Candle validation failed.",
+                    })
+                    continue
+                latest_candle_at = candles[-1].timestamp
+                previous_candle_at = state.last_entry_candles.get(key)
+                if previous_candle_at == latest_candle_at.isoformat():
+                    cycle_results.append({
+                        "instrument": instrument, "timeframe": timeframe,
+                        "status": "WAITING_NEW_CANDLE",
+                        "reason": f"No new completed {timeframe.upper()} candle since the last entry evaluation.",
+                    })
+                    continue
+
                 response = await live_decision(instrument=instrument, timeframe=timeframe)
+                response_candle_raw = (response.get("data_quality") or {}).get("last_candle")
+                if response_candle_raw:
+                    try:
+                        response_candle_at = datetime.fromisoformat(response_candle_raw)
+                        latest_candle_at = response_candle_at
+                    except ValueError:
+                        pass
+                state.last_entry_candles[key] = latest_candle_at.isoformat()
+
+                plan = response.get("trade_plan") or {}
+                if response.get("decision") not in {"BUY", "SELL"}:
+                    cycle_results.append({
+                        "instrument": instrument,
+                        "timeframe": timeframe,
+                        "status": "NO_SIGNAL",
+                        "reason": response.get("message") or "Live decision did not authorize a directional paper candidate.",
+                    })
+                    continue
+                direction = "LONG" if plan.get("direction") == "BUY" else "SHORT" if plan.get("direction") == "SELL" else None
+                if direction is None or plan.get("entry") is None or plan.get("stop_loss") is None:
+                    continue
+
+                price = float(plan["entry"])
+                macro = response.get("macro_event_risk") or {}
+                macro_level = macro.get("level")
+                macro_event_risk = MacroEventRisk(
+                    level=macro_level,
+                    reason=str(macro.get("reason") or ""),
+                    triggering_events=(),
+                ) if macro_level else None
+                result = engine.evaluate_and_maybe_open(
+                    instrument=instrument,
+                    timeframe=timeframe,
+                    direction=direction,
+                    entry_price=price,
+                    stop_price=float(plan["stop_loss"]),
+                    take_profit_price=(float(plan["take_profit"]) if plan.get("take_profit") is not None else None),
+                    current_prices={key: current_prices.get(key, price)},
+                    current_regime=None,
+                    macro_event_risk=macro_event_risk,
+                )
+                if result.position is not None:
+                    entry_candle_raw = (response.get("data_quality") or {}).get("last_candle")
+                    if entry_candle_raw:
+                        try:
+                            entry_candle_at = datetime.fromisoformat(entry_candle_raw)
+                            row = (await db.execute(
+                                select(PaperRuntimePosition).where(
+                                    PaperRuntimePosition.account_key == ACCOUNT_KEY,
+                                    PaperRuntimePosition.position_id == result.position.position_id,
+                                )
+                            )).scalar_one_or_none()
+                            if row is not None:
+                                row.last_completed_candle_at = entry_candle_at
+                        except ValueError:
+                            pass
+                cycle_results.append({
+                    "instrument": instrument,
+                    "timeframe": timeframe,
+                    "status": result.status,
+                    "reason": result.reason,
+                    "position_id": result.position.position_id if result.position else None,
+                })
             except Exception as exc:
                 cycle_results.append({
                     "instrument": instrument, "timeframe": timeframe,
                     "status": "UNAVAILABLE", "reason": str(exc),
                 })
-                continue
-
-            plan = response.get("trade_plan") or {}
-            if response.get("decision") not in {"BUY", "SELL"}:
-                cycle_results.append({
-                    "instrument": instrument,
-                    "timeframe": timeframe,
-                    "status": "NO_SIGNAL",
-                    "reason": response.get("message") or "Live decision did not authorize a directional paper candidate.",
-                })
-                continue
-            direction = "LONG" if plan.get("direction") == "BUY" else "SHORT" if plan.get("direction") == "SELL" else None
-            if direction is None or plan.get("entry") is None or plan.get("stop_loss") is None:
-                continue
-
-            price = float(plan["entry"])
-            macro = response.get("macro_event_risk") or {}
-            macro_level = macro.get("level")
-            macro_event_risk = MacroEventRisk(
-                level=macro_level,
-                reason=str(macro.get("reason") or ""),
-                triggering_events=(),
-            ) if macro_level else None
-            result = engine.evaluate_and_maybe_open(
-                instrument=instrument,
-                timeframe=timeframe,
-                direction=direction,
-                entry_price=price,
-                stop_price=float(plan["stop_loss"]),
-                take_profit_price=(float(plan["take_profit"]) if plan.get("take_profit") is not None else None),
-                current_prices={key: current_prices.get(key, price)},
-                current_regime=None,
-                macro_event_risk=macro_event_risk,
-            )
-            if result.position is not None:
-                entry_candle_raw = (response.get("data_quality") or {}).get("last_candle")
-                if entry_candle_raw:
-                    try:
-                        entry_candle_at = datetime.fromisoformat(entry_candle_raw)
-                        row = (await db.execute(
-                            select(PaperRuntimePosition).where(
-                                PaperRuntimePosition.account_key == ACCOUNT_KEY,
-                                PaperRuntimePosition.position_id == result.position.position_id,
-                            )
-                        )).scalar_one_or_none()
-                        if row is not None:
-                            row.last_completed_candle_at = entry_candle_at
-                    except ValueError:
-                        pass
-            cycle_results.append({
-                "instrument": instrument,
-                "timeframe": timeframe,
-                "status": result.status,
-                "reason": result.reason,
-                "position_id": result.position.position_id if result.position else None,
-            })
 
     # Persist a compact audit trail for every cycle event. SystemLog is
     # append-only and does not affect trading decisions.
