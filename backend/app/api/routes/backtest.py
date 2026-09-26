@@ -65,6 +65,67 @@ async def backtest_readiness() -> dict:
     }
 
 
+@router.get("/baseline")
+async def baseline_backtest(
+    symbol: str = "EUR/USD",
+    timeframe: str = "1h",
+) -> dict:
+    """Run the frozen baseline against all stored candles and return a compact report."""
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(MarketCandle)
+            .where(MarketCandle.symbol == symbol, MarketCandle.timeframe == timeframe)
+            .order_by(MarketCandle.timestamp.asc())
+        )
+        rows = result.scalars().all()
+
+    if not rows:
+        raise HTTPException(status_code=404, detail=f"No stored candles for {symbol} {timeframe}")
+
+    candles = [
+        Candle(
+            symbol=r.symbol, timeframe=r.timeframe, timestamp=r.timestamp,
+            open=r.open, high=r.high, low=r.low, close=r.close, volume=r.volume,
+        )
+        for r in rows
+    ]
+    config = BacktestConfig(
+        symbol=symbol, timeframe=timeframe,
+        initial_balance=10_000.0, position_size=10_000.0,
+        spread=0.00010, slippage=0.00002,
+    )
+    result = run_backtest(candles, config)
+    return {
+        "status": "completed",
+        "dataset": {
+            "symbol": symbol, "timeframe": timeframe, "candle_count": len(candles),
+            "first_candle": candles[0].timestamp.isoformat(),
+            "last_candle": candles[-1].timestamp.isoformat(),
+        },
+        "configuration": {
+            "initial_balance": config.initial_balance, "position_size": config.position_size,
+            "spread": config.spread, "slippage": config.slippage,
+            "execution_model": config.execution_model,
+        },
+        "summary": {
+            "initial_balance": result.summary.initial_balance,
+            "final_balance": result.summary.final_balance,
+            "net_pnl": result.summary.net_pnl,
+            "total_return": result.summary.total_return,
+            "trade_count": result.summary.trade_count,
+            "winning_trades": result.summary.winning_trades,
+            "losing_trades": result.summary.losing_trades,
+            "win_rate": result.summary.win_rate,
+            "average_win": result.summary.average_win,
+            "average_loss": result.summary.average_loss,
+            "expectancy": result.summary.expectancy,
+            "profit_factor": result.summary.profit_factor,
+            "max_drawdown": result.summary.max_drawdown,
+            "max_drawdown_percent": result.summary.max_drawdown_percent,
+        },
+    }
+
+
 
 class BacktestRequest(BaseModel):
     symbol: str = "EUR/USD"
