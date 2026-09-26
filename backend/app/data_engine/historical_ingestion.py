@@ -26,6 +26,13 @@ H1_WINDOW_DAYS = 150
 MIN_REQUEST_SPACING_SECONDS = 8.0
 SUPPORTED_HISTORICAL_INSTRUMENTS = ("EUR/USD", "GBP/USD", "XAU/USD")
 
+# A historical provider can occasionally return an isolated malformed bar.
+# We never repair its prices. We may quarantine a very small number of bad
+# rows, but only when the clean-data ratio is overwhelmingly high. If a
+# provider returns a materially corrupted batch, ingestion still fails closed.
+MAX_QUARANTINED_CANDLE_RATIO = 0.005  # 0.5%
+MIN_CANDLES_FOR_QUARANTINE = 100
+
 
 def _completed_h1(candles: list[Candle], now: datetime | None = None) -> list[Candle]:
     """Keep only fully closed H1 candles and return them chronologically."""
@@ -71,13 +78,58 @@ async def ingest_instrument(
 
     candles = sorted(all_candles.values(), key=lambda c: c.timestamp)
     report = validate_candles(candles, timeframe="h1")
-    if not report.is_clean:
-        raise ValueError(
-            f"Historical data validation failed for {symbol}: "
-            f"ohlc={len(report.ohlc_violations)}, "
-            f"nonpositive={len(report.negative_or_zero_price)}, "
-            f"duplicates={len(report.duplicate_timestamps)}"
+
+    bad_timestamps = {
+        item.split(":", 1)[1].strip().rstrip(")") 
+        for item in report.ohlc_violations
+    }
+    bad_timestamps.update(
+        item.split(":", 1)[1].strip().rstrip(")")
+        for item in report.negative_or_zero_price
+    )
+
+    if bad_timestamps:
+        bad_ratio = len(bad_timestamps) / max(len(candles), 1)
+        can_quarantine = (
+            len(candles) >= MIN_CANDLES_FOR_QUARANTINE
+            and bad_ratio <= MAX_QUARANTINED_CANDLE_RATIO
+            and not report.duplicate_timestamps
         )
+        if not can_quarantine:
+            raise ValueError(
+                f"Historical data validation failed for {symbol}: "
+                f"ohlc={len(report.ohlc_violations)}, "
+                f"nonpositive={len(report.negative_or_zero_price)}, "
+                f"duplicates={len(report.duplicate_timestamps)}, "
+                f"bad_ratio={bad_ratio:.4%}"
+            )
+
+        original_count = len(candles)
+        candles = [
+            c for c in candles
+            if c.timestamp.isoformat() not in bad_timestamps
+        ]
+        logger = __import__("logging").getLogger(__name__)
+        logger.warning(
+            "Historical data quarantined malformed candles: symbol=%s "
+            "quarantined=%d total=%d ratio=%.4f",
+            symbol,
+            original_count - len(candles),
+            original_count,
+            bad_ratio,
+        )
+
+        # Re-validate the exact dataset that will be persisted. This prevents
+        # a future validator change from accidentally allowing another class
+        # of malformed row through.
+        report = validate_candles(candles, timeframe="h1")
+        if not report.is_clean:
+            raise ValueError(
+                f"Historical data validation failed after quarantine for {symbol}: "
+                f"ohlc={len(report.ohlc_violations)}, "
+                f"nonpositive={len(report.negative_or_zero_price)}, "
+                f"duplicates={len(report.duplicate_timestamps)}"
+            )
 
     if not candles:
         return {
