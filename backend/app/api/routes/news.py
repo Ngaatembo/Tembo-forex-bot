@@ -101,8 +101,14 @@ async def get_data_status() -> dict:
     news_status = "mock" if settings.news_provider == "mock" else (
         "unavailable" if not settings.news_api_key else "configured"
     )
-    calendar_status = "mock" if settings.economic_calendar_provider == "mock" else (
-        "unavailable" if not settings.economic_calendar_api_key else "configured"
+    calendar_status = (
+        "mock"
+        if settings.economic_calendar_provider == "mock"
+        else "configured"
+        if settings.economic_calendar_provider == "static_central_banks"
+        else "unavailable"
+        if not settings.economic_calendar_api_key
+        else "configured"
     )
 
     return {
