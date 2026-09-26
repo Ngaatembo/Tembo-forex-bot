@@ -5,9 +5,17 @@ mock and never exposed as a live quote, while real providers must return
 validated candles before the cockpit can use them.
 """
 
+import json
+from pathlib import Path
+
 from fastapi import APIRouter, HTTPException, Query
 
 from app.api.routes.health import health_check
+from app.research.strategy_selector import select_strategy
+from app.research.validated_strategy_config import ValidatedStrategyConfig
+from app.research.instrument_adapter import InstrumentTimeframeInfo
+from app.risk_engine.risk_engine import evaluate_risk
+from app.risk_engine.risk_models import AccountState, RiskLimitsConfig
 from app.core.config import get_settings
 from app.data_engine.market_data import get_market_data_provider
 from app.data_engine.normalizer import normalize_candles
@@ -414,6 +422,98 @@ async def live_decision(
         macro_risk_level=macro_risk.level,
     )
 
+    # Complete the chain without opening or mutating a paper position:
+    # market evidence -> multi-factor decision -> validated strategy -> risk -> paper eligibility.
+    registry_path = Path(__file__).resolve().parents[4] / "research" / "results" / "validated_strategy_configs.json"
+    configs: list[ValidatedStrategyConfig] = []
+    if registry_path.exists():
+        try:
+            configs = [
+                ValidatedStrategyConfig.from_dict(item)
+                for item in json.loads(registry_path.read_text())
+            ]
+        except (OSError, ValueError, TypeError, KeyError):
+            configs = []
+
+    selection = select_strategy(
+        instrument,
+        selected_timeframe,
+        configs,
+        current_regime=snapshots[-1].regime,
+    )
+
+    risk_payload = {
+        "status": "NOT_RUN",
+        "state": None,
+        "hierarchy_stage": None,
+        "computed_risk_pct": None,
+        "position_size": None,
+        "reason": "No BUY/SELL decision reached the risk layer.",
+    }
+    paper_eligibility = {
+        "eligible": False,
+        "status": "NOT_ELIGIBLE",
+        "reason": "Paper eligibility requires a BUY/SELL decision and an approved risk evaluation.",
+        "persistent_state_changed": False,
+        "real_broker_contacted": False,
+        "execution_enabled": False,
+    }
+
+    if decision.decision in {"BUY", "SELL"} and decision.entry is not None and decision.stop_loss is not None:
+        if selection.status == "TRADEABLE":
+            account = AccountState(
+                equity=10_000.0,
+                peak_equity=10_000.0,
+                daily_start_equity=10_000.0,
+                daily_realized_pnl=0.0,
+                daily_unrealized_pnl=0.0,
+                open_positions_count=0,
+                total_open_risk_pct=0.0,
+                kill_switch_active=False,
+            )
+            risk = evaluate_risk(
+                selection_result=selection,
+                account=account,
+                limits=RiskLimitsConfig(),
+                direction="LONG" if decision.direction == "BUY" else "SHORT",
+                entry_price=decision.entry,
+                stop_price=decision.stop_loss,
+                instrument_info=InstrumentTimeframeInfo(
+                    instrument,
+                    selected_timeframe,
+                    mean_price=decision.entry,
+                    price_precision_decimals=5,
+                ),
+            )
+            risk_payload = {
+                "status": "EVALUATED",
+                "state": risk.state,
+                "hierarchy_stage": risk.hierarchy_stage,
+                "computed_risk_pct": risk.computed_risk_pct,
+                "position_size": (
+                    risk.position_sizing.final_position_size
+                    if risk.position_sizing is not None
+                    else None
+                ),
+                "reason": risk.reason,
+            }
+            if risk.state == "APPROVED":
+                paper_eligibility = {
+                    "eligible": True,
+                    "status": "PAPER_ELIGIBLE",
+                    "reason": "Multi-factor decision passed validated-strategy selection and the full risk hierarchy.",
+                    "persistent_state_changed": False,
+                    "real_broker_contacted": False,
+                    "execution_enabled": False,
+                }
+            else:
+                paper_eligibility["reason"] = f"Risk layer rejected the decision: {risk.reason}"
+        else:
+            paper_eligibility["reason"] = (
+                f"Strategy Selector returned {selection.status}; "
+                "a signal cannot bypass the validated-strategy gate."
+            )
+
     return {
         "instrument": instrument,
         "timeframe": selected_timeframe,
@@ -431,7 +531,21 @@ async def live_decision(
             "candle_count": len(candles),
             "last_candle": candles[-1].timestamp.isoformat(),
         },
+        "market_evidence": {
+            "last_close": snapshots[-1].close,
+            "regime": snapshots[-1].regime,
+            "rsi_14": snapshots[-1].rsi_14,
+            "atr_14": snapshots[-1].atr_14,
+            "atr_percent": snapshots[-1].atr_percent,
+        },
+        "strategy_gate": {
+            "status": selection.status,
+            "selected_config_id": selection.selected_config_id,
+            "reason": selection.reason,
+        },
         "trade_plan": decision.to_dict(),
+        "risk": risk_payload,
+        "paper_eligibility": paper_eligibility,
         "execution": {
             "enabled": False,
             "note": "This endpoint produces analysis only. It does not place orders.",
