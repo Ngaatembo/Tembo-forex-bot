@@ -80,7 +80,7 @@ async def baseline_backtest(
         rows = result.scalars().all()
 
     if not rows:
-        raise HTTPException(status_code=404, detail=f"No stored candles for {symbol} {timeframe}")
+        raise HTTPException(status_code=404, detail=f"No stored candles for {symbol} h1")
 
     candles = [
         Candle(
@@ -90,7 +90,7 @@ async def baseline_backtest(
         for r in rows
     ]
     config = BacktestConfig(
-        symbol=symbol, timeframe=timeframe,
+        symbol=symbol, timeframe="h1",
         initial_balance=10_000.0, position_size=10_000.0,
         spread=0.00010, slippage=0.00002,
     )
@@ -98,7 +98,7 @@ async def baseline_backtest(
     return {
         "status": "completed",
         "dataset": {
-            "symbol": symbol, "timeframe": timeframe, "candle_count": len(candles),
+            "symbol": symbol, "timeframe": "h1", "candle_count": len(candles),
             "first_candle": candles[0].timestamp.isoformat(),
             "last_candle": candles[-1].timestamp.isoformat(),
         },
@@ -136,7 +136,7 @@ async def walk_forward_backtest(
 ) -> dict:
     """
     Run the frozen SMA10/50 crossover through rolling out-of-sample windows
-    using the validated historical candles already stored in PostgreSQL.
+    using the validated H1 historical candles already stored in PostgreSQL.
 
     This is research-only. It does not optimize parameters, select a winner,
     or place orders. Each window's OOS period is evaluated only after the
@@ -156,7 +156,7 @@ async def walk_forward_backtest(
             select(MarketCandle)
             .where(
                 MarketCandle.symbol == symbol,
-                MarketCandle.timeframe == timeframe,
+                MarketCandle.timeframe == "h1",
             )
             .order_by(MarketCandle.timestamp.asc())
         )
