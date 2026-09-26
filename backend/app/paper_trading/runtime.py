@@ -292,6 +292,21 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
                 current_regime=None,
                 macro_event_risk=macro_event_risk,
             )
+            if result.position is not None:
+                entry_candle_raw = (response.get("data_quality") or {}).get("last_candle")
+                if entry_candle_raw:
+                    try:
+                        entry_candle_at = datetime.fromisoformat(entry_candle_raw)
+                        row = (await db.execute(
+                            select(PaperRuntimePosition).where(
+                                PaperRuntimePosition.account_key == ACCOUNT_KEY,
+                                PaperRuntimePosition.position_id == result.position.position_id,
+                            )
+                        )).scalar_one_or_none()
+                        if row is not None:
+                            row.last_completed_candle_at = entry_candle_at
+                    except ValueError:
+                        pass
             cycle_results.append({
                 "instrument": instrument,
                 "timeframe": timeframe,
