@@ -61,8 +61,41 @@ async def live_overview(
         "Live market data is not verified, so Tembo fails closed instead of "
         "inventing an entry."
     )
+
+    # The overview is also rendered above the detailed market workspace.
+    # Populate its selected-market telemetry from the same verified provider
+    # path so the UI cannot simultaneously show "data verified" and "no
+    # market timestamp". This is read-only and never reaches execution.
+    selected_price = None
+    selected_last_update = None
+    if data_status not in {"mock", "unavailable", "not_configured"}:
+        try:
+            provider_instance = get_market_data_provider(provider)
+            selected_price = await provider_instance.get_current_price(selected)
+            overview_candles = normalize_candles(
+                await provider_instance.get_candles(selected, selected_timeframe, limit=3)
+            )
+            overview_candles = _completed_candles(overview_candles, selected_timeframe)
+            if overview_candles:
+                overview_validation = validate_candles(
+                    overview_candles, timeframe=selected_timeframe
+                )
+                if overview_validation.is_clean:
+                    selected_last_update = overview_candles[-1].timestamp.isoformat()
+        except Exception:
+            # Detailed market/decision endpoints remain the authoritative
+            # verification path. Overview must fail closed, not fabricate data.
+            selected_price = None
+            selected_last_update = None
+
     return {
-        "mode": "MT5_DEMO_READY" if settings.mt5_bridge_url else "PREPARING",
+        "mode": (
+            "MT5_DEMO_READY"
+            if settings.mt5_bridge_url
+            else "MARKET_DATA_READY"
+            if data_status not in {"mock", "unavailable", "not_configured"}
+            else "PREPARING"
+        ),
         "mt5": {
             "status": (
                 "configured"
@@ -98,8 +131,8 @@ async def live_overview(
                 "timeframe": selected_timeframe,
                 "provider": provider,
                 "data_status": data_status,
-                "current_price": None,
-                "last_update": None,
+                "current_price": selected_price if symbol == selected else None,
+                "last_update": selected_last_update if symbol == selected else None,
                 "decision": decision,
                 "reason": reason,
             }
