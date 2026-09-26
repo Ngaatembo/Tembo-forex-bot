@@ -8,6 +8,9 @@ Run with:
 from contextlib import asynccontextmanager
 import logging
 import asyncio
+from datetime import datetime, timezone
+
+from sqlalchemy import text
 
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,6 +19,8 @@ from app.api.routes import admin_data, backtest, decisions, health, market_data,
 from app.api.routes.live import router as live_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
+from app.data_engine.historical_ingestion import ingest_historical_range
+from app.data_engine.market_data import get_market_data_provider
 from app.database.init import initialize_database
 from app.database.session import AsyncSessionLocal
 from app.paper_trading.runtime import run_paper_cycle
@@ -35,9 +40,61 @@ async def lifespan(_: FastAPI):
         logger.info("Database schema initialization/check completed.")
     except Exception:
         logger.exception("Database schema initialization failed; starting API in degraded database mode.")
+    historical_bootstrap_task = None
+    if settings.enable_historical_bootstrap:
+        async def _historical_bootstrap():
+            try:
+                async with AsyncSessionLocal() as session:
+                    row = await session.execute(
+                        text("SELECT completed_at FROM historical_bootstrap_state WHERE id = 1")
+                    )
+                    completed_at = row.scalar_one_or_none()
+                    if completed_at is not None:
+                        logger.info("Historical bootstrap already completed at %s; skipping.", completed_at)
+                        return
+
+                    provider = get_market_data_provider(settings.market_data_provider)
+                    if settings.market_data_provider == "mock":
+                        logger.warning("Historical bootstrap is enabled but MARKET_DATA_PROVIDER=mock; skipping.")
+                        return
+
+                    start = datetime(2023, 1, 1, tzinfo=timezone.utc)
+                    end = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+                    logger.info(
+                        "Starting one-time historical H1 bootstrap: %s to %s.",
+                        start.isoformat(),
+                        end.isoformat(),
+                    )
+                    result = await ingest_historical_range(session, provider, start, end)
+                    results = result["results"]
+                    if len(results) != 3 or any(r["fetched_candles"] <= 0 for r in results):
+                        raise RuntimeError(
+                            "Historical bootstrap did not produce complete datasets for all supported instruments."
+                        )
+                    await session.execute(
+                        text(
+                            "UPDATE historical_bootstrap_state "
+                            "SET completed_at = NOW() WHERE id = 1"
+                        )
+                    )
+                    await session.commit()
+                    logger.info(
+                        "Historical bootstrap completed: fetched=%s inserted=%s.",
+                        result["fetched_candles"],
+                        result["inserted_candles"],
+                    )
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                logger.exception("Historical bootstrap failed; it will retry on the next service restart.")
+
+        historical_bootstrap_task = asyncio.create_task(_historical_bootstrap())
+
     paper_task = None
     if settings.enable_paper_runtime:
         async def _paper_loop():
+            if historical_bootstrap_task is not None:
+                await historical_bootstrap_task
             while True:
                 try:
                     async with AsyncSessionLocal() as session:
@@ -58,6 +115,12 @@ async def lifespan(_: FastAPI):
             paper_task.cancel()
             try:
                 await paper_task
+            except asyncio.CancelledError:
+                pass
+        if historical_bootstrap_task is not None:
+            historical_bootstrap_task.cancel()
+            try:
+                await historical_bootstrap_task
             except asyncio.CancelledError:
                 pass
 
