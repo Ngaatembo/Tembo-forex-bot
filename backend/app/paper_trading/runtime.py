@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.routes.live import live_decision
 from app.data_engine.market_data import get_market_data_provider
+from app.core.config import get_settings
 from app.database.models import PaperRuntimePosition, PaperRuntimeState, PaperRuntimeTrade
 from app.paper_trading.account import PaperAccountState
 from app.paper_trading.engine import PaperTradingEngine
@@ -183,7 +184,7 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
     # provider calls and can trigger rate limits.
     current_prices: dict[str, float] = {}
     open_keys = list(account.open_positions.keys())
-    provider = get_market_data_provider(__import__("app.core.config", fromlist=["get_settings"]).get_settings().market_data_provider)
+    provider = get_market_data_provider(get_settings().market_data_provider)
     for key in open_keys:
         instrument, timeframe = key.rsplit(":", 1)
         try:
