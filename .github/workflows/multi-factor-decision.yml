@@ -15,6 +15,8 @@ on:
       - "backend/app/paper_trading/**"
       - "backend/tests/test_paper_trading_engine.py"
       - "backend/tests/test_paper_validation.py"
+      - "backend/tests/test_paper_runtime_timing.py"
+      - "backend/tests/test_paper_runtime_metrics.py"
       - ".github/workflows/multi-factor-decision.yml"
 
 jobs:
