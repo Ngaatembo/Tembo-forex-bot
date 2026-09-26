@@ -9,6 +9,8 @@ on:
       - "backend/app/live_engine/candlesticks.py"
       - "backend/scripts/run_candlestick_book_research.py"
       - "backend/tests/test_candlestick_engine.py"
+      - "backend/tests/test_candlestick_research_reporting.py"
+      - "backend/scripts/run_candlestick_context_research.py"
       - "docs/candlestick-book-integration.md"
       - ".github/workflows/candlestick-book-research.yml"
 
@@ -26,12 +28,13 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
-      - run: pytest -q tests/test_candlestick_engine.py
+      - run: pytest -q tests/test_candlestick_engine.py tests/test_candlestick_research_reporting.py
       - run: python scripts/run_candlestick_book_research.py --output research/results/candlestick_book_research.json
       - run: python scripts/run_candlestick_context_research.py
       - uses: actions/upload-artifact@v4
         with:
           name: candlestick-book-research
+          retention-days: 30
           path: |
             backend/research/results/candlestick_book_research.json
             backend/research/results/candlestick_context_research.json
