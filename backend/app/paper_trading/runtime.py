@@ -12,13 +12,14 @@ from pathlib import Path
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.routes.live import live_decision
+from app.api.routes.live import live_decision, live_market
 from app.database.models import PaperRuntimePosition, PaperRuntimeState, PaperRuntimeTrade
 from app.paper_trading.account import PaperAccountState
 from app.paper_trading.engine import PaperTradingEngine
 from app.paper_trading.models import PaperPosition
 from app.research.validated_strategy_config import ValidatedStrategyConfig
 from app.risk_engine.risk_models import RiskLimitsConfig
+from app.news_engine.models import MacroEventRisk
 
 ACCOUNT_KEY = "default_paper"
 INSTRUMENTS = ("EUR/USD", "GBP/USD", "XAU/USD")
@@ -171,18 +172,14 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
     for instrument in INSTRUMENTS:
         for timeframe in TIMEFRAMES:
             try:
-                response = await live_decision(instrument=instrument, timeframe=timeframe)
+                market = await live_market(instrument=instrument, timeframe=timeframe, limit=120)
+                current_prices[f"{instrument}:{timeframe}"] = float(market["current_price"])
             except Exception as exc:
                 cycle_results.append({
                     "instrument": instrument, "timeframe": timeframe,
                     "status": "UNAVAILABLE", "reason": str(exc),
                 })
                 continue
-
-            plan = response.get("trade_plan") or {}
-            entry = plan.get("entry")
-            if entry is not None:
-                current_prices[f"{instrument}:{timeframe}"] = float(entry)
 
     closed = engine.tick(current_prices, now)
     for trade in closed:
@@ -219,6 +216,13 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
                 continue
 
             price = float(plan["entry"])
+            macro = response.get("macro_risk") or {}
+            macro_level = macro.get("level")
+            macro_event_risk = MacroEventRisk(
+                level=macro_level,
+                reason=str(macro.get("reason") or ""),
+                triggering_events=[],
+            ) if macro_level else None
             result = engine.evaluate_and_maybe_open(
                 instrument=instrument,
                 timeframe=timeframe,
@@ -226,9 +230,9 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
                 entry_price=price,
                 stop_price=float(plan["stop_loss"]),
                 take_profit_price=(float(plan["take_profit"]) if plan.get("take_profit") is not None else None),
-                current_prices={key: price},
+                current_prices={key: current_prices.get(key, price)},
                 current_regime=response.get("market_evidence", {}).get("regime"),
-                macro_event_risk=None,
+                macro_event_risk=macro_event_risk,
             )
             cycle_results.append({
                 "instrument": instrument,
