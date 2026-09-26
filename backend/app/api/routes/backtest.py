@@ -15,7 +15,7 @@ from typing import Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.backtesting.config import BacktestConfig
 from app.backtesting.engine import run_backtest
@@ -23,7 +23,47 @@ from app.data_engine.market_data import Candle
 from app.database.models import MarketCandle
 from app.database.session import AsyncSessionLocal
 
+
 router = APIRouter(prefix="/backtests", tags=["backtesting"])
+
+
+@router.get("/readiness")
+async def backtest_readiness() -> dict:
+    """Report whether stored historical candles are available for simulation."""
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(
+                MarketCandle.symbol,
+                MarketCandle.timeframe,
+                func.count(MarketCandle.id).label("candle_count"),
+                func.min(MarketCandle.timestamp).label("first_candle"),
+                func.max(MarketCandle.timestamp).label("last_candle"),
+            )
+            .group_by(MarketCandle.symbol, MarketCandle.timeframe)
+            .order_by(MarketCandle.symbol, MarketCandle.timeframe)
+        )
+        rows = result.all()
+
+    datasets = [
+        {
+            "symbol": row.symbol,
+            "timeframe": row.timeframe,
+            "candle_count": int(row.candle_count),
+            "first_candle": row.first_candle.isoformat() if row.first_candle else None,
+            "last_candle": row.last_candle.isoformat() if row.last_candle else None,
+        }
+        for row in rows
+    ]
+    return {
+        "ready": bool(datasets),
+        "stored_candles": sum(item["candle_count"] for item in datasets),
+        "datasets": datasets,
+        "note": (
+            "Backtests use validated historical candles stored in PostgreSQL. "
+            "Live provider reads do not automatically imply historical backtest data is stored."
+        ),
+    }
+
 
 
 class BacktestRequest(BaseModel):
