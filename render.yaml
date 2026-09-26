@@ -20,11 +20,11 @@ services:
       - key: DEBUG
         value: "false"
       - key: MARKET_DATA_PROVIDER
-        value: mock
+        value: twelvedata
       - key: NEWS_PROVIDER
-        value: mock
+        value: finnhub
       - key: ECONOMIC_CALENDAR_PROVIDER
-        value: mock
+        value: static_central_banks
       - key: ENABLE_LIVE_EXECUTION
         value: "false"
       # Only the deployed Tembo frontend is allowed to call the API.
