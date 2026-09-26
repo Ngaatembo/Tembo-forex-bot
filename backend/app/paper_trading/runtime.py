@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.routes.live import live_decision
 from app.data_engine.market_data import get_market_data_provider
 from app.core.config import get_settings
-from app.database.models import PaperRuntimePosition, PaperRuntimeState, PaperRuntimeTrade
+from app.database.models import PaperRuntimePosition, PaperRuntimeState, PaperRuntimeTrade, SystemLog
 from app.paper_trading.account import PaperAccountState
 from app.paper_trading.engine import PaperTradingEngine
 from app.paper_trading.models import PaperPosition
@@ -274,6 +274,19 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
                 "reason": result.reason,
                 "position_id": result.position.position_id if result.position else None,
             })
+
+    # Persist a compact audit trail for every cycle event. SystemLog is
+    # append-only and does not affect trading decisions.
+    for event in cycle_results:
+        db.add(SystemLog(
+            level="INFO" if event.get("status") not in {"UNAVAILABLE", "ERROR"} else "WARNING",
+            component="paper_runtime",
+            message=json.dumps({
+                "account_id": ACCOUNT_KEY,
+                "cycle_at": now.isoformat(),
+                **event,
+            }, default=str),
+        ))
 
     await _persist_account(db, account, state)
     await db.commit()
