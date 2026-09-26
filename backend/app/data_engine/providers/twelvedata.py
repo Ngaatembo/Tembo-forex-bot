@@ -155,6 +155,10 @@ class TwelveDataProvider(MarketDataProvider):
 
     async def get_current_price(self, symbol: str) -> float:
         provider_symbol = self._to_provider_symbol(symbol)
+        cached = self._price_cache.get(symbol)
+        now = time.monotonic()
+        if cached and now - cached[0] < self._PRICE_CACHE_TTL:
+            return cached[1]
         body = await self._get("/price", {"symbol": provider_symbol})
         if "price" not in body:
             raise MalformedResponseError(f"Twelve Data /price response missing 'price' field: {body}", api_key=self._api_key)
@@ -193,7 +197,7 @@ class TwelveDataProvider(MarketDataProvider):
             "/time_series",
             {
                 "symbol": provider_symbol, "interval": interval, "outputsize": 5000,
-                "start_date": start.strftime("%Y-%m-%d %H:%M:%S"), "end_date": end.strftime("%Y-%m-%d %H:%M:%S"),
+                "start_date": start.strftime("%Y-%m-%d %H:%M:%S"), "end_date": end.strftime("%Y-%m-%d %H:%M:%S"), "timezone": "UTC",
             },
         )
         if "values" not in body:
