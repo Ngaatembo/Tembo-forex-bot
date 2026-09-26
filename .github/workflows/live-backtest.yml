@@ -1,0 +1,48 @@
+name: Live Historical Backtest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/live-backtest.yml"
+  workflow_dispatch:
+
+jobs:
+  baseline-backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check backtest readiness
+        run: |
+          curl --fail --silent --show-error --retry 3 --retry-delay 5 \
+            "https://tembo-forex-bot.onrender.com/backtests/readiness" \
+            -o readiness.json
+          cat readiness.json
+
+      - name: Run EUR/USD H1 baseline
+        run: |
+          curl --fail --silent --show-error --retry 3 --retry-delay 5 \
+            -X POST "https://tembo-forex-bot.onrender.com/backtests/sma-crossover" \
+            -H "Content-Type: application/json" \
+            -d '{"symbol":"EUR/USD","timeframe":"1h","initial_balance":10000,"position_size":10000,"spread":0.00010,"slippage":0.00002}' \
+            -o baseline.json
+
+      - name: Print baseline summary
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open("baseline.json"))
+          print(json.dumps(d["configuration"], indent=2))
+          print(json.dumps(d["summary"], indent=2))
+          print(f"trades={len(d.get('trades', []))}")
+          print(f"equity_points={len(d.get('equity_curve', []))}")
+          PY
+
+      - name: Upload backtest evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: tembo-eurusd-h1-baseline
+          path: |
+            readiness.json
+            baseline.json
+          retention-days: 30
