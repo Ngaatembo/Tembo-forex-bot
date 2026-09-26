@@ -7,6 +7,7 @@ on:
       - "backend/app/data_engine/providers/twelvedata.py"
       - "backend/scripts/ingest_historical_to_postgres.py"
       - "backend/tests/test_historical_ingestion.py"
+      - "backend/tests/test_twelvedata_historical_params.py"
       - ".github/workflows/historical-ingestion-tests.yml"
   pull_request:
     paths:
