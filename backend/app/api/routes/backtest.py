@@ -324,17 +324,30 @@ async def candidate_walk_forward(
         total_pnl = 0.0
         for window in windows:
             split = split_candles_by_period(candles, window.periods)
+            # Indicators and signal lookbacks receive the complete history
+            # immediately preceding OOS, so the first OOS candle has the
+            # same legitimate warm-up context it would have in live trading.
+            # The backtest itself still receives ONLY OOS candles, so no
+            # development/validation P&L can leak into the OOS result.
+            warmup = split["development"] + split["validation"]
             oos = split["out_of_sample"]
+            context = warmup + oos
+            context_features = calculate_feature_snapshots(context)
+
             if kind == "momentum":
-                signals = detect_momentum_signals(oos, lookback=lookback, symbol=symbol)
-                oos_features = calculate_feature_snapshots(oos)
+                context_signals = detect_momentum_signals(context, lookback=lookback, symbol=symbol)
             else:
-                signals = detect_breakout_signals(oos, lookback=lookback, symbol=symbol)
-                oos_features = calculate_feature_snapshots(oos)
+                context_signals = detect_breakout_signals(context, lookback=lookback, symbol=symbol)
                 if kind == "regime_breakout":
-                    signals = filter_signals_by_regime(signals, oos_features,
-                                                       {"HIGH_VOLATILITY", "TRENDING_DOWN", "TRENDING_UP"})
-            result = simulate_trades_with_exit_rules(oos, signals, oos_features, bt_config, exit_config)
+                    context_signals = filter_signals_by_regime(
+                        context_signals, context_features,
+                        {"HIGH_VOLATILITY", "TRENDING_DOWN", "TRENDING_UP"},
+                    )
+
+            warmup_len = len(warmup)
+            oos_signals = context_signals[warmup_len:]
+            oos_features = context_features[warmup_len:]
+            result = simulate_trades_with_exit_rules(oos, oos_signals, oos_features, bt_config, exit_config)
             s = result.summary
             total_trades += s.trade_count
             total_wins += s.winning_trades or 0
