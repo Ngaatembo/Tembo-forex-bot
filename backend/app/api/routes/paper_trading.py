@@ -15,7 +15,8 @@ import json
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, desc
+from datetime import datetime, timezone
 
 router = APIRouter(tags=["paper-trading"])
 
@@ -215,3 +216,32 @@ async def get_runtime_trades() -> list[dict]:
         }
         for row in rows
     ]
+
+
+@router.get("/runtime/events")
+async def get_runtime_events(limit: int = 100) -> list[dict]:
+    """Return the persistent audit trail produced by the paper runtime."""
+    from app.database.session import AsyncSessionLocal
+    from app.database.models import SystemLog
+
+    safe_limit = max(1, min(limit, 500))
+    async with AsyncSessionLocal() as db:
+        rows = (await db.execute(
+            select(SystemLog)
+            .where(SystemLog.component == "paper_runtime")
+            .order_by(desc(SystemLog.created_at))
+            .limit(safe_limit)
+        )).scalars().all()
+
+    events = []
+    for row in rows:
+        try:
+            payload = json.loads(row.message)
+        except (TypeError, ValueError):
+            payload = {"message": row.message}
+        events.append({
+            "level": row.level,
+            "created_at": row.created_at.isoformat() if row.created_at else None,
+            **payload,
+        })
+    return events
