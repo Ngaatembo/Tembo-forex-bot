@@ -32,6 +32,9 @@ class Settings(BaseSettings):
     ai_model: str = "claude-sonnet-5"
 
     enable_live_execution: bool = False
+    # One-time persistent H1 history bootstrap. Disabled by default and
+    # guarded by a database completion marker.
+    enable_historical_bootstrap: bool = False
 
     # Paper runtime is simulated-only. It never enables broker execution.
     enable_paper_runtime: bool = False
