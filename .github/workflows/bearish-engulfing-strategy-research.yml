@@ -1,4 +1,5 @@
 name: Bearish Engulfing Strategy Research
+# Phase 10 research-only workflow; no execution permissions are changed.
 
 on:
   workflow_dispatch:
