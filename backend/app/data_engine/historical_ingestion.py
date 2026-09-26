@@ -35,6 +35,7 @@ logger = get_logger(__name__)
 # provider returns a materially corrupted batch, ingestion still fails closed.
 MAX_QUARANTINED_CANDLE_RATIO = 0.005  # 0.5%
 MIN_CANDLES_FOR_QUARANTINE = 100
+DB_INSERT_BATCH_SIZE = 1000
 
 
 def _completed_h1(candles: list[Candle], now: datetime | None = None) -> list[Candle]:
@@ -157,11 +158,16 @@ async def ingest_instrument(
         }
         for c in candles
     ]
-    stmt = insert(MarketCandle).values(rows)
-    stmt = stmt.on_conflict_do_nothing(
-        constraint="uq_market_candle_identity"
-    )
-    result = await session.execute(stmt)
+    inserted_candles = 0
+    for offset in range(0, len(rows), DB_INSERT_BATCH_SIZE):
+        batch = rows[offset : offset + DB_INSERT_BATCH_SIZE]
+        stmt = insert(MarketCandle).values(batch)
+        stmt = stmt.on_conflict_do_nothing(
+            constraint="uq_market_candle_identity"
+        )
+        result = await session.execute(stmt)
+        inserted_candles += int(result.rowcount or 0)
+
     await session.commit()
 
     return {
@@ -170,7 +176,7 @@ async def ingest_instrument(
         "requested_start": start.astimezone(timezone.utc).isoformat(),
         "requested_end": end.astimezone(timezone.utc).isoformat(),
         "fetched_candles": len(candles),
-        "inserted_candles": int(result.rowcount or 0),
+        "inserted_candles": inserted_candles,
         "datasets": 1,
         "gaps_reported": len(report.unexpected_gaps),
         "actual_start": candles[0].timestamp.isoformat(),
