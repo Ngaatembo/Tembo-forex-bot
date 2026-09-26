@@ -100,6 +100,6 @@ app.include_router(admin_data.router)
 async def root() -> dict:
     return {
         "name": settings.app_name,
-        "phase": "Phase 0 — architecture skeleton",
+        "phase": "Persistent paper-runtime stage",
         "live_execution_enabled": settings.enable_live_execution,
     }
