@@ -82,19 +82,16 @@ async def ingest_instrument(
     candles = sorted(all_candles.values(), key=lambda c: c.timestamp)
     report = validate_candles(candles, timeframe="h1")
 
-    bad_timestamps = {
-        c.timestamp.isoformat()
-        for c in candles
-        if c.high < max(c.open, c.close, c.low)
-        or c.low > min(c.open, c.close, c.high)
-        or c.open <= 0
-        or c.high <= 0
-        or c.low <= 0
-        or c.close <= 0
+    # Use the validator's reported row indices rather than reconstructing
+    # the violation from floating-point values. This makes quarantine exact
+    # even when provider values sit on floating-point comparison boundaries.
+    bad_indices = {
+        int(item.split(" ", 2)[1])
+        for item in (report.ohlc_violations + report.negative_or_zero_price)
     }
 
     if bad_timestamps:
-        bad_ratio = len(bad_timestamps) / max(len(candles), 1)
+        bad_ratio = len(bad_indices) / max(len(candles), 1)
         can_quarantine = (
             len(candles) >= MIN_CANDLES_FOR_QUARANTINE
             and bad_ratio <= MAX_QUARANTINED_CANDLE_RATIO
@@ -112,7 +109,7 @@ async def ingest_instrument(
         original_count = len(candles)
         candles = [
             c for c in candles
-            if c.timestamp.isoformat() not in bad_timestamps
+            if i not in bad_indices
         ]
         logger.warning(
             "Historical data quarantined malformed candles: symbol=%s "
