@@ -29,3 +29,7 @@ async def initialize_database() -> None:
             "ALTER TABLE paper_runtime_positions "
             "ADD COLUMN IF NOT EXISTS last_completed_candle_at TIMESTAMPTZ"
         ))
+        await conn.execute(text(
+            "ALTER TABLE paper_runtime_states "
+            "ADD COLUMN IF NOT EXISTS last_entry_candles JSONB NOT NULL DEFAULT '{}'::jsonb"
+        ))
