@@ -160,14 +160,15 @@ class PaperTradingEngine:
         self.account.open_position(position, risk_amount=risk_amount)
         return PaperTradeDecision("PAPER_TRADE_APPROVED", risk_decision.reason, position=position)
 
-    def tick(self, current_prices: dict, current_time: datetime) -> list[PaperTrade]:
+    def tick(self, current_prices: dict, current_time: datetime, advance_holding_period: bool = True) -> list[PaperTrade]:
         closed_trades = []
         for key in list(self.account.open_positions.keys()):
             price = current_prices.get(key)
             if price is None:
                 continue
             position = self.account.open_positions[key]
-            position.periods_held += 1
+            if advance_holding_period:
+                position.periods_held += 1
             reason = _check_paper_exit(position, price)
             if reason:
                 trade = self.account.close_position(key, exit_price=price, exit_time=current_time, exit_reason=reason)
