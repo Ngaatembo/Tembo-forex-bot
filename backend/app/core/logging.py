@@ -27,6 +27,10 @@ def configure_logging(level: str = "INFO") -> None:
     root = logging.getLogger()
     root.setLevel(level)
     root.handlers = [handler]
+    # HTTP clients may include credentials in request URLs; never emit those
+    # URLs to application logs. Provider-specific errors already redact keys.
+    for noisy_logger in ("httpx", "httpcore"):
+        logging.getLogger(noisy_logger).setLevel(logging.WARNING)
 
 
 def get_logger(name: str) -> logging.Logger:
