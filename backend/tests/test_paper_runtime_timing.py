@@ -44,3 +44,42 @@ def test_completed_candles_uses_timeframe_delta():
     result = _completed_candles([m15_closed, m15_forming], "m15", NOW)
 
     assert [item.timestamp for item in result] == [m15_closed.timestamp]
+
+
+def test_live_decision_macro_risk_contract_is_mapped():
+    from app.news_engine.models import MacroEventRisk
+
+    response = {
+        "macro_risk": {
+            "level": "HIGH",
+            "reason": "High-impact event is approaching.",
+        }
+    }
+    macro = response.get("macro_risk") or response.get("macro_event_risk") or {}
+    risk = MacroEventRisk(
+        level=macro.get("level"),
+        reason=str(macro.get("reason") or ""),
+        triggering_events=(),
+    )
+
+    assert risk.level == "HIGH"
+    assert risk.reason == "High-impact event is approaching."
+
+
+def test_legacy_macro_event_risk_key_remains_compatible():
+    from app.news_engine.models import MacroEventRisk
+
+    response = {
+        "macro_event_risk": {
+            "level": "MEDIUM",
+            "reason": "Compatibility fallback.",
+        }
+    }
+    macro = response.get("macro_risk") or response.get("macro_event_risk") or {}
+    risk = MacroEventRisk(
+        level=macro.get("level"),
+        reason=str(macro.get("reason") or ""),
+        triggering_events=(),
+    )
+
+    assert risk.level == "MEDIUM"
