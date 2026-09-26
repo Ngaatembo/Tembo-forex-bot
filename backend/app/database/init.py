@@ -33,3 +33,16 @@ async def initialize_database() -> None:
             "ALTER TABLE paper_runtime_states "
             "ADD COLUMN IF NOT EXISTS last_entry_candles JSONB NOT NULL DEFAULT '{}'::jsonb"
         ))
+        # Persistent singleton marker for the optional historical bootstrap.
+        # Keeping this in PostgreSQL makes the bootstrap idempotent across
+        # Render restarts and prevents repeated vendor API downloads.
+        await conn.execute(text(
+            "CREATE TABLE IF NOT EXISTS historical_bootstrap_state ("
+            "id SMALLINT PRIMARY KEY CHECK (id = 1), "
+            "completed_at TIMESTAMPTZ NULL"
+            ")"
+        ))
+        await conn.execute(text(
+            "INSERT INTO historical_bootstrap_state (id) VALUES (1) "
+            "ON CONFLICT (id) DO NOTHING"
+        ))
