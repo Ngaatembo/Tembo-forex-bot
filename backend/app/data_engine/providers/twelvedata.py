@@ -34,6 +34,7 @@ provider-sourced data.
 
 from datetime import datetime, timezone
 from typing import Optional
+import time
 
 import httpx
 
@@ -90,6 +91,14 @@ class UnsupportedTimeframeError(TwelveDataProviderError):
 
 
 class TwelveDataProvider(MarketDataProvider):
+    # Multiple cockpit endpoints can request the same H1 dataset within a
+    # single page load. Keep a short process-local cache so the dashboard does
+    # not burn the minute-level Twelve Data quota on duplicate reads.
+    _candles_cache: dict[tuple[str, str, int], tuple[float, list[Candle]]] = {}
+    _price_cache: dict[str, tuple[float, float]] = {}
+    _CANDLE_CACHE_TTL = 55.0
+    _PRICE_CACHE_TTL = 5.0
+
     def __init__(self):
         settings = get_settings()
         if not settings.market_data_api_key:
@@ -149,17 +158,33 @@ class TwelveDataProvider(MarketDataProvider):
         body = await self._get("/price", {"symbol": provider_symbol})
         if "price" not in body:
             raise MalformedResponseError(f"Twelve Data /price response missing 'price' field: {body}", api_key=self._api_key)
-        return float(body["price"])
+        value = float(body["price"])
+        self._price_cache[symbol] = (time.monotonic(), value)
+        return value
 
     async def get_candles(self, symbol: str, timeframe: str, limit: int = 500) -> list[Candle]:
         provider_symbol = self._to_provider_symbol(symbol)
         interval = self._to_provider_interval(timeframe)
+        cache_key = (symbol, timeframe, min(limit, 5000))
+        cached = self._candles_cache.get(cache_key)
+        now = time.monotonic()
+        if cached and now - cached[0] < self._CANDLE_CACHE_TTL:
+            return list(cached[1])
+
         body = await self._get(
-            "/time_series", {"symbol": provider_symbol, "interval": interval, "outputsize": min(limit, 5000)}
+            "/time_series",
+            {
+                "symbol": provider_symbol,
+                "interval": interval,
+                "outputsize": min(limit, 5000),
+                "timezone": "UTC",
+            },
         )
         if "values" not in body:
             raise MalformedResponseError(f"Twelve Data /time_series response missing 'values' field: {body}", api_key=self._api_key)
-        return self._parse_candles(body["values"], symbol, timeframe)
+        parsed = self._parse_candles(body["values"], symbol, timeframe)
+        self._candles_cache[cache_key] = (time.monotonic(), parsed)
+        return list(parsed)
 
     async def get_historical_data(self, symbol: str, timeframe: str, start: datetime, end: datetime) -> list[Candle]:
         provider_symbol = self._to_provider_symbol(symbol)
