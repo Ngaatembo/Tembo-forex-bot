@@ -262,8 +262,13 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
                 continue
             try:
                 candles = normalize_candles(
-                    await provider.get_candles(instrument, timeframe, limit=2)
+                    await provider.get_candles(instrument, timeframe, limit=3)
                 )
+                # The provider's newest bar can still be forming. Entry gating
+                # must use the same completed-candle definition as live_decision,
+                # otherwise a 15-minute polling cycle can re-run the same H1
+                # decision several times before the candle closes.
+                candles = _completed_candles(candles, timeframe, now)
                 validation = validate_candles(candles, timeframe=timeframe)
                 if not validation.is_clean or not candles:
                     cycle_results.append({
