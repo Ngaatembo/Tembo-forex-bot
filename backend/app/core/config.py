@@ -35,7 +35,7 @@ class Settings(BaseSettings):
 
     # Paper runtime is simulated-only. It never enables broker execution.
     enable_paper_runtime: bool = False
-    paper_runtime_interval_seconds: int = 300
+    paper_runtime_interval_seconds: int = 900
 
     max_risk_per_trade_pct: float = 1.0
     max_daily_loss_pct: float = 3.0
