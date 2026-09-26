@@ -11,12 +11,11 @@ simultaneously" work without one overwriting another, and is also
 the duplicate-position guard: the same instrument/timeframe pair
 cannot have two open positions at once.
 
-DAILY P&L: for this milestone, "daily" realized/unrealized P&L are
-simply the account's total realized_pnl and current unrealized P&L —
-there is no multi-day session tracking yet (would require a real
-persistent store across process restarts, out of scope here). This
-is accurate for a single continuous session, which is all a
-same-process paper engine can represent right now.
+DAILY P&L: this in-memory account remains a single-session model. The
+persistent live runtime supplies the multi-day session baseline and
+persists daily_realized_pnl separately in PaperRuntimeState. The
+Risk Engine snapshot produced here therefore remains compatible with
+both standalone paper tests and the persistent runtime.
 """
 
 from dataclasses import dataclass, field
