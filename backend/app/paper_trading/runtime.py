@@ -23,7 +23,7 @@ from app.news_engine.models import MacroEventRisk
 
 ACCOUNT_KEY = "default_paper"
 INSTRUMENTS = ("EUR/USD", "GBP/USD", "XAU/USD")
-TIMEFRAMES = ("m5", "m15", "h1", "h4", "d1")
+TIMEFRAMES = ("h1",)
 REGISTRY_PATH = Path(__file__).resolve().parents[3] / "research" / "results" / "validated_strategy_configs.json"
 
 
