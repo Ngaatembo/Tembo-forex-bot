@@ -71,7 +71,7 @@ def _market_data_status(provider_name: str) -> str:
     return "configured"
 
 
-@router.get("/health")
+@router.api_route("/health", methods=["GET", "HEAD"])
 async def health_check() -> dict:
     settings = get_settings()
     db_ok = await check_database_health()
