@@ -25,3 +25,7 @@ async def initialize_database() -> None:
             "ALTER TABLE paper_runtime_states "
             "ADD COLUMN IF NOT EXISTS session_date VARCHAR NOT NULL DEFAULT '1970-01-01'"
         ))
+        await conn.execute(text(
+            "ALTER TABLE paper_runtime_positions "
+            "ADD COLUMN IF NOT EXISTS last_completed_candle_at TIMESTAMPTZ"
+        ))
