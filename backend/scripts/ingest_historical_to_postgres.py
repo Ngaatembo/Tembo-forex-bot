@@ -20,7 +20,7 @@ API-credit/minute quota.
 
 import asyncio
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from app.core.config import get_settings
 from app.data_engine.historical_ingestion import ingest_historical_range
@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 
 def last_completed_hour() -> datetime:
     now = datetime.now(timezone.utc)
-    return now.replace(minute=0, second=0, microsecond=0) - __import__("datetime").timedelta(hours=1)
+    return now.replace(minute=0, second=0, microsecond=0) - timedelta(hours=1)
 
 
 async def main() -> None:
