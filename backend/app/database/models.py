@@ -184,6 +184,8 @@ class PaperRuntimeState(Base):
     peak_equity: Mapped[float] = mapped_column(Float, nullable=False, default=10000.0)
     kill_switch_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     last_cycle_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # Latest completed candle evaluated for entry decisions, keyed by instrument:timeframe.
+    last_entry_candles: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
