@@ -163,7 +163,7 @@ async def walk_forward_backtest(
         rows = result.scalars().all()
 
     if not rows:
-        raise HTTPException(status_code=404, detail=f"No stored candles for {symbol} {timeframe}")
+        raise HTTPException(status_code=404, detail=f"No stored candles for {symbol} h1")
 
     candles = [
         Candle(
