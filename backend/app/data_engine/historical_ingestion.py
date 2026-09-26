@@ -108,7 +108,7 @@ async def ingest_instrument(
 
         original_count = len(candles)
         candles = [
-            c for c in candles
+            c for i, c in enumerate(candles)
             if i not in bad_indices
         ]
         logger.warning(
