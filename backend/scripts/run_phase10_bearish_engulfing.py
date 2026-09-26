@@ -228,23 +228,31 @@ def research() -> dict:
     ranges = split_ranges(len(candles))
 
     candidates = []
+    # IMPORTANT: only development and validation are evaluated here.
+    # The OOS slice is not touched until after selection below.
     for variant in ENTRY_VARIANTS:
         for stop_atr in STOP_ATR_GRID:
             for target_atr in TARGET_ATR_GRID:
                 for max_hold in MAX_HOLD_GRID:
-                    period_results = {}
-                    for period, (start, end) in ranges.items():
-                        result = run_config(
-                            candles, features, signals_by_variant[variant],
-                            start, end, stop_atr, target_atr, max_hold, "BASE",
-                        )
-                        period_results[period] = summary_dict(result)
+                    development_start, development_end = ranges["development"]
+                    validation_start, validation_end = ranges["validation"]
+                    development = run_config(
+                        candles, features, signals_by_variant[variant],
+                        development_start, development_end,
+                        stop_atr, target_atr, max_hold, "BASE",
+                    )
+                    validation = run_config(
+                        candles, features, signals_by_variant[variant],
+                        validation_start, validation_end,
+                        stop_atr, target_atr, max_hold, "BASE",
+                    )
                     candidates.append({
                         "variant": variant,
                         "stop_atr": stop_atr,
                         "target_atr": target_atr,
                         "max_hold": max_hold,
-                        **period_results,
+                        "development": summary_dict(development),
+                        "validation": summary_dict(validation),
                     })
 
     # Fixed selection protocol: keep configurations with enough development
