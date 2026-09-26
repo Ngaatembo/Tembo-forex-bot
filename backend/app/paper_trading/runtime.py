@@ -14,6 +14,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.routes.live import live_decision
 from app.data_engine.market_data import get_market_data_provider
+from app.data_engine.normalizer import normalize_candles
+from app.data_engine.validator import validate_candles
 from app.core.config import get_settings
 from app.database.models import PaperRuntimePosition, PaperRuntimeState, PaperRuntimeTrade, SystemLog
 from app.paper_trading.account import PaperAccountState
@@ -197,19 +199,42 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
     # validated H1 candle set, so prefetching 120 candles here would duplicate
     # provider calls and can trigger rate limits.
     current_prices: dict[str, float] = {}
+    advance_holding_period_keys: set[str] = set()
     open_keys = list(account.open_positions.keys())
     provider = get_market_data_provider(get_settings().market_data_provider)
     for key in open_keys:
         instrument, timeframe = key.rsplit(":", 1)
         try:
             current_prices[key] = float(await provider.get_current_price(instrument))
+            # Exit monitoring remains frequent, but max-holding periods advance
+            # only when a new completed candle for the position timeframe exists.
+            candles = normalize_candles(
+                await provider.get_candles(instrument, timeframe, limit=2)
+            )
+            validation = validate_candles(candles, timeframe=timeframe)
+            if validation.is_clean and candles:
+                latest_candle_at = candles[-1].timestamp
+                row = (await db.execute(
+                    select(PaperRuntimePosition).where(
+                        PaperRuntimePosition.account_key == ACCOUNT_KEY,
+                        PaperRuntimePosition.position_id == account.open_positions[key].position_id,
+                    )
+                )).scalar_one_or_none()
+                if row is not None:
+                    if row.last_completed_candle_at is None or latest_candle_at > row.last_completed_candle_at:
+                        advance_holding_period_keys.add(key)
+                        row.last_completed_candle_at = latest_candle_at
         except Exception as exc:
             cycle_results.append({
                 "instrument": instrument, "timeframe": timeframe,
                 "status": "UNAVAILABLE", "reason": str(exc),
             })
 
-    closed = engine.tick(current_prices, now)
+    closed = engine.tick(
+        current_prices,
+        now,
+        advance_holding_period_keys=advance_holding_period_keys,
+    )
     for trade in closed:
         cycle_results.append({
             "instrument": trade.instrument,
