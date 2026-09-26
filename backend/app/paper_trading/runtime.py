@@ -344,12 +344,18 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
                                 row.last_completed_candle_at = entry_candle_at
                         except ValueError:
                             pass
+                selected_config = response.get("selected_research_config") or response.get("strategy_config") or {}
                 cycle_results.append({
                     "instrument": instrument,
                     "timeframe": timeframe,
                     "status": result.status,
                     "reason": result.reason,
                     "position_id": result.position.position_id if result.position else None,
+                    "strategy_id": selected_config.get("config_id") or selected_config.get("id"),
+                    "decision": response.get("decision"),
+                    "macro_risk": macro_level,
+                    "last_completed_candle": latest_candle_at.isoformat(),
+                    "data_quality": response.get("data_quality"),
                 })
             except Exception as exc:
                 cycle_results.append({
