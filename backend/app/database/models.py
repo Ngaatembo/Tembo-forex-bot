@@ -202,6 +202,7 @@ class PaperRuntimePosition(Base):
     candidate_config_id: Mapped[str] = mapped_column(String, nullable=False)
     entry_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     periods_held: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    last_completed_candle_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     max_holding_periods: Mapped[int | None] = mapped_column(Integer, nullable=True)
     risk_amount: Mapped[float] = mapped_column(Float, nullable=False)
     status: Mapped[str] = mapped_column(String, nullable=False, default="OPEN")
