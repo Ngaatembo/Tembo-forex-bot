@@ -167,6 +167,7 @@ async def live_market(
             instrument, selected_timeframe, limit=limit
         )
         candles = normalize_candles(candles)
+        candles = _completed_candles(candles, selected_timeframe)
         validation = validate_candles(candles, timeframe=selected_timeframe)
         metadata = await provider.get_instrument_metadata(instrument)
     except Exception as exc:
@@ -312,6 +313,7 @@ async def live_multi_timeframe_analysis(
             candles = normalize_candles(
                 await provider.get_candles(instrument, tf, limit=200)
             )
+            candles = _completed_candles(candles, tf)
             validation = validate_candles(candles, timeframe=tf)
             if not candles or not validation.is_clean:
                 results[tf] = {
