@@ -248,6 +248,9 @@ async def live_analysis(
             instrument, selected_timeframe, limit=200
         )
         candles = normalize_candles(candles)
+        # Keep analysis aligned with market/decision endpoints: indicators
+        # must never consume the currently-forming candle.
+        candles = _completed_candles(candles, selected_timeframe)
         validation = validate_candles(candles, timeframe=selected_timeframe)
     except Exception as exc:
         raise HTTPException(
