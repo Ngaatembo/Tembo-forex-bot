@@ -126,6 +126,136 @@ async def baseline_backtest(
     }
 
 
+@router.get("/walk-forward")
+async def walk_forward_backtest(
+    symbol: str = "EUR/USD",
+    development_days: int = 720,
+    validation_days: int = 180,
+    out_of_sample_days: int = 180,
+    step_days: int = 180,
+) -> dict:
+    """
+    Run the frozen SMA10/50 crossover through rolling out-of-sample windows
+    using the validated historical candles already stored in PostgreSQL.
+
+    This is research-only. It does not optimize parameters, select a winner,
+    or place orders. Each window's OOS period is evaluated only after the
+    development/validation history preceding it.
+    """
+    from app.research.periods import split_candles_by_period
+    from app.research.walk_forward import (
+        WalkForwardConfig,
+        generate_walk_forward_windows,
+    )
+
+    if min(development_days, validation_days, out_of_sample_days, step_days) <= 0:
+        raise HTTPException(status_code=400, detail="All walk-forward periods must be positive.")
+
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(MarketCandle)
+            .where(
+                MarketCandle.symbol == symbol,
+                MarketCandle.timeframe == timeframe,
+            )
+            .order_by(MarketCandle.timestamp.asc())
+        )
+        rows = result.scalars().all()
+
+    if not rows:
+        raise HTTPException(status_code=404, detail=f"No stored candles for {symbol} {timeframe}")
+
+    candles = [
+        Candle(
+            symbol=r.symbol, timeframe=r.timeframe, timestamp=r.timestamp,
+            open=r.open, high=r.high, low=r.low, close=r.close, volume=r.volume,
+        )
+        for r in rows
+    ]
+
+    config = WalkForwardConfig(
+        development_days=development_days,
+        validation_days=validation_days,
+        out_of_sample_days=out_of_sample_days,
+        step_days=step_days,
+    )
+    windows = generate_walk_forward_windows(candles, config)
+    bt_config = BacktestConfig(
+        symbol=symbol,
+        timeframe=timeframe,
+        initial_balance=10_000.0,
+        position_size=10_000.0,
+        spread=0.00010,
+        slippage=0.00002,
+    )
+
+    window_reports = []
+    all_oos_trades = 0
+    all_wins = 0
+    all_net_pnl = 0.0
+    worst_drawdown = 0.0
+
+    for window in windows:
+        split = split_candles_by_period(candles, window.periods)
+        oos_candles = split["out_of_sample"]
+        result = run_backtest(oos_candles, bt_config)
+        summary = result.summary
+
+        all_oos_trades += summary.trade_count
+        all_wins += summary.winning_trades or 0
+        all_net_pnl += summary.net_pnl
+        worst_drawdown = max(worst_drawdown, summary.max_drawdown or 0.0)
+
+        window_reports.append({
+            "window": window.index,
+            "oos_start": window.periods.out_of_sample.start.isoformat(),
+            "oos_end": window.periods.out_of_sample.end.isoformat(),
+            "oos_candles": len(oos_candles),
+            "trade_count": summary.trade_count,
+            "win_rate": summary.win_rate,
+            "profit_factor": summary.profit_factor,
+            "net_pnl": summary.net_pnl,
+            "max_drawdown": summary.max_drawdown,
+        })
+
+    return {
+        "status": "completed",
+        "method": "rolling_out_of_sample",
+        "strategy": "SMA10/SMA50 crossover",
+        "dataset": {
+            "symbol": symbol,
+            "timeframe": timeframe,
+            "candle_count": len(candles),
+            "first_candle": candles[0].timestamp.isoformat(),
+            "last_candle": candles[-1].timestamp.isoformat(),
+        },
+        "windows": {
+            "development_days": development_days,
+            "validation_days": validation_days,
+            "out_of_sample_days": out_of_sample_days,
+            "step_days": step_days,
+            "count": len(windows),
+        },
+        "cost_model": {
+            "spread": bt_config.spread,
+            "slippage": bt_config.slippage,
+            "execution_model": bt_config.execution_model,
+        },
+        "aggregate_oos": {
+            "trade_count": all_oos_trades,
+            "win_rate": (all_wins / all_oos_trades) if all_oos_trades else None,
+            "net_pnl": all_net_pnl,
+            "worst_window_drawdown": worst_drawdown,
+        },
+        "windows_report": window_reports,
+        "note": (
+            "Historical out-of-sample results are descriptive evidence, not "
+            "a guarantee of future performance. No parameter optimization is "
+            "performed by this endpoint."
+        ),
+    }
+
+
 
 class BacktestRequest(BaseModel):
     symbol: str = "EUR/USD"
