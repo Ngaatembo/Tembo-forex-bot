@@ -1,0 +1,34 @@
+name: Historical Ingestion Tests
+
+on:
+  push:
+    paths:
+      - "backend/app/data_engine/historical_ingestion.py"
+      - "backend/app/data_engine/providers/twelvedata.py"
+      - "backend/scripts/ingest_historical_to_postgres.py"
+      - "backend/tests/test_historical_ingestion.py"
+      - "backend/tests/test_twelvedata_historical_params.py"
+      - ".github/workflows/historical-ingestion-tests.yml"
+  pull_request:
+    paths:
+      - "backend/app/data_engine/historical_ingestion.py"
+      - "backend/app/data_engine/providers/twelvedata.py"
+      - "backend/scripts/ingest_historical_to_postgres.py"
+      - "backend/tests/test_historical_ingestion.py"
+      - "backend/tests/test_twelvedata_historical_params.py"
+      - ".github/workflows/historical-ingestion-tests.yml"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: pytest -q tests/test_historical_ingestion.py tests/test_twelvedata_historical_params.py tests/test_backtest_security_boundary.py
