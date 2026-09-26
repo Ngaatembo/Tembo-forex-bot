@@ -196,8 +196,10 @@ class TwelveDataProvider(MarketDataProvider):
         body = await self._get(
             "/time_series",
             {
-                "symbol": provider_symbol, "interval": interval, "outputsize": 5000,
-                "start_date": start.strftime("%Y-%m-%d %H:%M:%S"), "end_date": end.strftime("%Y-%m-%d %H:%M:%S"), "timezone": "UTC",
+                "symbol": provider_symbol, "interval": interval,
+                "start_date": start.strftime("%Y-%m-%d %H:%M:%S"),
+                "end_date": end.strftime("%Y-%m-%d %H:%M:%S"),
+                "timezone": "UTC",
             },
         )
         if "values" not in body:
