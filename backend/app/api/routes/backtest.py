@@ -256,6 +256,126 @@ async def walk_forward_backtest(
     }
 
 
+@router.get("/candidate-walk-forward")
+async def candidate_walk_forward(
+    symbol: str = "EUR/USD",
+    development_days: int = 360,
+    validation_days: int = 90,
+    out_of_sample_days: int = 90,
+    step_days: int = 90,
+) -> dict:
+    """Evaluate the existing frozen strategy candidates on rolling H1 OOS windows.
+
+    No candidate is selected or optimized here. Each strategy is evaluated independently
+    on the same OOS windows so the report can be compared without changing the research
+    rules. Position sizing is instrument-aware, especially for XAU/USD.
+    """
+    from app.backtesting.engine_research import simulate_trades_with_exit_rules
+    from app.backtesting.exit_rules import ExitConfig
+    from app.strategy_engine.breakout import detect_breakout_signals
+    from app.strategy_engine.momentum import detect_momentum_signals
+    from app.strategy_engine.regime_filter import filter_signals_by_regime
+    from app.technical_engine.features import calculate_feature_snapshots
+
+    if min(development_days, validation_days, out_of_sample_days, step_days) <= 0:
+        raise HTTPException(status_code=400, detail="All walk-forward periods must be positive.")
+
+    position_sizes = {"EUR/USD": 10_000.0, "GBP/USD": 10_000.0, "XAU/USD": 8.298216860650118}
+    if symbol not in position_sizes:
+        raise HTTPException(status_code=400, detail=f"Unsupported symbol: {symbol}")
+
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(MarketCandle)
+            .where(MarketCandle.symbol == symbol, MarketCandle.timeframe == "h1")
+            .order_by(MarketCandle.timestamp.asc())
+        )
+        rows = result.scalars().all()
+
+    if not rows:
+        raise HTTPException(status_code=404, detail=f"No stored candles for {symbol} h1")
+
+    candles = [Candle(symbol=r.symbol, timeframe=r.timeframe, timestamp=r.timestamp,
+                       open=r.open, high=r.high, low=r.low, close=r.close, volume=r.volume)
+                for r in rows]
+
+    from app.research.periods import split_candles_by_period
+    from app.research.walk_forward import WalkForwardConfig, generate_walk_forward_windows
+
+    wf = WalkForwardConfig(development_days=development_days, validation_days=validation_days,
+                           out_of_sample_days=out_of_sample_days, step_days=step_days)
+    windows = generate_walk_forward_windows(candles, wf)
+    features = calculate_feature_snapshots(candles)
+    exit_config = ExitConfig(label="atr_2x_max100", atr_stop_multiple=2.0, max_holding_candles=100)
+    candidates = {
+        "breakout_30": ("breakout", 30),
+        "breakout_40": ("breakout", 40),
+        "breakout_50": ("breakout", 50),
+        "momentum_20": ("momentum", 20),
+        "regime_filtered_breakout_40": ("regime_breakout", 40),
+    }
+    bt_config = BacktestConfig(symbol=symbol, timeframe="h1", initial_balance=10_000.0,
+                               position_size=position_sizes[symbol], spread=0.00010, slippage=0.00002)
+
+    reports = {}
+    for name, (kind, lookback) in candidates.items():
+        windows_report = []
+        total_trades = total_wins = 0
+        total_pnl = 0.0
+        for window in windows:
+            split = split_candles_by_period(candles, window.periods)
+            oos = split["out_of_sample"]
+            if kind == "momentum":
+                signals = detect_momentum_signals(oos, lookback=lookback, symbol=symbol)
+                oos_features = calculate_feature_snapshots(oos)
+            else:
+                signals = detect_breakout_signals(oos, lookback=lookback, symbol=symbol)
+                oos_features = calculate_feature_snapshots(oos)
+                if kind == "regime_breakout":
+                    signals = filter_signals_by_regime(signals, oos_features,
+                                                       {"HIGH_VOLATILITY", "TRENDING_DOWN", "TRENDING_UP"})
+            result = simulate_trades_with_exit_rules(oos, signals, oos_features, bt_config, exit_config)
+            s = result.summary
+            total_trades += s.trade_count
+            total_wins += s.winning_trades or 0
+            total_pnl += s.net_pnl
+            windows_report.append({
+                "window": window.index,
+                "oos_start": window.periods.out_of_sample.start.isoformat(),
+                "oos_end": window.periods.out_of_sample.end.isoformat(),
+                "trade_count": s.trade_count,
+                "win_rate": s.win_rate,
+                "profit_factor": s.profit_factor,
+                "net_pnl": s.net_pnl,
+                "max_drawdown": s.max_drawdown,
+            })
+        reports[name] = {
+            "aggregate_oos": {
+                "trade_count": total_trades,
+                "win_rate": (total_wins / total_trades) if total_trades else None,
+                "net_pnl": total_pnl,
+                "positive_windows": sum(1 for w in windows_report if (w["net_pnl"] or 0) > 0),
+                "negative_windows": sum(1 for w in windows_report if (w["net_pnl"] or 0) < 0),
+            },
+            "windows_report": windows_report,
+        }
+
+    return {
+        "status": "completed",
+        "method": "independent_rolling_out_of_sample",
+        "strategy_selection": "none — all candidates evaluated independently",
+        "dataset": {"symbol": symbol, "timeframe": "h1", "candle_count": len(candles),
+                    "first_candle": candles[0].timestamp.isoformat(),
+                    "last_candle": candles[-1].timestamp.isoformat()},
+        "windows": {"development_days": development_days, "validation_days": validation_days,
+                    "out_of_sample_days": out_of_sample_days, "step_days": step_days, "count": len(windows)},
+        "cost_model": {"spread": bt_config.spread, "slippage": bt_config.slippage,
+                       "position_size": bt_config.position_size, "execution_model": bt_config.execution_model},
+        "strategies": reports,
+        "note": "Historical OOS evidence only; no parameter optimization and no execution path.",
+    }
+
+
 
 class BacktestRequest(BaseModel):
     symbol: str = "EUR/USD"
