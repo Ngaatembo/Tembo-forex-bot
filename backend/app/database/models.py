@@ -13,6 +13,8 @@ class PaperRuntimeState(Base):
     initial_equity: Mapped[float] = mapped_column(Float, nullable=False, default=10000.0)
     realized_pnl: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     daily_start_equity: Mapped[float] = mapped_column(Float, nullable=False, default=10000.0)
+    daily_realized_pnl: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    session_date: Mapped[str] = mapped_column(String, nullable=False, default="1970-01-01")
     peak_equity: Mapped[float] = mapped_column(Float, nullable=False, default=10000.0)
     kill_switch_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     last_cycle_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
