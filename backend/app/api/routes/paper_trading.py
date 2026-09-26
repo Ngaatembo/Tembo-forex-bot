@@ -179,6 +179,7 @@ async def get_runtime_positions() -> list[dict]:
             "candidate_config_id": row.candidate_config_id,
             "entry_time": row.entry_time.isoformat(),
             "periods_held": row.periods_held,
+            "last_completed_candle_at": row.last_completed_candle_at.isoformat() if row.last_completed_candle_at else None,
             "status": row.status,
         }
         for row in rows
