@@ -69,7 +69,7 @@ def simulate_trades_with_exit_rules(
                 )
             elif reason == "TAKE_PROFIT":
                 portfolio.close_position_at_price(
-                    exact_price=portfolio.position.target_price, timestamp=candle.timestamp, reason=reason
+                    exact_price=portfolio.position.target_price, timestamp=candle.timestamp, reason=reason, apply_costs=config.apply_costs_to_trigger_exits
                 )
             elif reason == "MAX_HOLDING_PERIOD":
                 portfolio.close_position(mid_price=candle.open, timestamp=candle.timestamp, reason=reason)
