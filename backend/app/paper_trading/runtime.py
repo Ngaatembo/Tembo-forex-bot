@@ -5,7 +5,7 @@ pipeline and then delegates every simulated entry/exit to PaperTradingEngine.
 It never imports or calls broker/execution code.
 """
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import json
 from pathlib import Path
 
@@ -29,6 +29,12 @@ ACCOUNT_KEY = "default_paper"
 INSTRUMENTS = ("EUR/USD", "GBP/USD", "XAU/USD")
 TIMEFRAMES = ("h1",)
 REGISTRY_PATH = Path(__file__).resolve().parents[3] / "research" / "results" / "validated_strategy_configs.json"
+
+_TIMEFRAME_DELTAS = {"m5": timedelta(minutes=5), "m15": timedelta(minutes=15), "h1": timedelta(hours=1), "h4": timedelta(hours=4), "d1": timedelta(days=1)}
+
+def _completed_candles(candles, timeframe: str, now: datetime):
+    delta = _TIMEFRAME_DELTAS[timeframe]
+    return [c for c in candles if c.timestamp + delta <= now]
 
 
 def _configs() -> list[ValidatedStrategyConfig]:
@@ -209,8 +215,9 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
             # Exit monitoring remains frequent, but max-holding periods advance
             # only when a new completed candle for the position timeframe exists.
             candles = normalize_candles(
-                await provider.get_candles(instrument, timeframe, limit=2)
+                await provider.get_candles(instrument, timeframe, limit=3)
             )
+            candles = _completed_candles(candles, timeframe, now)
             validation = validate_candles(candles, timeframe=timeframe)
             if validation.is_clean and candles:
                 latest_candle_at = candles[-1].timestamp
