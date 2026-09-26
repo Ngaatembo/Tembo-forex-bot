@@ -17,7 +17,7 @@ from dataclasses import dataclass
 @dataclass
 class BacktestConfig:
     symbol: str = "EUR/USD"
-    timeframe: str = "1h"
+    timeframe: str = "h1"
 
     initial_balance: float = 1000.0
 
