@@ -68,7 +68,7 @@ async def backtest_readiness() -> dict:
 @router.get("/baseline")
 async def baseline_backtest(
     symbol: str = "EUR/USD",
-    timeframe: str = "1h",
+    timeframe: str = "h1",
 ) -> dict:
     """Run the frozen baseline against all stored candles and return a compact report."""
     async with AsyncSessionLocal() as session:
@@ -129,7 +129,7 @@ async def baseline_backtest(
 
 class BacktestRequest(BaseModel):
     symbol: str = "EUR/USD"
-    timeframe: str = "1h"
+    timeframe: str = "h1"
     start: Optional[datetime] = None
     end: Optional[datetime] = None
     initial_balance: float = Field(default=1000.0, gt=0)
