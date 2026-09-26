@@ -90,7 +90,7 @@ async def ingest_instrument(
         for item in (report.ohlc_violations + report.negative_or_zero_price)
     }
 
-    if bad_timestamps:
+    if bad_indices:
         bad_ratio = len(bad_indices) / max(len(candles), 1)
         can_quarantine = (
             len(candles) >= MIN_CANDLES_FOR_QUARANTINE
