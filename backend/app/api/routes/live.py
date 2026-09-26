@@ -7,6 +7,7 @@ validated candles before the cockpit can use them.
 
 import json
 from pathlib import Path
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, HTTPException, Query
 
@@ -25,6 +26,12 @@ router = APIRouter(prefix="/live", tags=["live"])
 
 INSTRUMENTS = ("EUR/USD", "GBP/USD", "XAU/USD")
 TIMEFRAMES = ("m5", "m15", "h1", "h4", "d1")
+_TIMEFRAME_DELTAS = {"m5": timedelta(minutes=5), "m15": timedelta(minutes=15), "h1": timedelta(hours=1), "h4": timedelta(hours=4), "d1": timedelta(days=1)}
+
+def _completed_candles(candles, timeframe: str):
+    now = datetime.now(timezone.utc)
+    delta = _TIMEFRAME_DELTAS[timeframe]
+    return [c for c in candles if c.timestamp + delta <= now]
 
 
 def _candle_payload(candle) -> dict:
@@ -368,6 +375,7 @@ async def live_decision(
         candles = normalize_candles(
             await provider.get_candles(instrument, selected_timeframe, limit=200)
         )
+        candles = _completed_candles(candles, selected_timeframe)
         validation = validate_candles(candles, timeframe=selected_timeframe)
     except Exception as exc:
         raise HTTPException(
