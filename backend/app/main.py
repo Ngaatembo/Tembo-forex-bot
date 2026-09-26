@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 import logging
 import asyncio
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import admin_data, backtest, decisions, health, market_data, markets, news, paper_trading, research, strategy, technical_analysis
@@ -103,3 +103,8 @@ async def root() -> dict:
         "phase": "Persistent paper-runtime stage",
         "live_execution_enabled": settings.enable_live_execution,
     }
+
+
+@app.head("/")
+async def root_head() -> Response:
+    return Response(status_code=200)
