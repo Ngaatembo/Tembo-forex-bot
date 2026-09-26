@@ -54,6 +54,14 @@ async def _load_account(db: AsyncSession) -> tuple[PaperAccountState, PaperRunti
         )
     )).scalars().all()
 
+    today = datetime.now(timezone.utc).date().isoformat()
+    if state.session_date != today:
+        # Start a new risk session from current equity. Historical closed
+        # trades remain immutable; only the daily risk baseline resets.
+        state.daily_start_equity = state.initial_equity + state.realized_pnl
+        state.daily_realized_pnl = 0.0
+        state.session_date = today
+
     account = PaperAccountState(
         account_id=ACCOUNT_KEY,
         initial_equity=state.initial_equity,
@@ -85,7 +93,9 @@ async def _load_account(db: AsyncSession) -> tuple[PaperAccountState, PaperRunti
 
 
 async def _persist_account(db: AsyncSession, account: PaperAccountState, state: PaperRuntimeState) -> None:
+    previous_realized = state.realized_pnl
     state.realized_pnl = account.realized_pnl
+    state.daily_realized_pnl += account.realized_pnl - previous_realized
     state.peak_equity = account._peak_equity
     state.kill_switch_active = account.kill_switch_active
     state.updated_at = datetime.now(timezone.utc)
