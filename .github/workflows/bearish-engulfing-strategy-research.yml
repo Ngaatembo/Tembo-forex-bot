@@ -1,0 +1,41 @@
+name: Bearish Engulfing Strategy Research
+# Phase 10 research-only workflow; no execution permissions are changed.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "backend/scripts/run_phase10_bearish_engulfing.py"
+      - "backend/app/live_engine/candlesticks.py"
+      - "backend/app/backtesting/**"
+      - "backend/app/research/**"
+      - ".github/workflows/bearish-engulfing-strategy-research.yml"
+  push:
+    paths:
+      - "backend/scripts/run_phase10_bearish_engulfing.py"
+      - "backend/app/live_engine/candlesticks.py"
+      - "backend/app/backtesting/**"
+      - "backend/app/research/**"
+      - ".github/workflows/bearish-engulfing-strategy-research.yml"
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      PYTHONPATH: ${{ github.workspace }}/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python -m py_compile scripts/run_phase10_bearish_engulfing.py
+      - run: python scripts/run_phase10_bearish_engulfing.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phase10-bearish-engulfing-strategy
+          retention-days: 30
+          path: backend/research/results/phase10_bearish_engulfing_strategy.json
