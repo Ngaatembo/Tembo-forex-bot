@@ -65,7 +65,7 @@ def simulate_trades_with_exit_rules(
             )
             if reason == "STOP_LOSS":
                 portfolio.close_position_at_price(
-                    exact_price=portfolio.position.stop_price, timestamp=candle.timestamp, reason=reason
+                    exact_price=portfolio.position.stop_price, timestamp=candle.timestamp, reason=reason, apply_costs=config.apply_costs_to_trigger_exits
                 )
             elif reason == "TAKE_PROFIT":
                 portfolio.close_position_at_price(
