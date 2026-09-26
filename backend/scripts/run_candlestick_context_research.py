@@ -124,6 +124,7 @@ def analyze_split(df: pd.DataFrame, start: int, end: int) -> dict:
                         "horizon": horizon,
                         "context_ok": bool(context_ok),
                         "signed_return": signed_return,
+                        "entry_price": entry,
                     }
                 )
 
@@ -138,9 +139,20 @@ def analyze_split(df: pd.DataFrame, start: int, end: int) -> dict:
         ):
             result[f"{pattern}:{direction}:{horizon}h"] = {
                 "count": int(len(group)),
+                "sample_sufficient": bool(len(group) >= MIN_CANDIDATE_COUNT),
+                "minimum_candidate_count": MIN_CANDIDATE_COUNT,
                 "directional_hit_rate": float((group.signed_return > 0).mean()),
-                "average_forward_return": float(group.signed_return.mean()),
-                "median_forward_return": float(group.signed_return.median()),
+                "average_gross_return": float(group.signed_return.mean()),
+                "median_gross_return": float(group.signed_return.median()),
+                "cost_scenarios": {
+                    scenario: {
+                        "average_net_return": float((group.signed_return - pips * PIP_SIZE / group.entry_price).mean()),
+                        "median_net_return": float((group.signed_return - pips * PIP_SIZE / group.entry_price).median()),
+                        "hit_rate_after_cost": float(((group.signed_return - pips * PIP_SIZE / group.entry_price) > 0).mean()),
+                        "positive_after_cost": bool((group.signed_return - pips * PIP_SIZE / group.entry_price).mean() > 0),
+                    }
+                    for scenario, pips in COST_SCENARIOS_PIPS.items()
+                },
             }
         return result
 
@@ -172,6 +184,8 @@ def main() -> None:
             "out_of_sample": analyze_split(df, validation_end, len(df)),
         },
         "horizons_hours": list(HORIZONS),
+        "cost_scenarios_pips": COST_SCENARIOS_PIPS,
+        "minimum_candidate_count": MIN_CANDIDATE_COUNT,
         "note": "Historical evidence only; context filters are Tembo engineering hypotheses, not source claims.",
     }
     path = Path("research/results/candlestick_context_research.json")
