@@ -15,6 +15,7 @@ import json
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
+from sqlalchemy import select
 
 router = APIRouter(tags=["paper-trading"])
 
@@ -118,3 +119,99 @@ async def get_paper_validation() -> dict:
     from app.paper_trading.validation import run_paper_validation_suite
 
     return run_paper_validation_suite()
+
+
+@router.get("/runtime/status")
+async def get_runtime_status() -> dict:
+    """Return persistent live-data paper runtime state; never mutates it."""
+    from app.database.session import AsyncSessionLocal
+    from app.database.models import PaperRuntimePosition, PaperRuntimeState
+
+    async with AsyncSessionLocal() as db:
+        state = (await db.execute(
+            select(PaperRuntimeState).where(PaperRuntimeState.account_key == "default_paper")
+        )).scalar_one_or_none()
+        positions = (await db.execute(
+            select(PaperRuntimePosition).where(
+                PaperRuntimePosition.account_key == "default_paper",
+                PaperRuntimePosition.status == "OPEN",
+            )
+        )).scalars().all()
+
+    return {
+        "status": "RUNNING" if state and state.last_cycle_at else "NOT_STARTED",
+        "account_id": "default_paper",
+        "initial_equity": state.initial_equity if state else 10000.0,
+        "realized_pnl": state.realized_pnl if state else 0.0,
+        "peak_equity": state.peak_equity if state else 10000.0,
+        "open_positions": len(positions),
+        "last_cycle_at": state.last_cycle_at.isoformat() if state and state.last_cycle_at else None,
+        "execution_enabled": False,
+        "broker_contacted": False,
+    }
+
+
+@router.get("/runtime/positions")
+async def get_runtime_positions() -> list[dict]:
+    """Return current persistent simulated positions."""
+    from app.database.session import AsyncSessionLocal
+    from app.database.models import PaperRuntimePosition
+
+    async with AsyncSessionLocal() as db:
+        rows = (await db.execute(
+            select(PaperRuntimePosition).where(
+                PaperRuntimePosition.account_key == "default_paper",
+                PaperRuntimePosition.status == "OPEN",
+            )
+        )).scalars().all()
+
+    return [
+        {
+            "position_id": row.position_id,
+            "instrument": row.instrument,
+            "timeframe": row.timeframe,
+            "direction": row.direction,
+            "entry_price": row.entry_price,
+            "stop_price": row.stop_price,
+            "take_profit_price": row.take_profit_price,
+            "position_size": row.position_size,
+            "candidate_config_id": row.candidate_config_id,
+            "entry_time": row.entry_time.isoformat(),
+            "periods_held": row.periods_held,
+            "status": row.status,
+        }
+        for row in rows
+    ]
+
+
+@router.get("/runtime/trades")
+async def get_runtime_trades() -> list[dict]:
+    """Return immutable closed paper trades from the live-data runtime."""
+    from app.database.session import AsyncSessionLocal
+    from app.database.models import PaperRuntimeTrade
+
+    async with AsyncSessionLocal() as db:
+        rows = (await db.execute(
+            select(PaperRuntimeTrade)
+            .where(PaperRuntimeTrade.account_key == "default_paper")
+            .order_by(PaperRuntimeTrade.exit_time.desc())
+        )).scalars().all()
+
+    return [
+        {
+            "trade_id": row.trade_id,
+            "position_id": row.position_id,
+            "instrument": row.instrument,
+            "timeframe": row.timeframe,
+            "direction": row.direction,
+            "entry_price": row.entry_price,
+            "exit_price": row.exit_price,
+            "position_size": row.position_size,
+            "entry_time": row.entry_time.isoformat(),
+            "exit_time": row.exit_time.isoformat(),
+            "exit_reason": row.exit_reason,
+            "realized_pnl": row.realized_pnl,
+            "candidate_config_id": row.candidate_config_id,
+        }
+        for row in rows
+    ]
