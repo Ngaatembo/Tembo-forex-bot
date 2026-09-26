@@ -4,6 +4,15 @@ name: Candlestick Book Research
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - "backend/app/live_engine/candlesticks.py"
+      - "backend/scripts/run_candlestick_book_research.py"
+      - "backend/scripts/run_candlestick_context_research.py"
+      - "backend/tests/test_candlestick_engine.py"
+      - "backend/tests/test_candlestick_research_reporting.py"
+      - "docs/candlestick-book-integration.md"
+      - ".github/workflows/candlestick-book-research.yml"
   push:
     paths:
       - "backend/app/live_engine/candlesticks.py"
