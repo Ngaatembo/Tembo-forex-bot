@@ -311,7 +311,10 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
                     continue
 
                 price = float(plan["entry"])
-                macro = response.get("macro_event_risk") or {}
+                # The live decision contract exposes macro risk as "macro_risk".
+                # Keep the legacy key as a compatibility fallback so the
+                # macro safety gate is never silently dropped.
+                macro = response.get("macro_risk") or response.get("macro_event_risk") or {}
                 macro_level = macro.get("level")
                 macro_event_risk = MacroEventRisk(
                     level=macro_level,
