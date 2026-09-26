@@ -26,6 +26,9 @@ from app.live_engine.candlesticks import detect_candlestick_patterns
 
 DATA_URL = "https://raw.githubusercontent.com/ejtraderLabs/historical-data/main/EURUSD/EURUSDh1.csv"
 HORIZONS = (1, 3, 6, 12)
+COST_SCENARIOS_PIPS = {"low": 0.5, "base": 1.0, "high": 2.0}
+PIP_SIZE = 0.0001
+MIN_CANDIDATE_COUNT = 30
 
 
 def load_data(source: str) -> pd.DataFrame:
