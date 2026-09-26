@@ -175,6 +175,20 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
     account, state, _ = await _load_account(db)
     configs = _configs()
     engine = PaperTradingEngine(account, configs, RiskLimitsConfig())
+    # Position IDs must remain unique across service restarts. Recover the
+    # highest persisted counter, including previously closed positions.
+    all_position_ids = (await db.execute(
+        select(PaperRuntimePosition.position_id).where(
+            PaperRuntimePosition.account_key == ACCOUNT_KEY
+        )
+    )).scalars().all()
+    counters = []
+    for position_id in all_position_ids:
+        try:
+            counters.append(int(str(position_id).rsplit("_", 1)[1]))
+        except (ValueError, IndexError):
+            continue
+    engine._position_counter = max(counters, default=0)
     cycle_results = []
     now = datetime.now(timezone.utc)
 
