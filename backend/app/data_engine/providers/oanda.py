@@ -38,12 +38,11 @@ _SYMBOL_MAP = {
 
 # Our internal timeframe strings -> OANDA's "granularity" codes
 _GRANULARITY_MAP = {
-    "1m": "M1",
-    "5m": "M5",
-    "15m": "M15",
-    "1h": "H1",
-    "4h": "H4",
-    "1d": "D",
+    "m5": "M5",
+    "m15": "M15",
+    "h1": "H1",
+    "h4": "H4",
+    "d1": "D",
 }
 
 _PRACTICE_BASE_URL = "https://api-fxpractice.oanda.com/v3"
