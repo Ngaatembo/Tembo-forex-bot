@@ -25,6 +25,8 @@ services:
         value: finnhub
       - key: ECONOMIC_CALENDAR_PROVIDER
         value: finnhub
+      - key: ECONOMIC_CALENDAR_API_KEY
+        sync: false
       - key: ENABLE_LIVE_EXECUTION
         value: "false"
       - key: ENABLE_PAPER_RUNTIME
