@@ -81,9 +81,12 @@ class MockMarketDataProvider(MarketDataProvider):
 
 def get_market_data_provider(provider_name: str, symbol: str | None = None) -> MarketDataProvider:
     """
-    Factory. Phase 1 adds real implementations (OANDAProvider, etc.)
-    and registers them here. Unknown/"mock" provider names fall back
-    to the mock so the app never fails to start for lack of credentials.
+    Factory for the configured market-data source.
+
+    Deriv is deliberately split by instrument: standard forex/gold symbols
+    use the direct Deriv adapter, while SYNTH:<symbol> uses the existing
+    synthetic-index adapter. This keeps Twelve Data out of the live cockpit
+    when MARKET_DATA_PROVIDER=deriv.
     """
     if provider_name == "mock":
         return MockMarketDataProvider()
@@ -94,13 +97,19 @@ def get_market_data_provider(provider_name: str, symbol: str | None = None) -> M
     if provider_name == "twelvedata":
         if symbol and symbol.startswith("SYNTH:"):
             from app.data_engine.providers.deriv_synthetics import DerivSyntheticProvider
+
             return DerivSyntheticProvider()
         from app.data_engine.providers.twelvedata import TwelveDataProvider
 
         return TwelveDataProvider()
     if provider_name == "deriv":
-        from app.data_engine.providers.deriv_synthetics import DerivSyntheticProvider
-        return DerivSyntheticProvider()
+        if symbol and symbol.startswith("SYNTH:"):
+            from app.data_engine.providers.deriv_synthetics import DerivSyntheticProvider
+
+            return DerivSyntheticProvider()
+        from app.data_engine.providers.deriv import DerivMarketDataProvider
+
+        return DerivMarketDataProvider()
     if provider_name == "mt5_bridge":
         from app.data_engine.providers.mt5_bridge import MT5BridgeProvider
 
