@@ -41,6 +41,6 @@ def test_invalid_hypothesis_cannot_be_marked_validated():
             profitability_status="VALIDATED",
         )
     except ValueError as exc:
-        assert "UNVALIDATED" in str(exc)
+        assert "cannot be marked validated" in str(exc)
     else:
         raise AssertionError("validated book hypothesis was accepted")
