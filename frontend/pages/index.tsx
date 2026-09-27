@@ -21,6 +21,53 @@ function Metric({ label, value }: { label: string; value: string }) {
   return <div><div className="metric-label">{label}</div><div className="metric-value">{value}</div></div>;
 }
 
+
+function CandleChart({ candles, instrument }: { candles: MarketResponse["candles"]; instrument: string }) {
+  const visible = candles.slice(-60);
+  if (!visible.length) return <div className="chart-empty">Waiting for verified candle data…</div>;
+
+  const width = 920, height = 360;
+  const pad = { top: 18, right: 70, bottom: 34, left: 8 };
+  const max = Math.max(...visible.map(c => c.high));
+  const min = Math.min(...visible.map(c => c.low));
+  const range = Math.max(max - min, Math.abs(max) * 0.00001, 0.0000001);
+  const y = (price: number) => pad.top + ((max - price) / range) * (height - pad.top - pad.bottom);
+  const step = (width - pad.left - pad.right) / visible.length;
+  const bodyWidth = Math.max(3, Math.min(10, step * 0.58));
+  const labelEvery = Math.max(1, Math.floor(visible.length / 5));
+
+  return <div className="chart-wrap">
+    <div className="chart-head">
+      <div><div className="eyebrow">LIVE CANDLESTICK CHART</div><div className="chart-title">{instrument} · H1</div></div>
+      <div className="chart-legend"><span><i className="legend-up"/> Bullish</span><span><i className="legend-down"/> Bearish</span><span>{visible.length} completed candles</span></div>
+    </div>
+    <div className="chart-scroll">
+      <svg className="candle-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${instrument} H1 candlestick chart`}>
+        {[0, .25, .5, .75, 1].map(ratio => {
+          const price = max - range * ratio, yy = y(price);
+          return <g key={ratio}><line x1={pad.left} x2={width-pad.right} y1={yy} y2={yy} className="grid-line"/>
+            <text x={width-pad.right+10} y={yy+4} className="axis-label">{fmt(price, instrument === "XAU/USD" ? 2 : 5)}</text></g>;
+        })}
+        {visible.map((c, i) => {
+          const x = pad.left + step * i + step / 2;
+          const openY = y(c.open), closeY = y(c.close), highY = y(c.high), lowY = y(c.low);
+          const bullish = c.close >= c.open, bodyY = Math.min(openY, closeY), bodyH = Math.max(2, Math.abs(closeY-openY));
+          return <g key={c.timestamp}>
+            <line x1={x} x2={x} y1={highY} y2={lowY} className={bullish ? "wick-up" : "wick-down"}/>
+            <rect x={x-bodyWidth/2} y={bodyY} width={bodyWidth} height={bodyH} rx="1" className={bullish ? "body-up" : "body-down"}/>
+            {i % labelEvery === 0 && <text x={x} y={height-10} textAnchor="middle" className="time-label">{new Date(c.timestamp).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})}</text>}
+          </g>;
+        })}
+      </svg>
+    </div>
+    <div className="chart-foot">
+      <span>Provider: {market?.provider || "—"}</span><span>Data: {market?.data_quality.is_clean ? "VERIFIED" : "CHECKING"}</span>
+      <span>Latest completed: {visible.length ? new Date(visible[visible.length-1].timestamp).toLocaleString() : "—"}</span>
+    </div>
+  </div>;
+}
+
+
 export default function Home() {
   const [instrument,setInstrument]=useState("EUR/USD");
   const [timeframe]=useState("h1");
@@ -75,7 +122,12 @@ export default function Home() {
         <div className="card"><div className="eyebrow">PAPER RUNTIME</div><div className="signal">{runtime?.status||"—"}</div><p>Last cycle: {runtime?.last_cycle_at ? new Date(runtime.last_cycle_at).toLocaleString() : "—"}</p></div>
       </section>
 
-      <section className="section"><div className="section-title"><span>01</span> Evidence</div>
+      <section className="section market-chart-section">
+        <div className="section-title"><span>01</span> Market candles</div>
+        <CandleChart candles={market?.candles || []} instrument={instrument}/>
+      </section>
+
+      <section className="section"><div className="section-title"><span>02</span> Evidence</div>
         <div className="metrics">
           <Metric label="Candle count" value={String(decision?.data_quality.candle_count??"—")}/>
           <Metric label="Macro risk" value={decision?.macro_risk.level||"—"}/>
@@ -86,7 +138,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section"><div className="section-title"><span>02</span> Safety chain</div>
+      <section className="section"><div className="section-title"><span>03</span> Safety chain</div>
         <div className="gates">
           <div className="gate"><div className="gate-top">Market validation <Pill value={decision?.data_quality.is_clean?"AVAILABLE":"UNAVAILABLE"} tone={toneFor(decision?.data_quality.is_clean?"AVAILABLE":"UNAVAILABLE")}/></div><p>Only validated completed candles can reach the decision engine.</p></div>
           <div className="gate"><div className="gate-top">Research selector <Pill value={research?.selector_status||"WAITING"} tone={toneFor(research?.selector_status)}/></div><p>{research?.reason||"No strategy selection loaded."}</p></div>
@@ -95,7 +147,7 @@ export default function Home() {
         {selected && <div className="selected"><strong>Selected research config:</strong> {selected.config_id} · {selected.strategy_family} · gate {selected.gate_status} · statistical {selected.statistical_level}</div>}
       </section>
 
-      <section className="section"><div className="section-title"><span>03</span> Trade plan</div>
+      <section className="section"><div className="section-title"><span>04</span> Trade plan</div>
         <div className="plan">
           <Metric label="Direction" value={decision?.trade_plan.direction||"NONE"}/>
           <Metric label="Entry" value={fmt(decision?.trade_plan.entry)}/>
@@ -107,7 +159,7 @@ export default function Home() {
         <div className="reason">{decision?.trade_plan.rejection_reasons?.join(" · ") || (signal==="NO_TRADE" ? "No trade is authorized by the multi-factor signal." : "Signal passed the technical decision stage; the paper engine still performs its own research and risk gates.")}</div>
       </section>
 
-      <section className="section"><div className="section-title"><span>04</span> Persistent paper account</div>
+      <section className="section"><div className="section-title"><span>05</span> Persistent paper account</div>
         <div className="metrics">
           <Metric label="Initial equity" value={`$${fmt(runtime?.initial_equity,2)}`}/>
           <Metric label="Realized P&L" value={`$${fmt(runtime?.realized_pnl,2)}`}/>
@@ -119,7 +171,7 @@ export default function Home() {
         {activePosition && <div className="position"><strong>{activePosition.direction} {activePosition.instrument}</strong> · entry {fmt(activePosition.entry_price)} · stop {fmt(activePosition.stop_price)} · TP {fmt(activePosition.take_profit_price)} · held {activePosition.periods_held} cycles</div>}
       </section>
 
-      <section className="section"><div className="section-title"><span>05</span> Research status</div>
+      <section className="section"><div className="section-title"><span>06</span> Research status</div>
         <div className="boundary"><Pill value={research?.research_gate_status||"WAITING"} tone={toneFor(research?.research_gate_status)}/><p>{research?.research_recommendation||"The research gate determines whether a configuration can progress toward paper trading."}</p></div>
       </section>
 
@@ -139,8 +191,14 @@ export default function Home() {
       .gates{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.gate{background:#0e1219;border:1px solid #1e2530;border-radius:9px;padding:15px}.gate-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px;font-weight:750}
       .pill{display:inline-flex;border:1px solid #344052;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}.pill.good{border-color:#2f7650;color:#77e39d;background:#102219}.pill.warn{border-color:#756332;color:#e1c87b;background:#211d11}.pill.bad{border-color:#713a42;color:#ee9ca7;background:#241419}
       .selected,.position{margin-top:12px;background:#0e1219;border:1px solid #1e2530;border-radius:9px;padding:14px}.boundary{background:#0e1219;border:1px solid #25302b;border-radius:9px;padding:17px}
+      .market-chart-section{padding-top:18px}.chart-wrap{background:#0e1219;border:1px solid #202632;border-radius:12px;padding:18px}
+      .chart-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:12px}.chart-title{font-size:20px;font-weight:800;margin-top:6px}
+      .chart-legend{display:flex;gap:14px;flex-wrap:wrap;color:#778295;font-size:11px}.chart-legend span{display:inline-flex;align-items:center;gap:6px}.chart-legend i{display:inline-block;width:8px;height:8px;border-radius:2px}.legend-up{background:#55d991}.legend-down{background:#ed707c}
+      .chart-scroll{width:100%;overflow-x:auto;overflow-y:hidden}.candle-chart{display:block;width:100%;min-width:720px;height:auto}
+      .grid-line{stroke:#202732;stroke-width:1}.axis-label,.time-label{fill:#667184;font-size:11px;font-family:inherit}.wick-up,.wick-down{stroke-width:1.5}.wick-up{stroke:#55d991}.wick-down{stroke:#ed707c}.body-up{fill:#55d991;stroke:#55d991}.body-down{fill:#ed707c;stroke:#ed707c}
+      .chart-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;color:#6f7b8d;font-size:11px}.chart-foot span:nth-child(2){color:#70d99a;font-weight:700}.chart-empty{padding:80px 20px;text-align:center;color:#778295}
       footer{border-top:1px solid #202632;margin-top:10px;padding:20px 0 30px;color:#697486;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
-      @media(max-width:850px){main{padding:16px}.hero-grid,.gates{grid-template-columns:1fr}.metrics,.plan{grid-template-columns:repeat(2,1fr)}.controls{flex-wrap:wrap}.refresh-note{width:100%;margin:0}}
+      @media(max-width:850px){main{padding:16px}.chart-head{align-items:flex-start;flex-direction:column}.hero-grid,.gates{grid-template-columns:1fr}.metrics,.plan{grid-template-columns:repeat(2,1fr)}.controls{flex-wrap:wrap}.refresh-note{width:100%;margin:0}}
     `}</style>
   </>;
 }
