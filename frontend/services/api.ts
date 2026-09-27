@@ -40,6 +40,7 @@ export type ResearchDecision = {
 };
 export type MarketResponse = {
   instrument: string; timeframe: string; provider: string; status: string; current_price: number | null;
+  instrument_metadata?: { symbol: string; display_name: string; pip_size: number; asset_class: string };
   last_update: string | null; candles: Array<{timestamp:string;open:number;high:number;low:number;close:number;volume:number}>;
   data_quality: {is_clean:boolean;ohlc_violations:number;duplicate_timestamps:number;unexpected_gaps:number};
 };
@@ -58,6 +59,15 @@ async function getJson(path: string) {
   const res = await fetch(`${API_BASE_URL}${path}`, { cache: "no-store" });
   if (!res.ok) throw new Error(await readApiError(res));
   return res.json();
+}
+export type SyntheticSymbol = {
+  symbol: string; underlying_symbol: string; display_name: string; market: string;
+  submarket?: string | null; subgroup?: string | null; pip_size: number; exchange_is_open: boolean;
+};
+export type SyntheticSymbolsResponse = { provider: string; status: string; symbols: SyntheticSymbol[]; message: string };
+
+export function getSyntheticSymbols():Promise<SyntheticSymbolsResponse> {
+  return getJson("/live/synthetic-symbols");
 }
 export function getMarket(instrument:string,timeframe:string):Promise<MarketResponse> {
   return getJson(`/live/market?${new URLSearchParams({instrument,timeframe,limit:"120"})}`);
