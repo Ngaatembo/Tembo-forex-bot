@@ -94,7 +94,8 @@ export default function Home() {
     } catch(e) { setError(e instanceof Error ? e.message : "Unable to load Tembo data."); }
     finally { setLoading(false); }
   }
-  useEffect(()=>{ void refresh(); },[instrument,timeframe]);\n  useEffect(()=>{ void getSyntheticSymbols().then(r=>setSynthetics(r.symbols)).catch(()=>setSynthetics([])); },[]);
+  useEffect(()=>{ void refresh(); },[instrument,timeframe]);
+  useEffect(()=>{ void getSyntheticSymbols().then(r=>setSynthetics(r.symbols)).catch(()=>setSynthetics([])); },[]);
 
   const latest = useMemo(()=>market?.candles?.[market.candles.length-1], [market]);
   const signal = decision?.decision || "NO_TRADE";
