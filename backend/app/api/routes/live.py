@@ -298,7 +298,7 @@ async def live_analysis(
         }
 
     try:
-        provider = get_market_data_provider(settings.market_data_provider)
+        provider = get_market_data_provider(settings.market_data_provider, instrument)
         candles = await provider.get_candles(
             instrument, selected_timeframe, limit=200
         )
@@ -367,7 +367,7 @@ async def live_multi_timeframe_analysis(
     results: dict[str, dict] = {}
     for tf in TIMEFRAMES:
         try:
-            provider = get_market_data_provider(settings.market_data_provider)
+            provider = get_market_data_provider(settings.market_data_provider, instrument)
             candles = normalize_candles(
                 await provider.get_candles(instrument, tf, limit=200)
             )
@@ -431,7 +431,7 @@ async def live_decision(
         }
 
     try:
-        provider = get_market_data_provider(settings.market_data_provider)
+        provider = get_market_data_provider(settings.market_data_provider, instrument)
         candles = normalize_candles(
             await provider.get_candles(instrument, selected_timeframe, limit=200)
         )
