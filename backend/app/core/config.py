@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     market_data_provider: str = "mock"
     market_data_api_key: Optional[str] = None
     market_data_account_id: Optional[str] = None
+    deriv_public_ws_url: Optional[str] = "wss://api.derivws.com/trading/v1/options/ws/public"
     mt5_bridge_url: Optional[str] = None
     mt5_bridge_token: Optional[str] = None
     news_provider: str = "mock"
