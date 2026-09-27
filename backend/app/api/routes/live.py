@@ -25,6 +25,10 @@ from app.data_engine.validator import validate_candles
 router = APIRouter(prefix="/live", tags=["live"])
 
 INSTRUMENTS = ("EUR/USD", "GBP/USD", "XAU/USD")
+
+
+def _is_synthetic_instrument(instrument: str) -> bool:
+    return instrument.startswith("SYNTH:") and len(instrument) > len("SYNTH:")
 TIMEFRAMES = ("m5", "m15", "h1", "h4", "d1")
 _TIMEFRAME_DELTAS = {"m5": timedelta(minutes=5), "m15": timedelta(minutes=15), "h1": timedelta(hours=1), "h4": timedelta(hours=4), "d1": timedelta(days=1)}
 
@@ -70,7 +74,7 @@ async def live_overview(
     selected_last_update = None
     if data_status not in {"mock", "unavailable", "not_configured"}:
         try:
-            provider_instance = get_market_data_provider(provider)
+            provider_instance = get_market_data_provider(provider, selected)
             selected_price = await provider_instance.get_current_price(selected)
             overview_candles = normalize_candles(
                 await provider_instance.get_candles(selected, selected_timeframe, limit=3)
@@ -149,6 +153,24 @@ async def live_overview(
     }
 
 
+@router.get("/synthetic-symbols")
+async def synthetic_symbols() -> dict:
+    """Return currently active Deriv synthetic indices for the cockpit."""
+    from app.data_engine.providers.deriv_synthetics import DerivSyntheticProvider
+    try:
+        symbols = await DerivSyntheticProvider().get_active_synthetics()
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Deriv synthetic symbols are unavailable: {exc}",
+        ) from exc
+    return {
+        "provider": "deriv",
+        "status": "available",
+        "symbols": symbols,
+        "message": "Active synthetic symbols discovered from Deriv public market data.",
+    }
+
 @router.get("/market")
 async def live_market(
     instrument: str = Query("EUR/USD"),
@@ -157,10 +179,10 @@ async def live_market(
 ) -> dict:
     """Return chart-ready quote/candle data without fabricating mock prices."""
 
-    if instrument not in INSTRUMENTS:
+    if instrument not in INSTRUMENTS and not _is_synthetic_instrument(instrument):
         raise HTTPException(
             status_code=400,
-            detail=f"Invalid instrument {instrument!r}. Must be one of {INSTRUMENTS}.",
+            detail=f"Invalid instrument {instrument!r}. Use a supported forex/gold symbol or a discovered SYNTH:<DerivSymbol>.",
         )
 
     selected_timeframe = timeframe.lower()
@@ -194,7 +216,7 @@ async def live_market(
         }
 
     try:
-        provider = get_market_data_provider(settings.market_data_provider)
+        provider = get_market_data_provider(settings.market_data_provider, instrument)
         current_price = await provider.get_current_price(instrument)
         candles = await provider.get_candles(
             instrument, selected_timeframe, limit=limit
@@ -251,10 +273,10 @@ async def live_analysis(
     timeframe: str = Query("h1"),
 ) -> dict:
     """Analyze verified completed candles; never returns a trade direction."""
-    if instrument not in INSTRUMENTS:
+    if instrument not in INSTRUMENTS and not _is_synthetic_instrument(instrument):
         raise HTTPException(
             status_code=400,
-            detail=f"Invalid instrument {instrument!r}. Must be one of {INSTRUMENTS}.",
+            detail=f"Invalid instrument {instrument!r}. Use a supported forex/gold symbol or a discovered SYNTH:<DerivSymbol>.",
         )
 
     selected_timeframe = timeframe.lower()
@@ -324,10 +346,10 @@ async def live_multi_timeframe_analysis(
     instrument: str = Query("EUR/USD"),
 ) -> dict:
     """Summarize the same deterministic analysis across all cockpit timeframes."""
-    if instrument not in INSTRUMENTS:
+    if instrument not in INSTRUMENTS and not _is_synthetic_instrument(instrument):
         raise HTTPException(
             status_code=400,
-            detail=f"Invalid instrument {instrument!r}. Must be one of {INSTRUMENTS}.",
+            detail=f"Invalid instrument {instrument!r}. Use a supported forex/gold symbol or a discovered SYNTH:<DerivSymbol>.",
         )
 
     settings = get_settings()
@@ -383,10 +405,10 @@ async def live_decision(
     timeframe: str = Query("h1"),
 ) -> dict:
     """Return a read-only multi-factor decision from verified completed candles."""
-    if instrument not in INSTRUMENTS:
+    if instrument not in INSTRUMENTS and not _is_synthetic_instrument(instrument):
         raise HTTPException(
             status_code=400,
-            detail=f"Invalid instrument {instrument!r}. Must be one of {INSTRUMENTS}.",
+            detail=f"Invalid instrument {instrument!r}. Use a supported forex/gold symbol or a discovered SYNTH:<DerivSymbol>.",
         )
 
     selected_timeframe = timeframe.lower()
