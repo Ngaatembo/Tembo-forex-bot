@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
 import { getLiveAnalysis, getLiveDecision, getMarket, getResearchDecision, getRuntimePositions, getRuntimeStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ResearchDecision, type RuntimePosition, type RuntimeStatus } from "../services/api";
 
-const instruments = ["EUR/USD", "GBP/USD", "XAU/USD"];
+const instruments = ["EUR/USD", "GBP/USD", "XAU/USD"];\nconst timeframes = ["m5", "m15", "h1", "h4", "d1"];
 const timeframes = ["h1"];
 
 function fmt(value: number | null | undefined, digits = 5) {
@@ -70,7 +70,7 @@ function CandleChart({ candles, instrument, provider, isClean }: { candles: Mark
 
 export default function Home() {
   const [instrument,setInstrument]=useState("EUR/USD");
-  const [timeframe]=useState("h1");
+  const [timeframe,setTimeframe]=useState("h1");\n  const [synthetics,setSynthetics]=useState<SyntheticSymbol[]>([]);
   const [market,setMarket]=useState<MarketResponse|null>(null);
   const [decision,setDecision]=useState<LiveDecision|null>(null);
   const [analysis,setAnalysis]=useState<LiveAnalysis|null>(null);
@@ -93,7 +93,7 @@ export default function Home() {
     } catch(e) { setError(e instanceof Error ? e.message : "Unable to load Tembo data."); }
     finally { setLoading(false); }
   }
-  useEffect(()=>{ void refresh(); },[instrument]);
+  useEffect(()=>{ void refresh(); },[instrument,timeframe]);\n  useEffect(()=>{ void getSyntheticSymbols().then(r=>setSynthetics(r.symbols)).catch(()=>setSynthetics([])); },[]);
 
   const latest = useMemo(()=>market?.candles?.[market.candles.length-1], [market]);
   const signal = decision?.decision || "NO_TRADE";
@@ -101,7 +101,7 @@ export default function Home() {
   const activePosition = positions.find(p=>p.instrument===instrument && p.timeframe===timeframe);
 
   return <>
-    <Head><title>Tembo Forex Bot — Cockpit</title><meta name="description" content="Tembo live-data paper trading cockpit"/></Head>
+    <Head><title>Tembo Forex Bot — Multi-Market Cockpit</title><meta name="description" content="Tembo live-data paper trading cockpit"/></Head>
     <main>
       <header className="topbar">
         <div><div className="brand">TEMBO</div><div className="subbrand">LIVE-DATA PAPER TRADING COCKPIT</div></div>
@@ -109,8 +109,11 @@ export default function Home() {
       </header>
 
       <section className="controls">
-        <div><label>Instrument</label><select value={instrument} onChange={e=>setInstrument(e.target.value)}>{instruments.map(x=><option key={x}>{x}</option>)}</select></div>
-        <div><label>Timeframe</label><select value={timeframe} disabled><option>h1</option></select></div>
+        <div><label>Instrument</label><select value={instrument} onChange={e=>setInstrument(e.target.value)}>
+          <optgroup label="Forex / Gold">{instruments.map(x=><option key={x}>{x}</option>)}</optgroup>
+          {synthetics.length > 0 && <optgroup label="Deriv Synthetic Indices">{synthetics.map(x=><option key={x.symbol} value={x.symbol}>{x.display_name}</option>)}</optgroup>}
+        </select></div>
+        <div><label>Timeframe</label><select value={timeframe} onChange={e=>setTimeframe(e.target.value)}>{timeframes.map(x=><option key={x}>{x.toUpperCase()}</option>)}</select></div>
         <button onClick={()=>void refresh()} disabled={loading}>{loading?"Refreshing…":"Refresh"}</button>
         <div className="refresh-note">{lastRefresh?`Updated ${lastRefresh}`:"Waiting for data"}</div>
       </section>
@@ -118,7 +121,7 @@ export default function Home() {
       {error && <div className="error"><strong>Data unavailable.</strong> {error}</div>}
 
       <section className="hero-grid">
-        <div className="card"><div className="eyebrow">LIVE MARKET</div><div className="price">{fmt(market?.current_price ?? latest?.close)}</div><div className="meta">{market?.provider||"—"} · {market?.data_quality.is_clean?"candles verified":"verification pending"}</div></div>
+        <div className="card"><div className="eyebrow">LIVE MARKET</div><div className="price">{fmt(market?.current_price ?? latest?.close)}</div><div className="meta">{market?.instrument_metadata?.display_name || instrument} · {timeframe.toUpperCase()} · {market?.provider||"—"} · {market?.data_quality.is_clean?"candles verified":"verification pending"}</div></div>
         <div className="card"><div className="eyebrow">SIGNAL</div><div className="signal">{signal}</div><p>{decision?.methodology||"Waiting for verified market evidence."}</p></div>
         <div className="card"><div className="eyebrow">PAPER RUNTIME</div><div className="signal">{runtime?.status||"—"}</div><p>Last cycle: {runtime?.last_cycle_at ? new Date(runtime.last_cycle_at).toLocaleString() : "—"}</p></div>
       </section>
@@ -132,11 +135,11 @@ export default function Home() {
         <div className="analysis-grid">
           <div className="analysis-card"><div className="analysis-label">Market state</div><div className="analysis-main">{analysis?.analysis?.trend?.state || "WAITING"}</div><div className="analysis-sub">{analysis?.analysis?.trend?.regime || analysis?.status || "No verified analysis yet."}</div></div>
           <div className="analysis-card"><div className="analysis-label">Momentum</div><div className="analysis-main">{analysis?.analysis?.momentum?.state || "—"}</div><div className="analysis-sub">RSI 14: {fmt(analysis?.analysis?.momentum?.rsi_14,2)}</div></div>
-          <div className="analysis-card"><div className="analysis-label">Volatility</div><div className="analysis-main">{analysis?.analysis?.volatility?.state || "—"}</div><div className="analysis-sub">ATR: {fmt(analysis?.analysis?.volatility?.atr_14, instrument === "XAU/USD" ? 2 : 5)} · {fmt(analysis?.analysis?.volatility?.atr_percent,4)}%</div></div>
+          <div className="analysis-card"><div className="analysis-label">Volatility</div><div className="analysis-main">{analysis?.analysis?.volatility?.state || "—"}</div><div className="analysis-sub">ATR: {fmt(analysis?.analysis?.volatility?.atr_14, market?.instrument_metadata?.pip_size && market.instrument_metadata.pip_size < 0.01 ? 5 : 2)} · {fmt(analysis?.analysis?.volatility?.atr_percent,4)}%</div></div>
           <div className="analysis-card"><div className="analysis-label">Structure</div><div className="analysis-main">{(analysis?.analysis?.market_structure?.label || "—").replaceAll("_"," ")}</div><div className="analysis-sub">Confirmed swing structure only</div></div>
         </div>
         <div className="analysis-grid analysis-grid-wide">
-          <div className="analysis-card"><div className="analysis-label">Support / resistance</div><div className="levels"><span>Support <b>{fmt(analysis?.analysis?.support_resistance?.support, instrument === "XAU/USD" ? 2 : 5)}</b></span><span>Resistance <b>{fmt(analysis?.analysis?.support_resistance?.resistance, instrument === "XAU/USD" ? 2 : 5)}</b></span></div><div className="analysis-sub">Recent range: {fmt(analysis?.analysis?.support_resistance?.rolling_range, instrument === "XAU/USD" ? 2 : 5)}</div></div>
+          <div className="analysis-card"><div className="analysis-label">Support / resistance</div><div className="levels"><span>Support <b>{fmt(analysis?.analysis?.support_resistance?.support, market?.instrument_metadata?.pip_size && market.instrument_metadata.pip_size < 0.01 ? 5 : 2)}</b></span><span>Resistance <b>{fmt(analysis?.analysis?.support_resistance?.resistance, market?.instrument_metadata?.pip_size && market.instrument_metadata.pip_size < 0.01 ? 5 : 2)}</b></span></div><div className="analysis-sub">Recent range: {fmt(analysis?.analysis?.support_resistance?.rolling_range, market?.instrument_metadata?.pip_size && market.instrument_metadata.pip_size < 0.01 ? 5 : 2)}</div></div>
           <div className="analysis-card"><div className="analysis-label">Candlestick evidence</div><div className="pattern-list">{(analysis?.analysis?.candlestick_patterns || []).slice(-4).map((p,i)=><span key={i} className="pattern">{String(p.name || p.pattern || "Pattern")} {p.direction ? "· "+String(p.direction) : ""}</span>)}{!analysis?.analysis?.candlestick_patterns?.length && <span className="analysis-sub">No confirmed pattern reported.</span>}</div></div>
         </div>
         <div className="analysis-note"><strong>How Tembo uses this:</strong> this panel describes verified completed-candle conditions. It does not turn technical context into a trade by itself; the decision, strategy, macro, and risk gates below remain authoritative. {analysis?.analysis?.as_of ? "Analysis as of "+new Date(analysis.analysis.as_of).toLocaleString()+"." : ""}</div>
