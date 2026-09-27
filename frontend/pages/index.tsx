@@ -142,7 +142,7 @@ export default function Home() {
         <div className="analysis-note"><strong>How Tembo uses this:</strong> this panel describes verified completed-candle conditions. It does not turn technical context into a trade by itself; the decision, strategy, macro, and risk gates below remain authoritative. {analysis?.analysis?.as_of ? "Analysis as of "+new Date(analysis.analysis.as_of).toLocaleString()+"." : ""}</div>
       </section>
 
-      <section className="section"><div className="section-title"><span>02</span> Evidence</div>
+      <section className="section"><div className="section-title"><span>03</span> Evidence</div>
         <div className="metrics">
           <Metric label="Candle count" value={String(decision?.data_quality.candle_count??"—")}/>
           <Metric label="Macro risk" value={decision?.macro_risk.level||"—"}/>
@@ -164,14 +164,14 @@ export default function Home() {
 
       <section className="section"><div className="section-title"><span>05</span> Trade plan</div>
         <div className="plan">
-          <Metric label="Direction" value={decision?.trade_plan.direction||"NONE"}/>
-          <Metric label="Entry" value={fmt(decision?.trade_plan.entry)}/>
-          <Metric label="Stop loss" value={fmt(decision?.trade_plan.stop_loss)}/>
-          <Metric label="Take profit" value={fmt(decision?.trade_plan.take_profit)}/>
-          <Metric label="Risk / reward" value={fmt(decision?.trade_plan.risk_reward,2)}/>
+          <Metric label="Direction" value={decision?.trade_plan?.direction||"NONE"}/>
+          <Metric label="Entry" value={fmt(decision?.trade_plan?.entry)}/>
+          <Metric label="Stop loss" value={fmt(decision?.trade_plan?.stop_loss)}/>
+          <Metric label="Take profit" value={fmt(decision?.trade_plan?.take_profit)}/>
+          <Metric label="Risk / reward" value={fmt(decision?.trade_plan?.risk_reward,2)}/>
           <Metric label="Position" value={activePosition?.position_size ? fmt(activePosition.position_size,4) : "NOT OPEN"}/>
         </div>
-        <div className="reason">{decision?.trade_plan.rejection_reasons?.join(" · ") || (signal==="NO_TRADE" ? "No trade is authorized by the multi-factor signal." : "Signal passed the technical decision stage; the paper engine still performs its own research and risk gates.")}</div>
+        <div className="reason">{decision?.trade_plan?.rejection_reasons?.join(" · ") || (signal==="NO_TRADE" ? "No trade is authorized by the multi-factor signal." : "Signal passed the technical decision stage; the paper engine still performs its own research and risk gates.")}</div>
       </section>
 
       <section className="section"><div className="section-title"><span>06</span> Persistent paper account</div>
