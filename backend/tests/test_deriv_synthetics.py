@@ -53,6 +53,8 @@ async def test_active_symbols_filters_to_unsuspended_synthetics(monkeypatch):
     from app.core.config import get_settings
     get_settings.cache_clear()
     monkeypatch.setenv("MARKET_DATA_PROVIDER", "twelvedata")
+    DerivSyntheticProvider._symbols_cache = None
+    DerivSyntheticProvider._symbols_cache = None
     provider = DerivSyntheticProvider()
     fake = FakeConnect([[
         {
