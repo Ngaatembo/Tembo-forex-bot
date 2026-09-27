@@ -2,42 +2,31 @@
 
 ## Principle
 
-Risk management operates independently from the AI and from any
-strategy. The AI cannot bypass risk controls. If risk state is
-unknown, the system does not trade — this is enforced in code, not
-just documented as policy (`app/risk_engine/kill_switch.py`).
+Risk management operates independently from AI and strategy. AI output cannot bypass risk controls. If risk state is unknown, the system does not trade — this is enforced in code, not only documented as policy.
 
-## Configurable limits (see `.env.example`)
+## Configurable limits
 
-- Max risk per trade (%)
-- Max daily loss (%)
-- Max weekly loss (%)
-- Max drawdown (%)
+- Max risk per trade
+- Max daily loss
+- Max weekly loss
+- Max drawdown
 - Max open positions
 - Max leverage
-- Max correlated exposure (per-currency) — Phase 7+
-- Minimum risk/reward threshold — Phase 3+
-- Trading pause after repeated losses — Phase 8+
-- Emergency kill switch — scaffolded now, real logic added as trading
-  logic itself is built, phase by phase
+- Correlated exposure limits as instrument support expands
+- Minimum risk/reward thresholds where configured
+- Emergency kill switch
 
 ## Live execution gate
 
-Two independent conditions must both be true before any real-money
-order can be placed:
+Two independent conditions must both be true before any real-money order can be placed:
 
-1. `ENABLE_LIVE_EXECUTION=true` in environment configuration
-2. A real `BrokerAdapter` implementation exists and is registered in
-   `app/execution/broker_adapter.py`
+1. ENABLE_LIVE_EXECUTION=true is explicitly set.
+2. A real BrokerAdapter implementation exists and is registered.
 
-As of Phase 0, condition 2 is not met — no live adapter exists.
-`get_broker_adapter()` always returns `PaperBrokerAdapter` today,
-and will keep doing so even if condition 1 is flipped, until a real
-adapter is deliberately written.
+At present, condition 2 is deliberately not satisfied. get_broker_adapter() fails closed rather than silently converting a configuration flag into live trading.
 
-## What "fail closed" means here
+Before live execution is ever enabled, the broker adapter must also pass demo-account connectivity, order-parameter, rejection, timeout, duplicate-order and emergency-stop tests.
 
-Every function in the risk-check path returns a `BLOCKED` or
-`UNKNOWN` result by default. `OK` must be actively earned by a
-passing check — it is never the fallback on an exception, a missing
-value, or an unrecognized state.
+## Fail closed
+
+Risk checks return BLOCKED or UNKNOWN by default. OK must be actively earned by passing validation; it is never the fallback for missing values, exceptions or unrecognized state.
