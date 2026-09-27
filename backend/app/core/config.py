@@ -21,6 +21,10 @@ class Settings(BaseSettings):
     market_data_api_key: Optional[str] = None
     market_data_account_id: Optional[str] = None
     deriv_public_ws_url: Optional[str] = "wss://api.derivws.com/trading/v1/options/ws/public"
+    deriv_api_token: Optional[str] = None
+    deriv_app_id: Optional[str] = None
+    deriv_account_id: Optional[str] = None
+    deriv_trading_mode: str = "demo"
     mt5_bridge_url: Optional[str] = None
     mt5_bridge_token: Optional[str] = None
     news_provider: str = "mock"
@@ -33,11 +37,8 @@ class Settings(BaseSettings):
     ai_model: str = "claude-sonnet-5"
 
     enable_live_execution: bool = False
-    # One-time persistent H1 history bootstrap. Disabled by default and
-    # guarded by a database completion marker.
     enable_historical_bootstrap: bool = False
 
-    # Paper runtime is simulated-only. It never enables broker execution.
     enable_paper_runtime: bool = False
     paper_runtime_interval_seconds: int = 900
 
