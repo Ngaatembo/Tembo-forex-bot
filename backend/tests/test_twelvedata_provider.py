@@ -21,7 +21,11 @@ def provider(monkeypatch):
     monkeypatch.setenv("MARKET_DATA_API_KEY", "fake_test_key_never_real")
     from app.data_engine.providers.twelvedata import TwelveDataProvider
     p = TwelveDataProvider()
+    TwelveDataProvider._candles_cache.clear()
+    TwelveDataProvider._price_cache.clear()
     yield p
+    TwelveDataProvider._candles_cache.clear()
+    TwelveDataProvider._price_cache.clear()
     get_settings.cache_clear()
 
 
