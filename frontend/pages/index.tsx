@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
-import { getLiveAnalysis, getLiveDecision, getMarket, getResearchDecision, getRuntimePositions, getRuntimeStatus, getSyntheticSymbols, type LiveAnalysis, type LiveDecision, type MarketResponse, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type SyntheticSymbol } from "../services/api";
+import { getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getResearchDecision, getRuntimePositions, getRuntimeStatus, getSyntheticSymbols, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type SyntheticSymbol } from "../services/api";
 
 const instruments = ["EUR/USD", "GBP/USD", "XAU/USD"];
 const timeframes = ["m5", "m15", "h1", "h4", "d1"];
@@ -71,7 +71,7 @@ function CandleChart({ candles, instrument, timeframe, provider, isClean }: { ca
 export default function Home() {
   const [instrument,setInstrument]=useState("EUR/USD");
   const [timeframe,setTimeframe]=useState("h1");
-  const [synthetics,setSynthetics]=useState<SyntheticSymbol[]>([]);
+  const [synthetics,setSynthetics]=useState<SyntheticSymbol[]>([]);\n  const [derivStatus,setDerivStatus]=useState<DerivStatus|null>(null);
   const [market,setMarket]=useState<MarketResponse|null>(null);
   const [decision,setDecision]=useState<LiveDecision|null>(null);
   const [analysis,setAnalysis]=useState<LiveAnalysis|null>(null);
@@ -95,7 +95,7 @@ export default function Home() {
     finally { setLoading(false); }
   }
   useEffect(()=>{ void refresh(); },[instrument,timeframe]);
-  useEffect(()=>{ void getSyntheticSymbols().then(r=>setSynthetics(r.symbols)).catch(()=>setSynthetics([])); },[]);
+  useEffect(()=>{ void getSyntheticSymbols().then(r=>setSynthetics(r.symbols)).catch(()=>setSynthetics([])); void getDerivStatus().then(setDerivStatus).catch(()=>setDerivStatus(null)); },[]);
   useEffect(()=>{ const timer = window.setInterval(()=>{ void refresh(); }, 15000); return ()=>window.clearInterval(timer); },[instrument,timeframe]);
 
   const latest = useMemo(()=>market?.candles?.[market.candles.length-1], [market]);
@@ -108,7 +108,7 @@ export default function Home() {
     <main>
       <header className="topbar">
         <div><div className="brand">TEMBO</div><div className="subbrand">LIVE-DATA PAPER TRADING COCKPIT</div></div>
-        <div className="live-state"><span className="dot"/> PAPER ONLY • BROKER OFF</div>
+        <div className="live-state"><span className="dot"/> PAPER ONLY • BROKER OFF<div className="broker-chip"><span className={derivStatus?.connected ? "broker-dot on" : "broker-dot"}/>DERIV {derivStatus?.connected ? "DEMO CONNECTED" : derivStatus?.configured ? "CHECKING" : "NOT CONFIGURED"}</div></div>
       </header>
 
       <section className="controls">
@@ -251,7 +251,7 @@ export default function Home() {
       *{box-sizing:border-box} body{margin:0;background:#080a0f;color:#e9edf5;font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif}
       main{min-height:100vh;max-width:1280px;margin:auto;padding:24px}.topbar{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #202632;padding-bottom:22px}
       .brand{font-size:28px;font-weight:900;letter-spacing:.16em}.subbrand,.eyebrow,.section-title span,label{color:#8993a5;font-size:11px;letter-spacing:.13em;text-transform:uppercase}.subbrand{margin-top:4px}
-      .live-state{font-size:11px;letter-spacing:.08em;color:#9ba5b7}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#5ee08b;margin-right:7px}
+      .live-state{font-size:11px;letter-spacing:.08em;color:#9ba5b7}.broker-chip{margin-top:8px;color:#7f899b;font-size:10px;letter-spacing:.08em;text-transform:uppercase}.broker-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#6a7180;margin-right:6px}.broker-dot.on{background:#5ee08b}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#5ee08b;margin-right:7px}
       .controls{display:flex;align-items:end;gap:12px;padding:22px 0;border-bottom:1px solid #202632}label{display:block;margin-bottom:7px}
       select,button{background:#11151d;border:1px solid #2a3240;color:#edf1f8;border-radius:8px;padding:10px 13px;font:inherit}button{cursor:pointer;font-weight:700}button:disabled{opacity:.5;cursor:default}.refresh-note{margin-left:auto;color:#727d90;font-size:12px;padding-bottom:10px}
       .error{margin-top:18px;padding:13px 15px;border:1px solid #60333a;background:#211217;color:#f2b6bd;border-radius:9px}.hero-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:14px;padding:22px 0}
