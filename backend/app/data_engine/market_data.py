@@ -86,9 +86,6 @@ def get_market_data_provider(provider_name: str, symbol: str | None = None) -> M
     to the mock so the app never fails to start for lack of credentials.
     """
     if provider_name == "mock":
-        if symbol and symbol.startswith("SYNTH:"):
-            from app.data_engine.providers.deriv_synthetics import DerivSyntheticProvider
-            return DerivSyntheticProvider()
         return MockMarketDataProvider()
     if provider_name == "oanda":
         from app.data_engine.providers.oanda import OANDAProvider
