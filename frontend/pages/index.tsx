@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
-import { getLiveDecision, getMarket, getResearchDecision, getRuntimePositions, getRuntimeStatus, type LiveDecision, type MarketResponse, type ResearchDecision, type RuntimePosition, type RuntimeStatus } from "../services/api";
+import { getLiveAnalysis, getLiveDecision, getMarket, getResearchDecision, getRuntimePositions, getRuntimeStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ResearchDecision, type RuntimePosition, type RuntimeStatus } from "../services/api";
 
 const instruments = ["EUR/USD", "GBP/USD", "XAU/USD"];
 const timeframes = ["h1"];
@@ -22,7 +22,7 @@ function Metric({ label, value }: { label: string; value: string }) {
 }
 
 
-function CandleChart({ candles, instrument }: { candles: MarketResponse["candles"]; instrument: string }) {
+function CandleChart({ candles, instrument, provider, isClean }: { candles: MarketResponse["candles"]; instrument: string; provider?: string; isClean?: boolean }) {
   const visible = candles.slice(-60);
   if (!visible.length) return <div className="chart-empty">Waiting for verified candle data…</div>;
 
@@ -61,7 +61,7 @@ function CandleChart({ candles, instrument }: { candles: MarketResponse["candles
       </svg>
     </div>
     <div className="chart-foot">
-      <span>Provider: {market?.provider || "—"}</span><span>Data: {market?.data_quality.is_clean ? "VERIFIED" : "CHECKING"}</span>
+      <span>Provider: {provider || "—"}</span><span>Data: {isClean ? "VERIFIED" : "CHECKING"}</span>
       <span>Latest completed: {visible.length ? new Date(visible[visible.length-1].timestamp).toLocaleString() : "—"}</span>
     </div>
   </div>;
@@ -73,6 +73,7 @@ export default function Home() {
   const [timeframe]=useState("h1");
   const [market,setMarket]=useState<MarketResponse|null>(null);
   const [decision,setDecision]=useState<LiveDecision|null>(null);
+  const [analysis,setAnalysis]=useState<LiveAnalysis|null>(null);
   const [research,setResearch]=useState<ResearchDecision|null>(null);
   const [runtime,setRuntime]=useState<RuntimeStatus|null>(null);
   const [positions,setPositions]=useState<RuntimePosition[]>([]);
@@ -83,11 +84,11 @@ export default function Home() {
   async function refresh() {
     setLoading(true); setError("");
     try {
-      const [m,d,r,rs,p] = await Promise.all([
-        getMarket(instrument,timeframe), getLiveDecision(instrument,timeframe),
+      const [m,a,d,r,rs,p] = await Promise.all([
+        getMarket(instrument,timeframe), getLiveAnalysis(instrument,timeframe), getLiveDecision(instrument,timeframe),
         getResearchDecision(instrument,timeframe), getRuntimeStatus(), getRuntimePositions()
       ]);
-      setMarket(m); setDecision(d); setResearch(r); setRuntime(rs); setPositions(p);
+      setMarket(m); setAnalysis(a); setDecision(d); setResearch(r); setRuntime(rs); setPositions(p);
       setLastRefresh(new Date().toLocaleTimeString());
     } catch(e) { setError(e instanceof Error ? e.message : "Unable to load Tembo data."); }
     finally { setLoading(false); }
@@ -124,7 +125,21 @@ export default function Home() {
 
       <section className="section market-chart-section">
         <div className="section-title"><span>01</span> Market candles</div>
-        <CandleChart candles={market?.candles || []} instrument={instrument}/>
+        <CandleChart candles={market?.candles || []} instrument={instrument} provider={market?.provider} isClean={market?.data_quality.is_clean}/>
+      </section>
+
+      <section className="section"><div className="section-title"><span>02</span> Live analysis</div>
+        <div className="analysis-grid">
+          <div className="analysis-card"><div className="analysis-label">Market state</div><div className="analysis-main">{analysis?.analysis?.trend?.state || "WAITING"}</div><div className="analysis-sub">{analysis?.analysis?.trend?.regime || analysis?.status || "No verified analysis yet."}</div></div>
+          <div className="analysis-card"><div className="analysis-label">Momentum</div><div className="analysis-main">{analysis?.analysis?.momentum?.state || "—"}</div><div className="analysis-sub">RSI 14: {fmt(analysis?.analysis?.momentum?.rsi_14,2)}</div></div>
+          <div className="analysis-card"><div className="analysis-label">Volatility</div><div className="analysis-main">{analysis?.analysis?.volatility?.state || "—"}</div><div className="analysis-sub">ATR: {fmt(analysis?.analysis?.volatility?.atr_14, instrument === "XAU/USD" ? 2 : 5)} · {fmt(analysis?.analysis?.volatility?.atr_percent,4)}%</div></div>
+          <div className="analysis-card"><div className="analysis-label">Structure</div><div className="analysis-main">{(analysis?.analysis?.market_structure?.label || "—").replaceAll("_"," ")}</div><div className="analysis-sub">Confirmed swing structure only</div></div>
+        </div>
+        <div className="analysis-grid analysis-grid-wide">
+          <div className="analysis-card"><div className="analysis-label">Support / resistance</div><div className="levels"><span>Support <b>{fmt(analysis?.analysis?.support_resistance?.support, instrument === "XAU/USD" ? 2 : 5)}</b></span><span>Resistance <b>{fmt(analysis?.analysis?.support_resistance?.resistance, instrument === "XAU/USD" ? 2 : 5)}</b></span></div><div className="analysis-sub">Recent range: {fmt(analysis?.analysis?.support_resistance?.rolling_range, instrument === "XAU/USD" ? 2 : 5)}</div></div>
+          <div className="analysis-card"><div className="analysis-label">Candlestick evidence</div><div className="pattern-list">{(analysis?.analysis?.candlestick_patterns || []).slice(-4).map((p,i)=><span key={i} className="pattern">{String(p.name || p.pattern || "Pattern")} {p.direction ? "· "+String(p.direction) : ""}</span>)}{!analysis?.analysis?.candlestick_patterns?.length && <span className="analysis-sub">No confirmed pattern reported.</span>}</div></div>
+        </div>
+        <div className="analysis-note"><strong>How Tembo uses this:</strong> this panel describes verified completed-candle conditions. It does not turn technical context into a trade by itself; the decision, strategy, macro, and risk gates below remain authoritative. {analysis?.analysis?.as_of ? "Analysis as of "+new Date(analysis.analysis.as_of).toLocaleString()+"." : ""}</div>
       </section>
 
       <section className="section"><div className="section-title"><span>02</span> Evidence</div>
@@ -138,7 +153,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section"><div className="section-title"><span>03</span> Safety chain</div>
+      <section className="section"><div className="section-title"><span>04</span> Safety chain</div>
         <div className="gates">
           <div className="gate"><div className="gate-top">Market validation <Pill value={decision?.data_quality.is_clean?"AVAILABLE":"UNAVAILABLE"} tone={toneFor(decision?.data_quality.is_clean?"AVAILABLE":"UNAVAILABLE")}/></div><p>Only validated completed candles can reach the decision engine.</p></div>
           <div className="gate"><div className="gate-top">Research selector <Pill value={research?.selector_status||"WAITING"} tone={toneFor(research?.selector_status)}/></div><p>{research?.reason||"No strategy selection loaded."}</p></div>
@@ -147,7 +162,7 @@ export default function Home() {
         {selected && <div className="selected"><strong>Selected research config:</strong> {selected.config_id} · {selected.strategy_family} · gate {selected.gate_status} · statistical {selected.statistical_level}</div>}
       </section>
 
-      <section className="section"><div className="section-title"><span>04</span> Trade plan</div>
+      <section className="section"><div className="section-title"><span>05</span> Trade plan</div>
         <div className="plan">
           <Metric label="Direction" value={decision?.trade_plan.direction||"NONE"}/>
           <Metric label="Entry" value={fmt(decision?.trade_plan.entry)}/>
@@ -159,7 +174,7 @@ export default function Home() {
         <div className="reason">{decision?.trade_plan.rejection_reasons?.join(" · ") || (signal==="NO_TRADE" ? "No trade is authorized by the multi-factor signal." : "Signal passed the technical decision stage; the paper engine still performs its own research and risk gates.")}</div>
       </section>
 
-      <section className="section"><div className="section-title"><span>05</span> Persistent paper account</div>
+      <section className="section"><div className="section-title"><span>06</span> Persistent paper account</div>
         <div className="metrics">
           <Metric label="Initial equity" value={`$${fmt(runtime?.initial_equity,2)}`}/>
           <Metric label="Realized P&L" value={`$${fmt(runtime?.realized_pnl,2)}`}/>
@@ -171,7 +186,7 @@ export default function Home() {
         {activePosition && <div className="position"><strong>{activePosition.direction} {activePosition.instrument}</strong> · entry {fmt(activePosition.entry_price)} · stop {fmt(activePosition.stop_price)} · TP {fmt(activePosition.take_profit_price)} · held {activePosition.periods_held} cycles</div>}
       </section>
 
-      <section className="section"><div className="section-title"><span>06</span> Research status</div>
+      <section className="section"><div className="section-title"><span>07</span> Research status</div>
         <div className="boundary"><Pill value={research?.research_gate_status||"WAITING"} tone={toneFor(research?.research_gate_status)}/><p>{research?.research_recommendation||"The research gate determines whether a configuration can progress toward paper trading."}</p></div>
       </section>
 
@@ -188,6 +203,8 @@ export default function Home() {
       .card{background:#0e1219;border:1px solid #202632;border-radius:12px;padding:22px;min-height:150px}.price{font-size:42px;font-weight:800;margin:18px 0 9px;letter-spacing:-.04em}.signal{font-size:26px;font-weight:800;margin:18px 0 8px}
       .meta,.card p,.gate p,.reason,.boundary p,.selected,.position{color:#8e98a9;font-size:13px;line-height:1.55;margin:0}.section{border-top:1px solid #202632;padding:24px 0}.section-title{font-size:14px;font-weight:800;margin-bottom:15px}.section-title span{margin-right:9px}
       .metrics,.plan{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.metrics>div,.plan>div{background:#0e1219;border:1px solid #1e2530;border-radius:9px;padding:14px}.metric-label{color:#747f92;font-size:11px;text-transform:uppercase;letter-spacing:.08em}.metric-value{font-weight:750;margin-top:8px;word-break:break-word}
+      .analysis-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.analysis-grid-wide{grid-template-columns:1fr 1fr;margin-top:10px}
+      .analysis-card{background:#0e1219;border:1px solid #1e2530;border-radius:9px;padding:15px;min-height:105px}.analysis-label{color:#747f92;font-size:10px;text-transform:uppercase;letter-spacing:.1em}.analysis-main{font-size:19px;font-weight:800;margin-top:10px}.analysis-sub{color:#7f899b;font-size:12px;line-height:1.45;margin-top:6px}.levels{display:flex;justify-content:space-between;gap:15px;margin-top:14px}.levels span{color:#7f899b;font-size:12px}.levels b{display:block;color:#e9edf5;font-size:15px;margin-top:4px}.pattern-list{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}.pattern{border:1px solid #2a3442;border-radius:999px;padding:5px 8px;color:#b7c0cf;font-size:10px;text-transform:uppercase;letter-spacing:.05em}.analysis-note{margin-top:10px;padding:13px 15px;border:1px solid #29313e;border-radius:9px;background:#0b0f15;color:#7f899b;font-size:12px;line-height:1.55}.analysis-note strong{color:#cbd2de}
       .gates{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.gate{background:#0e1219;border:1px solid #1e2530;border-radius:9px;padding:15px}.gate-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px;font-weight:750}
       .pill{display:inline-flex;border:1px solid #344052;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}.pill.good{border-color:#2f7650;color:#77e39d;background:#102219}.pill.warn{border-color:#756332;color:#e1c87b;background:#211d11}.pill.bad{border-color:#713a42;color:#ee9ca7;background:#241419}
       .selected,.position{margin-top:12px;background:#0e1219;border:1px solid #1e2530;border-radius:9px;padding:14px}.boundary{background:#0e1219;border:1px solid #25302b;border-radius:9px;padding:17px}
@@ -198,7 +215,7 @@ export default function Home() {
       .grid-line{stroke:#202732;stroke-width:1}.axis-label,.time-label{fill:#667184;font-size:11px;font-family:inherit}.wick-up,.wick-down{stroke-width:1.5}.wick-up{stroke:#55d991}.wick-down{stroke:#ed707c}.body-up{fill:#55d991;stroke:#55d991}.body-down{fill:#ed707c;stroke:#ed707c}
       .chart-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;color:#6f7b8d;font-size:11px}.chart-foot span:nth-child(2){color:#70d99a;font-weight:700}.chart-empty{padding:80px 20px;text-align:center;color:#778295}
       footer{border-top:1px solid #202632;margin-top:10px;padding:20px 0 30px;color:#697486;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
-      @media(max-width:850px){main{padding:16px}.chart-head{align-items:flex-start;flex-direction:column}.hero-grid,.gates{grid-template-columns:1fr}.metrics,.plan{grid-template-columns:repeat(2,1fr)}.controls{flex-wrap:wrap}.refresh-note{width:100%;margin:0}}
+      @media(max-width:850px){main{padding:16px}.chart-head{align-items:flex-start;flex-direction:column}.hero-grid,.gates,.analysis-grid,.analysis-grid-wide{grid-template-columns:1fr}.metrics,.plan{grid-template-columns:repeat(2,1fr)}.controls{flex-wrap:wrap}.refresh-note{width:100%;margin:0}}
     `}</style>
   </>;
 }
