@@ -96,6 +96,7 @@ export default function Home() {
   }
   useEffect(()=>{ void refresh(); },[instrument,timeframe]);
   useEffect(()=>{ void getSyntheticSymbols().then(r=>setSynthetics(r.symbols)).catch(()=>setSynthetics([])); },[]);
+  useEffect(()=>{ const timer = window.setInterval(()=>{ void refresh(); }, 15000); return ()=>window.clearInterval(timer); },[instrument,timeframe]);
 
   const latest = useMemo(()=>market?.candles?.[market.candles.length-1], [market]);
   const signal = decision?.decision || "NO_TRADE";
@@ -131,6 +132,55 @@ export default function Home() {
       <section className="section market-chart-section">
         <div className="section-title"><span>01</span> Market candles</div>
         <CandleChart candles={market?.candles || []} instrument={market?.instrument_metadata?.display_name || instrument} timeframe={timeframe} provider={market?.provider} isClean={market?.data_quality.is_clean}/>
+      </section>
+
+      <section className="section guidance-section"><div className="section-title"><span>02</span> Tembo Forex Bot Guidance</div>
+        <div className="guidance-header">
+          <div>
+            <div className="guidance-kicker">AI-ASSISTED MARKET GUIDANCE</div>
+            <h2>{signal === "NO_TRADE" ? "WAIT — Tembo is not authorizing a trade" : `Tembo sees a ${signal} setup`}</h2>
+            <p>{decision?.methodology || "Tembo is waiting for verified market evidence before giving guidance."}</p>
+          </div>
+          <div className={`decision-badge ${signal === "NO_TRADE" ? "wait" : signal === "BUY" ? "buy" : "sell"}`}>{signal}</div>
+        </div>
+
+        <div className="guidance-metrics">
+          <div className="guidance-metric"><span>Market</span><strong>{market?.instrument_metadata?.display_name || instrument}</strong><small>{timeframe.toUpperCase()} · {market?.provider || "—"}</small></div>
+          <div className="guidance-metric"><span>Data quality</span><strong>{market?.data_quality?.is_clean ? "VERIFIED" : "CHECKING"}</strong><small>{decision?.data_quality?.candle_count ?? 0} completed candles</small></div>
+          <div className="guidance-metric"><span>Entry</span><strong>{fmt(decision?.trade_plan?.entry, instrument.includes("XAU/USD") || instrument.startsWith("SYNTH:") ? 2 : 5)}</strong><small>Proposed only</small></div>
+          <div className="guidance-metric"><span>Stop loss</span><strong>{fmt(decision?.trade_plan?.stop_loss, instrument.includes("XAU/USD") || instrument.startsWith("SYNTH:") ? 2 : 5)}</strong><small>Risk boundary</small></div>
+          <div className="guidance-metric"><span>Take profit</span><strong>{fmt(decision?.trade_plan?.take_profit, instrument.includes("XAU/USD") || instrument.startsWith("SYNTH:") ? 2 : 5)}</strong><small>Target</small></div>
+          <div className="guidance-metric"><span>Risk / reward</span><strong>{fmt(decision?.trade_plan?.risk_reward,2)}</strong><small>From current trade plan</small></div>
+        </div>
+
+        <div className="guidance-grid">
+          <div className="guidance-card"><div className="guidance-card-title">Market reading</div>
+            <div className="guidance-big">{analysis?.analysis?.trend?.state || "WAITING"}</div>
+            <p>{analysis?.analysis?.trend?.regime || "Tembo is waiting for verified trend evidence."}</p>
+            <div className="guidance-row"><span>Momentum</span><b>{analysis?.analysis?.momentum?.state || "—"}</b></div>
+            <div className="guidance-row"><span>Volatility</span><b>{analysis?.analysis?.volatility?.state || "—"}</b></div>
+            <div className="guidance-row"><span>Structure</span><b>{(analysis?.analysis?.market_structure?.label || "—").replaceAll("_"," ")}</b></div>
+          </div>
+          <div className="guidance-card"><div className="guidance-card-title">Key levels</div>
+            <div className="level-row"><span>Resistance</span><strong>{fmt(analysis?.analysis?.support_resistance?.resistance, instrument.includes("XAU/USD") || instrument.startsWith("SYNTH:") ? 2 : 5)}</strong></div>
+            <div className="level-row"><span>Current price</span><strong>{fmt(market?.current_price ?? latest?.close, instrument.includes("XAU/USD") || instrument.startsWith("SYNTH:") ? 2 : 5)}</strong></div>
+            <div className="level-row"><span>Support</span><strong>{fmt(analysis?.analysis?.support_resistance?.support, instrument.includes("XAU/USD") || instrument.startsWith("SYNTH:") ? 2 : 5)}</strong></div>
+            <p className="guidance-muted">Levels come from the verified market-analysis response.</p>
+          </div>
+          <div className="guidance-card"><div className="guidance-card-title">Risk & gates</div>
+            <div className="gate-line"><span>Research</span><Pill value={research?.research_gate_status || "WAITING"} tone={toneFor(research?.research_gate_status || undefined)}/></div>
+            <div className="gate-line"><span>Macro risk</span><Pill value={decision?.macro_risk?.level || "WAITING"} tone={toneFor(decision?.macro_risk?.level || undefined)}/></div>
+            <div className="gate-line"><span>Paper execution</span><Pill value={runtime?.execution_enabled ? "ENABLED" : "DISABLED"} tone={runtime?.execution_enabled ? "warn" : "good"}/></div>
+            <p className="guidance-muted">Tembo fails closed: a weak or unverified input should result in no trade.</p>
+          </div>
+        </div>
+
+        <div className="guidance-plan">
+          <div><div className="guidance-card-title">Tembo's guidance</div>
+            <p>{decision?.trade_plan?.rejection_reasons?.length ? decision.trade_plan.rejection_reasons.join(" · ") : signal === "NO_TRADE" ? "Wait for a validated setup. Tembo will not manufacture a trade when the evidence or research gate is insufficient." : "Review the entry, stop, target and risk controls shown above. This remains a paper-stage decision until every execution gate passes."}</p>
+          </div>
+          <div className="guidance-warning">PAPER MODE · BROKER OFF</div>
+        </div>
       </section>
 
       <section className="section"><div className="section-title"><span>02</span> Live analysis</div>
@@ -213,6 +263,7 @@ export default function Home() {
       .gates{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.gate{background:#0e1219;border:1px solid #1e2530;border-radius:9px;padding:15px}.gate-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px;font-weight:750}
       .pill{display:inline-flex;border:1px solid #344052;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}.pill.good{border-color:#2f7650;color:#77e39d;background:#102219}.pill.warn{border-color:#756332;color:#e1c87b;background:#211d11}.pill.bad{border-color:#713a42;color:#ee9ca7;background:#241419}
       .selected,.position{margin-top:12px;background:#0e1219;border:1px solid #1e2530;border-radius:9px;padding:14px}.boundary{background:#0e1219;border:1px solid #25302b;border-radius:9px;padding:17px}
+      .guidance-section{padding-top:28px}.guidance-header{display:flex;justify-content:space-between;gap:20px;align-items:center;background:linear-gradient(135deg,#0d1716,#0e1219);border:1px solid #244235;border-radius:14px;padding:22px;margin-bottom:12px}.guidance-kicker{color:#69d99a;font-size:10px;letter-spacing:.14em;font-weight:800}.guidance-header h2{font-size:25px;margin:7px 0 6px;letter-spacing:-.02em}.guidance-header p{color:#8994a6;font-size:13px;line-height:1.55;margin:0;max-width:760px}.decision-badge{min-width:110px;text-align:center;border-radius:12px;padding:18px 16px;font-size:22px;font-weight:900;letter-spacing:.04em}.decision-badge.buy{background:#0c3b24;border:1px solid #32a867;color:#72e6a0}.decision-badge.sell{background:#3d171d;border:1px solid #a44c58;color:#f09aa5}.decision-badge.wait{background:#2d2815;border:1px solid #8a7131;color:#e7ce78}.guidance-metrics{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.guidance-metric{background:#0e1219;border:1px solid #1e2530;border-radius:9px;padding:14px}.guidance-metric span,.guidance-card-title{display:block;color:#727e91;font-size:10px;text-transform:uppercase;letter-spacing:.1em}.guidance-metric strong{display:block;font-size:18px;margin-top:8px}.guidance-metric small{display:block;color:#687487;font-size:10px;margin-top:5px}.guidance-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;margin-top:10px}.guidance-card{background:#0e1219;border:1px solid #1e2530;border-radius:10px;padding:17px}.guidance-big{font-size:22px;font-weight:850;margin-top:10px}.guidance-card p{color:#8791a3;font-size:12px;line-height:1.55;margin:7px 0 14px}.guidance-row,.level-row,.gate-line{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #1c232e;padding:9px 0;color:#778295;font-size:11px}.guidance-row b,.level-row strong{color:#e8edf5}.guidance-muted{font-size:10px!important;color:#687487!important}.guidance-plan{margin-top:10px;background:#0b1016;border:1px solid #27313d;border-radius:10px;padding:16px;display:flex;justify-content:space-between;gap:20px;align-items:center}.guidance-plan p{margin:7px 0 0;color:#9aa4b5;font-size:12px;line-height:1.55;max-width:900px}.guidance-warning{white-space:nowrap;border:1px solid #715f2e;background:#211d11;color:#dfc875;border-radius:999px;padding:7px 10px;font-size:9px;font-weight:800;letter-spacing:.08em}
       .market-chart-section{padding-top:18px}.chart-wrap{background:#0e1219;border:1px solid #202632;border-radius:12px;padding:18px}
       .chart-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:12px}.chart-title{font-size:20px;font-weight:800;margin-top:6px}
       .chart-legend{display:flex;gap:14px;flex-wrap:wrap;color:#778295;font-size:11px}.chart-legend span{display:inline-flex;align-items:center;gap:6px}.chart-legend i{display:inline-block;width:8px;height:8px;border-radius:2px}.legend-up{background:#55d991}.legend-down{background:#ed707c}
@@ -220,7 +271,7 @@ export default function Home() {
       .grid-line{stroke:#202732;stroke-width:1}.axis-label,.time-label{fill:#667184;font-size:11px;font-family:inherit}.wick-up,.wick-down{stroke-width:1.5}.wick-up{stroke:#55d991}.wick-down{stroke:#ed707c}.body-up{fill:#55d991;stroke:#55d991}.body-down{fill:#ed707c;stroke:#ed707c}
       .chart-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;color:#6f7b8d;font-size:11px}.chart-foot span:nth-child(2){color:#70d99a;font-weight:700}.chart-empty{padding:80px 20px;text-align:center;color:#778295}
       footer{border-top:1px solid #202632;margin-top:10px;padding:20px 0 30px;color:#697486;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
-      @media(max-width:850px){main{padding:16px}.chart-head{align-items:flex-start;flex-direction:column}.hero-grid,.gates,.analysis-grid,.analysis-grid-wide{grid-template-columns:1fr}.metrics,.plan{grid-template-columns:repeat(2,1fr)}.controls{flex-wrap:wrap}.refresh-note{width:100%;margin:0}}
+      @media(max-width:850px){main{padding:16px}.chart-head{align-items:flex-start;flex-direction:column}.hero-grid,.gates,.analysis-grid,.analysis-grid-wide,.guidance-grid{grid-template-columns:1fr}.metrics,.plan,.guidance-metrics{grid-template-columns:repeat(2,1fr)}.controls{flex-wrap:wrap}.refresh-note{width:100%;margin:0}.guidance-header,.guidance-plan{align-items:flex-start;flex-direction:column}.decision-badge{width:100%}}
     `}</style>
   </>;
 }
