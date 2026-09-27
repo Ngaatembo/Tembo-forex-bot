@@ -71,7 +71,9 @@ export type DerivStatus = {
   balance?: number | null; open_positions?: number; message: string;
 };
 
-export function getDerivStatus():Promise<DerivStatus> { return getJson("/deriv/status"); }\n\nexport function getSyntheticSymbols():Promise<SyntheticSymbolsResponse> {
+export function getDerivStatus():Promise<DerivStatus> { return getJson("/deriv/status"); }
+
+export function getSyntheticSymbols():Promise<SyntheticSymbolsResponse> {
   return getJson("/live/synthetic-symbols");
 }
 export function getMarket(instrument:string,timeframe:string):Promise<MarketResponse> {
