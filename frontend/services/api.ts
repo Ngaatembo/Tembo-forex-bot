@@ -41,7 +41,7 @@ export type ResearchDecision = {
 export type MarketResponse = {
   instrument: string; timeframe: string; provider: string; status: string; current_price: number | null;
   instrument_metadata?: { symbol: string; display_name: string; pip_size: number; asset_class: string };
-  last_update: string | null; candles: Array<{timestamp:string;open:number;high:number;low:number;close:number;volume:number}>;
+  last_update: string | null; candles: Array<{timestamp:string;open:number;high:number;low:number;close:number;volume:number | null}>;
   data_quality: {is_clean:boolean;ohlc_violations:number;duplicate_timestamps:number;unexpected_gaps:number};
 };
 export type RuntimeStatus = {
