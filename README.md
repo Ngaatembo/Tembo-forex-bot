@@ -1,59 +1,96 @@
-# AI-Powered Forex Trading Intelligence & Paper-Trading Platform
+# Tembo — Market Intelligence, Research & Paper-Trading Platform
 
-A modular research platform for analyzing forex markets — combining
-price data, technical indicators, news, and economic events — to test
-whether a statistically meaningful trading edge exists after realistic
-costs. **This is not an autonomous live-money trading bot.**
+Tembo is a modular trading-research platform for verified market data, technical analysis, macro/news context, strategy research, risk evaluation and paper trading.
 
-## Status: Phase 0 — Architecture
+**Current boundary:** Tembo is **not a live-money trading bot**. Live execution is deliberately fail-closed because a real broker execution adapter has not been registered. Setting the live flag alone cannot place an order.
 
-This repository currently contains the project skeleton only:
-directory structure, configuration, database schema foundation, a
-minimal FastAPI app with a health endpoint, and a test framework.
-No market data, news, AI analysis, strategies, or trading logic are
-implemented yet. See `docs/development-roadmap.md` for what comes next.
-
-**Live execution is disabled by default and requires both an explicit
-config flag and a real broker adapter implementation that does not
-exist yet.** See `docs/risk-management.md`.
-
-## Structure
+## Current architecture
 
 ```
-ai-trading-platform/
-├── backend/       FastAPI app (see backend/README.md)
-├── frontend/      React/Next.js dashboard (Phase 9+)
-├── notebooks/     Research/experiment notebooks
-├── docs/          Architecture, strategy, risk, data-source docs
-└── .env.example   All environment variables the app expects
+Verified market provider
+        ↓
+Normalization + data-quality validation
+        ↓
+Candles / technical analysis / candlestick context
+        ↓
+News + economic-calendar context
+        ↓
+Multi-factor decision
+        ↓
+Validated-strategy gate
+        ↓
+Risk engine / kill switch
+        ↓
+Paper-trading eligibility
+        ↓
+Paper runtime / analytics
+
+Live execution
+        ↓
+BLOCKED until a real broker adapter is implemented,
+registered, tested and explicitly enabled.
 ```
 
-## Quick start
+## Market coverage
+
+The live cockpit supports the following timeframes:
+
+- M5
+- M15
+- H1
+- H4
+- D1
+
+Core instruments include EUR/USD, GBP/USD and XAU/USD. Deriv synthetic indices use the `SYNTH:<DerivSymbol>` format and are discovered from Deriv's public market-data endpoint.
+
+The cockpit refuses mock data when a live market view is requested. Provider candles are normalized and validated before being exposed as live market data.
+
+## Providers
+
+The codebase contains provider adapters for:
+
+- OANDA
+- Twelve Data
+- Deriv synthetic-index market data
+- MT5 bridge scaffolding
+- News/calendar providers
+
+Provider availability depends on runtime configuration and credentials. A provider existing in code does not mean it is connected in production.
+
+## Safety boundary
+
+The following are intentional hard boundaries:
+
+1. AI output cannot bypass the risk engine.
+2. Invalid or unknown risk state fails closed.
+3. Mock market data is never presented as verified live data.
+4. The live cockpit does not place orders.
+5. Live execution requires both explicit configuration and a registered real broker adapter.
+6. Paper trading and live execution remain separate.
+7. Historical research must not use future information.
+
+See `docs/architecture.md` and `docs/risk-management.md` for the contracts.
+
+## Development
 
 ```bash
 cd backend
-python -m venv venv && source venv/bin/activate
+python -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 cp ../.env.example ../.env
 uvicorn app.main:app --reload
 ```
 
-Then check `http://localhost:8000/health`.
+Run the backend tests with:
 
-## Documentation
+```bash
+cd backend
+pytest -q
+```
 
-- `docs/architecture.md` — system design and module responsibilities
-- `docs/strategy.md` — strategy engine design (Phase 3+)
-- `docs/risk-management.md` — risk controls and the kill-switch contract
-- `docs/data-sources.md` — market data / news / economic providers
-- `docs/development-roadmap.md` — the phased build plan (Phase 0–10)
+## Project status
 
-## Core principles
+The repository has moved beyond the original Phase-0 skeleton. The README is intentionally kept aligned with the implemented architecture; unfinished integrations are labelled as such instead of being described as complete.
 
-1. Never promise profitability.
-2. Never let AI output bypass risk management.
-3. Never use future information in historical backtests.
-4. Every strategy must be independently backtestable and measurable.
-5. Live execution is isolated from research and requires deliberate opt-in.
-
-See `docs/development-roadmap.md` for the full rule set.
+**Not ready for live-money trading:** the real broker execution adapter and its end-to-end demo-account validation are still required.
