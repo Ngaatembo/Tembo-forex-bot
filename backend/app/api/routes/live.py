@@ -56,7 +56,7 @@ async def live_overview(
 ) -> dict:
     settings = get_settings()
     health = await health_check()
-    selected = instrument if instrument in INSTRUMENTS else "EUR/USD"
+    selected = instrument if instrument in INSTRUMENTS or _is_synthetic_instrument(instrument) else "EUR/USD"
     selected_timeframe = timeframe.lower() if timeframe.lower() in TIMEFRAMES else "h1"
     provider = settings.market_data_provider
     data_status = health["market_data"]
