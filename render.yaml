@@ -19,8 +19,10 @@ services:
         value: production
       - key: DEBUG
         value: "false"
+      # Direct Deriv market data is now the live cockpit source. It covers
+      # forex/gold and the existing SYNTH:<symbol> synthetic adapter.
       - key: MARKET_DATA_PROVIDER
-        value: twelvedata
+        value: deriv
       - key: NEWS_PROVIDER
         value: finnhub
       - key: ECONOMIC_CALENDAR_PROVIDER
