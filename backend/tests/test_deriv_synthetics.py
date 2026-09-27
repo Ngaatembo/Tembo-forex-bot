@@ -26,11 +26,11 @@ class FakeWebSocket:
 
 
 class FakeConnect:
-    def __init__(self, responses):
-        self.responses = responses
+    def __init__(self, response_batches):
+        self.response_batches = list(response_batches)
 
     def __call__(self, *args, **kwargs):
-        return FakeWebSocket(self.responses)
+        return FakeWebSocket(self.response_batches.pop(0))
 
 
 def test_synthetic_prefix_is_explicit():
@@ -54,7 +54,7 @@ async def test_active_symbols_filters_to_unsuspended_synthetics(monkeypatch):
     get_settings.cache_clear()
     monkeypatch.setenv("MARKET_DATA_PROVIDER", "twelvedata")
     provider = DerivSyntheticProvider()
-    fake = FakeConnect([
+    fake = FakeConnect([[
         {
             "msg_type": "active_symbols",
             "active_symbols": [
@@ -84,8 +84,7 @@ async def test_active_symbols_filters_to_unsuspended_synthetics(monkeypatch):
                     "is_trading_suspended": 0,
                 },
             ],
-        }
-    ])
+        }]])
     with patch("app.data_engine.providers.deriv_synthetics.websockets.connect", fake):
         symbols = await provider.get_active_synthetics()
     assert [item["symbol"] for item in symbols] == [f"{SYNTHETIC_PREFIX}1HZ100V"]
@@ -97,7 +96,7 @@ async def test_candles_are_normalized_to_tembo_candle_shape(monkeypatch):
     from app.core.config import get_settings
     get_settings.cache_clear()
     provider = DerivSyntheticProvider()
-    fake = FakeConnect([
+    fake = FakeConnect([[
         {
             "msg_type": "active_symbols",
             "active_symbols": [
@@ -111,15 +110,13 @@ async def test_candles_are_normalized_to_tembo_candle_shape(monkeypatch):
                     "is_trading_suspended": 0,
                 }
             ],
-        },
-        {
+        }], [{
             "msg_type": "candles",
             "candles": [
                 {"epoch": 1000, "open": "10", "high": "12", "low": "9", "close": "11"},
                 {"epoch": 1360, "open": "11", "high": "13", "low": "10", "close": "12"},
             ],
-        },
-    ])
+        }]])
     with patch("app.data_engine.providers.deriv_synthetics.websockets.connect", fake):
         candles = await provider.get_candles("SYNTH:1HZ100V", "m5", limit=2)
     assert len(candles) == 2
