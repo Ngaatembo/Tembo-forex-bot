@@ -12,6 +12,27 @@ export type LiveDecision = {
   data_quality: { is_clean: boolean; candle_count: number; last_candle: string };
   trade_plan: { decision: string; direction: string; entry: number | null; stop_loss: number | null; take_profit: number | null; risk_reward: number | null; rejection_reasons?: string[] };
 };
+export type LiveAnalysis = {
+  instrument: string;
+  timeframe: string;
+  provider: string;
+  status: string;
+  message: string;
+  data_quality?: { is_clean: boolean; ohlc_violations: number; duplicate_timestamps: number; unexpected_gaps: number };
+  analysis: {
+    status: string;
+    reason?: string;
+    as_of?: string;
+    close?: number;
+    trend?: { state: string; regime: string; sma_10: number | null; sma_50: number | null; sma_50_slope: number | null; sma_distance_pct: number | null };
+    momentum?: { state: string; rsi_14: number | null };
+    volatility?: { state: string; atr_14: number | null; atr_percent: number | null };
+    support_resistance?: { support: number | null; resistance: number | null; recent_high: number | null; recent_low: number | null; rolling_range: number | null };
+    market_structure?: { label: string; confirmed_swing_high: number | null; previous_swing_high: number | null; confirmed_swing_low: number | null; previous_swing_low: number | null };
+    candlestick_patterns?: Array<{ pattern?: string; name?: string; direction?: string; confidence?: string; timestamp?: string; [key: string]: unknown }>;
+  } | null;
+};
+
 export type ResearchDecision = {
   instrument: string; timeframe: string; selector_status: string; has_validated_edge: boolean;
   selected_config: { config_id: string; strategy_family: string; gate_status: string; verdict: string; statistical_level: string } | null;
@@ -43,6 +64,9 @@ export function getMarket(instrument:string,timeframe:string):Promise<MarketResp
 }
 export function getLiveDecision(instrument:string,timeframe:string):Promise<LiveDecision> {
   return getJson(`/live/decision?${new URLSearchParams({instrument,timeframe})}`);
+}
+export function getLiveAnalysis(instrument:string,timeframe:string):Promise<LiveAnalysis> {
+  return getJson(`/live/analysis?${new URLSearchParams({instrument,timeframe})}`);
 }
 export function getResearchDecision(instrument:string,timeframe:string):Promise<ResearchDecision> {
   return getJson(`/decisions?${new URLSearchParams({instrument,timeframe})}`);
