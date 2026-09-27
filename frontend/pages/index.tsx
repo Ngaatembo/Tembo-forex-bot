@@ -71,7 +71,8 @@ function CandleChart({ candles, instrument, timeframe, provider, isClean }: { ca
 export default function Home() {
   const [instrument,setInstrument]=useState("EUR/USD");
   const [timeframe,setTimeframe]=useState("h1");
-  const [synthetics,setSynthetics]=useState<SyntheticSymbol[]>([]);\n  const [derivStatus,setDerivStatus]=useState<DerivStatus|null>(null);
+  const [synthetics,setSynthetics]=useState<SyntheticSymbol[]>([]);
+  const [derivStatus,setDerivStatus]=useState<DerivStatus|null>(null);
   const [market,setMarket]=useState<MarketResponse|null>(null);
   const [decision,setDecision]=useState<LiveDecision|null>(null);
   const [analysis,setAnalysis]=useState<LiveAnalysis|null>(null);
