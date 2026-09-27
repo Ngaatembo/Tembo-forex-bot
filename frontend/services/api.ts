@@ -10,7 +10,7 @@ export type LiveDecision = {
   methodology: string;
   macro_risk: { level: string; reason: string; triggering_event_count: number };
   data_quality: { is_clean: boolean; candle_count: number; last_candle: string };
-  trade_plan: { decision: string; direction: string; entry: number | null; stop_loss: number | null; take_profit: number | null; risk_reward: number | null; rejection_reasons?: string[] };
+  trade_plan: { decision: string; direction: string; entry: number | null; stop_loss: number | null; take_profit: number | null; risk_reward: number | null; rejection_reasons?: string[] } | null;
 };
 export type LiveAnalysis = {
   instrument: string;
