@@ -23,12 +23,12 @@ def test_cors_rejects_unlisted_origin():
     assert resp.headers.get("access-control-allow-origin") != "https://not-allowed.example.com"
 
 
-def test_cors_only_allows_get():
+def test_cors_allows_methods_used_by_api():
     from app.core.config import get_settings
     settings = get_settings()
     for m in app.user_middleware:
         if m.cls.__name__ == "CORSMiddleware":
-            assert m.kwargs.get("allow_methods") == ["GET"]
+            assert set(m.kwargs.get("allow_methods", [])) == {"GET", "POST", "OPTIONS"}
 
 
 def test_cors_does_not_allow_credentials():
