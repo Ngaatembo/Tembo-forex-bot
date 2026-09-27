@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
-import { getLiveAnalysis, getLiveDecision, getMarket, getResearchDecision, getRuntimePositions, getRuntimeStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ResearchDecision, type RuntimePosition, type RuntimeStatus } from "../services/api";
+import { getLiveAnalysis, getLiveDecision, getMarket, getResearchDecision, getRuntimePositions, getRuntimeStatus, getSyntheticSymbols, type LiveAnalysis, type LiveDecision, type MarketResponse, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type SyntheticSymbol } from "../services/api";
 
-const instruments = ["EUR/USD", "GBP/USD", "XAU/USD"];\nconst timeframes = ["m5", "m15", "h1", "h4", "d1"];
-const timeframes = ["h1"];
+const instruments = ["EUR/USD", "GBP/USD", "XAU/USD"];
+const timeframes = ["m5", "m15", "h1", "h4", "d1"];
 
 function fmt(value: number | null | undefined, digits = 5) {
   return value == null || !Number.isFinite(value) ? "—" : value.toFixed(digits);
@@ -22,7 +22,7 @@ function Metric({ label, value }: { label: string; value: string }) {
 }
 
 
-function CandleChart({ candles, instrument, provider, isClean }: { candles: MarketResponse["candles"]; instrument: string; provider?: string; isClean?: boolean }) {
+function CandleChart({ candles, instrument, timeframe, provider, isClean }: { candles: MarketResponse["candles"]; instrument: string; timeframe: string; provider?: string; isClean?: boolean }) {
   const visible = candles.slice(-60);
   if (!visible.length) return <div className="chart-empty">Waiting for verified candle data…</div>;
 
@@ -38,15 +38,15 @@ function CandleChart({ candles, instrument, provider, isClean }: { candles: Mark
 
   return <div className="chart-wrap">
     <div className="chart-head">
-      <div><div className="eyebrow">LIVE CANDLESTICK CHART</div><div className="chart-title">{instrument} · H1</div></div>
+      <div><div className="eyebrow">LIVE CANDLESTICK CHART</div><div className="chart-title">{instrument} · {timeframe.toUpperCase()}</div></div>
       <div className="chart-legend"><span><i className="legend-up"/> Bullish</span><span><i className="legend-down"/> Bearish</span><span>{visible.length} completed candles</span></div>
     </div>
     <div className="chart-scroll">
-      <svg className="candle-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${instrument} H1 candlestick chart`}>
+      <svg className="candle-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${instrument} ${timeframe.toUpperCase()} candlestick chart`}>
         {[0, .25, .5, .75, 1].map(ratio => {
           const price = max - range * ratio, yy = y(price);
           return <g key={ratio}><line x1={pad.left} x2={width-pad.right} y1={yy} y2={yy} className="grid-line"/>
-            <text x={width-pad.right+10} y={yy+4} className="axis-label">{fmt(price, instrument === "XAU/USD" ? 2 : 5)}</text></g>;
+            <text x={width-pad.right+10} y={yy+4} className="axis-label">{fmt(price, instrument.includes("XAU/USD") ? 2 : instrument.startsWith("SYNTH:") ? 2 : 5)}</text></g>;
         })}
         {visible.map((c, i) => {
           const x = pad.left + step * i + step / 2;
@@ -70,7 +70,8 @@ function CandleChart({ candles, instrument, provider, isClean }: { candles: Mark
 
 export default function Home() {
   const [instrument,setInstrument]=useState("EUR/USD");
-  const [timeframe,setTimeframe]=useState("h1");\n  const [synthetics,setSynthetics]=useState<SyntheticSymbol[]>([]);
+  const [timeframe,setTimeframe]=useState("h1");
+  const [synthetics,setSynthetics]=useState<SyntheticSymbol[]>([]);
   const [market,setMarket]=useState<MarketResponse|null>(null);
   const [decision,setDecision]=useState<LiveDecision|null>(null);
   const [analysis,setAnalysis]=useState<LiveAnalysis|null>(null);
@@ -128,7 +129,7 @@ export default function Home() {
 
       <section className="section market-chart-section">
         <div className="section-title"><span>01</span> Market candles</div>
-        <CandleChart candles={market?.candles || []} instrument={instrument} provider={market?.provider} isClean={market?.data_quality.is_clean}/>
+        <CandleChart candles={market?.candles || []} instrument={market?.instrument_metadata?.display_name || instrument} timeframe={timeframe} provider={market?.provider} isClean={market?.data_quality.is_clean}/>
       </section>
 
       <section className="section"><div className="section-title"><span>02</span> Live analysis</div>
