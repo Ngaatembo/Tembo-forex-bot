@@ -123,7 +123,7 @@ export default function Home() {
       {error && <div className="error"><strong>Data unavailable.</strong> {error}</div>}
 
       <section className="hero-grid">
-        <div className="card"><div className="eyebrow">LIVE MARKET</div><div className="price">{fmt(market?.current_price ?? latest?.close)}</div><div className="meta">{market?.instrument_metadata?.display_name || instrument} · {timeframe.toUpperCase()} · {market?.provider||"—"} · {market?.data_quality.is_clean?"candles verified":"verification pending"}</div></div>
+        <div className="card"><div className="eyebrow">LIVE MARKET</div><div className="price">{fmt(market?.current_price ?? latest?.close, market?.instrument_metadata?.pip_size && market.instrument_metadata.pip_size < 0.01 ? 5 : instrument.includes("XAU/USD") ? 2 : 5)}</div><div className="meta">{market?.instrument_metadata?.display_name || instrument} · {timeframe.toUpperCase()} · {market?.provider||"—"} · {market?.data_quality.is_clean?"candles verified":"verification pending"}</div></div>
         <div className="card"><div className="eyebrow">SIGNAL</div><div className="signal">{signal}</div><p>{decision?.methodology||"Waiting for verified market evidence."}</p></div>
         <div className="card"><div className="eyebrow">PAPER RUNTIME</div><div className="signal">{runtime?.status||"—"}</div><p>Last cycle: {runtime?.last_cycle_at ? new Date(runtime.last_cycle_at).toLocaleString() : "—"}</p></div>
       </section>
