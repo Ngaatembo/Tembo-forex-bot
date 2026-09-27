@@ -24,7 +24,7 @@ services:
       - key: NEWS_PROVIDER
         value: finnhub
       - key: ECONOMIC_CALENDAR_PROVIDER
-        value: static_central_banks
+        value: finnhub
       - key: ENABLE_LIVE_EXECUTION
         value: "false"
       - key: ENABLE_PAPER_RUNTIME
