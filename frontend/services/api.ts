@@ -3,7 +3,7 @@
  * No provider, broker, or secret credentials belong in the browser.
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://tembo-forex-bot.onrender.com";
 
 export type LiveDecision = {
   instrument: string; timeframe: string; provider: string; status: string; decision: string;
