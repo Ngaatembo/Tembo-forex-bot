@@ -65,8 +65,13 @@ export type SyntheticSymbol = {
   submarket?: string | null; subgroup?: string | null; pip_size: number; exchange_is_open: boolean;
 };
 export type SyntheticSymbolsResponse = { provider: string; status: string; symbols: SyntheticSymbol[]; message: string };
+export type DerivStatus = {
+  connected: boolean; configured: boolean; mode: string; account_id?: string | null;
+  account_type?: string | null; status?: string | null; currency?: string | null;
+  balance?: number | null; open_positions?: number; message: string;
+};
 
-export function getSyntheticSymbols():Promise<SyntheticSymbolsResponse> {
+export function getDerivStatus():Promise<DerivStatus> { return getJson("/deriv/status"); }\n\nexport function getSyntheticSymbols():Promise<SyntheticSymbolsResponse> {
   return getJson("/live/synthetic-symbols");
 }
 export function getMarket(instrument:string,timeframe:string):Promise<MarketResponse> {
