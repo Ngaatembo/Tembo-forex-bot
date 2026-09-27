@@ -15,7 +15,7 @@ from sqlalchemy import text
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import admin_data, backtest, decisions, health, market_data, markets, news, paper_trading, research, strategy, technical_analysis
+from app.api.routes import admin_data, backtest, decisions, deriv, health, market_data, markets, news, paper_trading, research, strategy, technical_analysis
 from app.api.routes.live import router as live_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
@@ -32,9 +32,6 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    # Bootstrap the foundational Render PostgreSQL schema when a database is
-    # configured. A database outage must not prevent the read-only dashboard
-    # from starting; /health reports database availability separately.
     try:
         await initialize_database()
         logger.info("Database schema initialization/check completed.")
@@ -72,10 +69,7 @@ async def lifespan(_: FastAPI):
                             "Historical bootstrap did not produce complete datasets for all supported instruments."
                         )
                     await session.execute(
-                        text(
-                            "UPDATE historical_bootstrap_state "
-                            "SET completed_at = NOW() WHERE id = 1"
-                        )
+                        text("UPDATE historical_bootstrap_state SET completed_at = NOW() WHERE id = 1")
                     )
                     await session.commit()
                     logger.info(
@@ -135,8 +129,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS: allows the deployed frontend to call this API from the browser.
-# This is not an authentication mechanism and no API credentials live here.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[o.strip() for o in settings.cors_allowed_origins.split(",") if o.strip()],
@@ -147,6 +139,7 @@ app.add_middleware(
 
 app.include_router(health.router, tags=["system"])
 app.include_router(live_router)
+app.include_router(deriv.router)
 app.include_router(market_data.router)
 app.include_router(markets.router)
 app.include_router(technical_analysis.router)
