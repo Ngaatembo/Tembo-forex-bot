@@ -42,3 +42,11 @@ async def deriv_status() -> dict:
             status_code=503,
             detail=f"Deriv demo connection failed: {exc}",
         ) from exc
+
+
+@router.get("/markets")
+async def deriv_markets() -> dict:
+    try:
+        return await DerivDemoClient().markets()
+    except (DerivConfigurationError, DerivAPIError) as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
