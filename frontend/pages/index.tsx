@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
-import { buyDemoContract, getDemoContract, getDemoProposal, sellDemoContract, updateDemoProtection, getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getReliabilityRuntime, getReliabilityStatus, getResearchDecision, getRuntimePositions, getRuntimeStatus, getStrategyHealth, getSyntheticSymbols, type DemoBuyResult, type DemoContractResult, type DemoProposal, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ReliabilityRuntime, type ReliabilityStatus, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type StrategyHealth, type SyntheticSymbol } from "../services/api";
+import { buyDemoContract, getDemoContract, getDemoProposal, sellDemoContract, updateDemoProtection, getDemoProtectionHistory, getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getReliabilityRuntime, getReliabilityStatus, getResearchDecision, getRuntimePositions, getRuntimeStatus, getStrategyHealth, getSyntheticSymbols, type DemoBuyResult, type DemoContractResult, type DemoProposal, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ReliabilityRuntime, type ReliabilityStatus, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type StrategyHealth, type SyntheticSymbol } from "../services/api";
 
 const instruments = ["EUR/USD", "GBP/USD", "USD/JPY", "XAU/USD"];
 const timeframes = ["m5", "m15", "h1", "h4", "d1"];
@@ -370,6 +370,7 @@ export default function Home() {
             </div>}
             {demoBuy && <div className="demo-open">DEMO CONTRACT #{demoBuy.contract_id} · BUY ${demoBuy.buy_price.toFixed(2)}</div>}
             {demoProposal?.protection?.attached && <div className="demo-message">Broker-side demo protection attached from Tembo's price plan: SL loss ${demoProposal.protection.limit_order.stop_loss ?? "—"} · TP profit ${demoProposal.protection.limit_order.take_profit ?? "—"}.</div>}
+            {demoProtectionHistory.length > 0 && <div className="demo-message">Deriv confirmation: {demoProtectionHistory.slice(-2).map((x:any)=>String(x.order_type || x.display_name || "protection").replaceAll("_"," ")).join(" · ")}.</div>}
             {demoContract?.contract && <div className="demo-proposal">
               <span>Status {String(demoContract.contract.status || "—")}</span>
               <span>P&amp;L ${String(demoContract.contract.profit ?? "—")}</span>
