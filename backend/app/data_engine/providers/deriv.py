@@ -11,6 +11,7 @@ the currently active Deriv underlying symbol.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import time
 from datetime import datetime, timezone
@@ -74,31 +75,53 @@ class DerivMarketDataProvider(MarketDataProvider):
         self._ws_url = settings.deriv_public_ws_url or DERIV_PUBLIC_WS
 
     async def _request(self, payload: dict, expected_type: str) -> dict:
-        try:
-            async with websockets.connect(
-                self._ws_url, open_timeout=15, close_timeout=5
-            ) as ws:
-                await ws.send(json.dumps(payload))
-                deadline = time.monotonic() + 20
-                while time.monotonic() < deadline:
-                    raw = await ws.recv()
-                    response = json.loads(raw)
-                    if response.get("error"):
-                        error = response["error"]
+        # Deriv recommends pacing and backing off after rejected requests.
+        # Public market-data calls are otherwise stateless, so a fresh
+        # connection is safe for a small number of transient retries.
+        retryable_codes = {"WrongResponse", "RateLimit", "InternalServerError"}
+        last_error: Exception | None = None
+
+        for attempt in range(3):
+            try:
+                async with websockets.connect(
+                    self._ws_url, open_timeout=15, close_timeout=5
+                ) as ws:
+                    await ws.send(json.dumps(payload))
+                    deadline = time.monotonic() + 20
+                    while time.monotonic() < deadline:
+                        raw = await ws.recv()
+                        response = json.loads(raw)
+                        if response.get("error"):
+                            error = response["error"]
+                            code = str(error.get("code") or "")
+                            message = str(error.get("message") or "Unknown Deriv error")
+                            if code in retryable_codes and attempt < 2:
+                                await asyncio.sleep(1.5 * (attempt + 1))
+                                break
+                            raise DerivMarketDataError(
+                                f"Deriv API error {code}: {message}"
+                            )
+                        if response.get("msg_type") == expected_type:
+                            return response
+                    else:
                         raise DerivMarketDataError(
-                            f"Deriv API error {error.get('code')}: {error.get('message')}"
+                            f"Timed out waiting for Deriv {expected_type} response."
                         )
-                    if response.get("msg_type") == expected_type:
-                        return response
-                raise DerivMarketDataError(
-                    f"Timed out waiting for Deriv {expected_type} response."
-                )
-        except DerivMarketDataError:
-            raise
-        except Exception as exc:
-            raise DerivMarketDataError(
-                f"Deriv public market-data connection failed: {exc}"
-            ) from exc
+            except DerivMarketDataError as exc:
+                last_error = exc
+                if attempt >= 2:
+                    raise
+            except Exception as exc:
+                last_error = exc
+                if attempt >= 2:
+                    raise DerivMarketDataError(
+                        f"Deriv public market-data connection failed: {exc}"
+                    ) from exc
+            await asyncio.sleep(1.5 * (attempt + 1))
+
+        raise DerivMarketDataError(
+            f"Deriv public market-data request failed after retries: {last_error}"
+        )
 
     @staticmethod
     def _normalize(value: object) -> str:
