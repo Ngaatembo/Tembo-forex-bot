@@ -116,6 +116,134 @@ class DerivDemoClient:
         symbols = await provider.get_active_markets()
         return {"status": "AVAILABLE", "symbols": symbols}
 
+    async def _resolve_underlying_symbol(self, instrument: str) -> str:
+        """Resolve Tembo instrument names to the current Deriv symbol catalogue."""
+        normalized = instrument.strip().upper()
+        from app.data_engine.providers.deriv import DerivMarketDataProvider
+        from app.data_engine.providers.deriv_synthetics import DerivSyntheticProvider
+
+        if normalized.startswith("SYNTH:"):
+            provider_symbol = DerivSyntheticProvider.provider_symbol(normalized)
+            for item in await DerivSyntheticProvider().get_active_synthetics():
+                if str(item.get("underlying_symbol", "")).upper() == provider_symbol:
+                    return provider_symbol
+            raise DerivAPIError(f"Synthetic market {instrument!r} is not currently active.")
+
+        aliases = {
+            "EUR/USD": {"EURUSD", "FRXEURUSD"},
+            "EURUSD": {"EURUSD", "FRXEURUSD"},
+            "GBP/USD": {"GBPUSD", "FRXGBPUSD"},
+            "GBPUSD": {"GBPUSD", "FRXGBPUSD"},
+            "USD/JPY": {"USDJPY", "FRXUSDJPY"},
+            "USDJPY": {"USDJPY", "FRXUSDJPY"},
+            "XAU/USD": {"XAUUSD", "GOLDUSD", "FRXXAUUSD"},
+            "XAUUSD": {"XAUUSD", "GOLDUSD", "FRXXAUUSD"},
+        }.get(normalized, {normalized.replace("/", "")})
+
+        for item in await DerivMarketDataProvider().get_active_markets():
+            values = {
+                str(item.get("underlying_symbol", "")).upper(),
+                str(item.get("symbol", "")).upper(),
+                str(item.get("display_name", "")).upper().replace("/", "").replace(" ", ""),
+            }
+            if values & aliases or {v[3:] for v in values if v.startswith("FRX")} & aliases:
+                return str(item["underlying_symbol"])
+        raise DerivAPIError(f"Could not resolve {instrument!r} to an active Deriv symbol.")
+
+    async def proposal(
+        self,
+        *,
+        instrument: str,
+        direction: str,
+        stake: float,
+        multiplier: float,
+    ) -> dict[str, Any]:
+        if not 0 < stake <= 10:
+            raise DerivAPIError("Demo stake must be greater than 0 and no more than 10 USD.")
+        if not 0 < multiplier <= 50:
+            raise DerivAPIError("Demo multiplier must be greater than 0 and no more than 50.")
+        side = direction.upper()
+        if side not in {"BUY", "SELL"}:
+            raise DerivAPIError("Direction must be BUY or SELL.")
+        underlying = await self._resolve_underlying_symbol(instrument)
+        contract_type = "MULTUP" if side == "BUY" else "MULTDOWN"
+        response = await self._ws_request(
+            {
+                "proposal": 1,
+                "amount": round(stake, 2),
+                "basis": "stake",
+                "contract_type": contract_type,
+                "currency": "USD",
+                "multiplier": multiplier,
+                "underlying_symbol": underlying,
+                "req_id": 301,
+            },
+            "proposal",
+        )
+        proposal = response.get("proposal") or {}
+        proposal_id = proposal.get("id")
+        ask_price = proposal.get("ask_price")
+        if not proposal_id or ask_price is None:
+            raise DerivAPIError("Deriv proposal response did not contain an id and ask price.")
+        return {
+            "status": "AVAILABLE",
+            "instrument": instrument,
+            "underlying_symbol": underlying,
+            "direction": side,
+            "contract_type": contract_type,
+            "stake": stake,
+            "multiplier": multiplier,
+            "proposal_id": proposal_id,
+            "ask_price": float(ask_price),
+            "spot": float(proposal["spot"]) if proposal.get("spot") is not None else None,
+            "payout": float(proposal["payout"]) if proposal.get("payout") is not None else None,
+            "currency": proposal.get("currency") or "USD",
+        }
+
+    async def buy_demo(
+        self,
+        *,
+        proposal_id: str,
+        price: float,
+    ) -> dict[str, Any]:
+        if not proposal_id or not 0 < price <= 10:
+            raise DerivAPIError("Invalid demo proposal or price.")
+        response = await self._ws_request(
+            {"buy": str(proposal_id), "price": round(price, 2), "req_id": 302},
+            "buy",
+        )
+        buy = response.get("buy") or {}
+        contract_id = buy.get("contract_id")
+        if contract_id is None:
+            raise DerivAPIError("Deriv buy response did not contain a contract id.")
+        return {
+            "status": "EXECUTED_DEMO",
+            "contract_id": int(contract_id),
+            "transaction_id": buy.get("transaction_id"),
+            "buy_price": float(buy["buy_price"]) if buy.get("buy_price") is not None else price,
+            "balance_after": float(buy["balance_after"]) if buy.get("balance_after") is not None else None,
+        }
+
+    async def open_contract(self, contract_id: int) -> dict[str, Any]:
+        response = await self._ws_request(
+            {"proposal_open_contract": 1, "contract_id": int(contract_id), "subscribe": 0, "req_id": 303},
+            "proposal_open_contract",
+        )
+        return {"status": "AVAILABLE", "contract": response.get("proposal_open_contract") or {}}
+
+    async def sell_demo(self, contract_id: int) -> dict[str, Any]:
+        response = await self._ws_request(
+            {"sell": int(contract_id), "price": 0, "req_id": 304},
+            "sell",
+        )
+        sell = response.get("sell") or {}
+        return {
+            "status": "CLOSED_DEMO",
+            "contract_id": int(contract_id),
+            "transaction_id": sell.get("transaction_id"),
+            "sold_for": float(sell["sold_for"]) if sell.get("sold_for") is not None else None,
+        }
+
     async def account_status(self) -> dict[str, Any]:
         payload = await self._get("/trading/v1/options/accounts")
         raw_accounts = payload.get("data", [])
