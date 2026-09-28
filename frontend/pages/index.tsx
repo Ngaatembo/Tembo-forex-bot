@@ -338,7 +338,7 @@ export default function Home() {
               <button className="primary-button" onClick={()=>void executeDemoTrade()} disabled={demoBusy || !demoProposal || !demoExecutionEligible}>Execute demo trade</button>
               {demoBuy && demoProposal?.protection?.attached && <button className="secondary-button" onClick={()=>void syncDemoProtection()} disabled={demoBusy}>Sync protection</button>}
               {demoBuy && <button className="secondary-button" onClick={()=>void refreshDemoContract()} disabled={demoBusy}>Refresh contract</button>}
-              {demoBuy && <button className="secondary-button" onClick={()=>void closeDemoTrade()} disabled={demoBusy}>Close demo</button>
+              {demoBuy && <button className="secondary-button" onClick={()=>void closeDemoTrade()} disabled={demoBusy}>Close demo</button>}
             </div>
             {demoProposal && <div className="demo-proposal">
               <span>Proposal {demoProposal.proposal_id}</span>
