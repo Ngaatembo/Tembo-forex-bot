@@ -294,8 +294,15 @@ export default function Home() {
               <button className="primary-button" onClick={()=>void executeDemoTrade()} disabled={demoBusy || !demoProposal || !demoExecutionEligible}>Execute demo trade</button>
               {demoBuy && <button className="secondary-button" onClick={()=>void refreshDemoContract()} disabled={demoBusy}>Refresh contract</button>}{demoBuy && <button className="secondary-button" onClick={()=>void closeDemoTrade()} disabled={demoBusy}>Close demo</button>}
             </div>
-            {demoProposal && <div className="demo-proposal"><span>Proposal {demoProposal.proposal_id}</span><span>Ask ${demoProposal.ask_price.toFixed(2)}</span><span>Spot {demoProposal.spot == null ? "—" : demoProposal.spot}</span><span>{demoProposal.contract_type} ×{demoProposal.multiplier}</span></div>}
+            {demoProposal && <div className="demo-proposal">
+              <span>Proposal {demoProposal.proposal_id}</span>
+              <span>Ask ${demoProposal.ask_price.toFixed(2)}</span>
+              <span>Spot {demoProposal.spot == null ? "—" : demoProposal.spot}</span>
+              <span>{demoProposal.contract_type} ×{demoProposal.multiplier}</span>
+              <span>Protection {demoProposal.protection?.attached ? "ATTACHED" : "NOT ATTACHED"}</span>
+            </div>}
             {demoBuy && <div className="demo-open">DEMO CONTRACT #{demoBuy.contract_id} · BUY ${demoBuy.buy_price.toFixed(2)}</div>}
+            {demoProposal?.protection?.attached && <div className="demo-message">Broker-side demo protection attached from Tembo's price plan: SL loss ${demoProposal.protection.limit_order.stop_loss ?? "—"} · TP profit ${demoProposal.protection.limit_order.take_profit ?? "—"}.</div>}
             {demoMessage && <div className="demo-message">{demoMessage}</div>}
           </div>
           <div className="demo-gate-card">
