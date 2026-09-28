@@ -148,6 +148,14 @@ async def deriv_demo_contract(contract_id: int) -> dict:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
+@router.get("/demo/contract/history")
+async def deriv_demo_contract_history(contract_id: int) -> dict:
+    try:
+        return await DerivDemoClient().contract_update_history(contract_id)
+    except (DerivConfigurationError, DerivAPIError, ValueError, TypeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
 @router.post("/demo/contract/update")
 async def deriv_demo_contract_update(payload: dict) -> dict:
     try:
