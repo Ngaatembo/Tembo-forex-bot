@@ -92,6 +92,7 @@ export type DemoProposal = {
   status: string; instrument: string; underlying_symbol: string; direction: string;
   contract_type: string; stake: number; multiplier: number; proposal_id: string;
   ask_price: number; spot: number | null; execution_token: string; payout: number | null; currency: string;
+  protection?: { attached: boolean; limit_order: { stop_loss?: number; take_profit?: number }; source: string };
 };
 export type DemoBuyResult = {
   status: string; contract_id: number; transaction_id?: number | string | null;
