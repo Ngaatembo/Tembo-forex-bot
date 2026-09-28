@@ -148,6 +148,27 @@ async def deriv_demo_contract(contract_id: int) -> dict:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
+@router.post("/demo/contract/update")
+async def deriv_demo_contract_update(payload: dict) -> dict:
+    try:
+        contract_id = int(payload.get("contract_id"))
+        stop_loss = payload.get("stop_loss")
+        take_profit = payload.get("take_profit")
+        # Fail closed: only the configured demo account may be touched.
+        client = DerivDemoClient()
+        current = await client.open_contract(contract_id)
+        contract = current.get("contract") or {}
+        if str(contract.get("is_sold", "0")).lower() in {"1", "true"} or str(contract.get("status", "")).lower() in {"sold", "closed", "expired"}:
+            raise DerivAPIError("Cannot update protection on a closed demo contract.")
+        return await client.update_contract_protection(
+            contract_id=contract_id,
+            stop_loss=float(stop_loss) if stop_loss is not None else None,
+            take_profit=float(take_profit) if take_profit is not None else None,
+        )
+    except (DerivConfigurationError, DerivAPIError, ValueError, TypeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
 @router.post("/demo/sell")
 async def deriv_demo_sell(payload: dict) -> dict:
     try:
