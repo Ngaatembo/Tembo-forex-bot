@@ -1,6 +1,7 @@
 import pytest
 
 from app.integrations.deriv import DerivDemoClient, DerivAPIError
+from app.api.routes.deriv import _sign_demo_authorization, _verify_demo_authorization
 
 
 def client_without_init() -> DerivDemoClient:
@@ -56,3 +57,30 @@ async def test_demo_buy_returns_contract(monkeypatch):
     assert result["contract_id"] == 12345
     assert result["balance_after"] == 997.5
 
+
+
+def test_demo_execution_authorization_round_trip(monkeypatch):
+    from app.core.config import get_settings
+    settings = get_settings()
+    monkeypatch.setattr(settings, "deriv_api_token", "test-secret")
+    token = _sign_demo_authorization(
+        proposal_id="p-1",
+        price=2.5,
+        instrument="EUR/USD",
+        direction="BUY",
+    )
+    _verify_demo_authorization(token, proposal_id="p-1", price=2.5)
+
+
+def test_demo_execution_authorization_rejects_tampering(monkeypatch):
+    from app.core.config import get_settings
+    settings = get_settings()
+    monkeypatch.setattr(settings, "deriv_api_token", "test-secret")
+    token = _sign_demo_authorization(
+        proposal_id="p-1",
+        price=2.5,
+        instrument="EUR/USD",
+        direction="BUY",
+    )
+    with pytest.raises(DerivAPIError):
+        _verify_demo_authorization(token, proposal_id="p-1", price=2.6)
