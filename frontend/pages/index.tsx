@@ -355,7 +355,7 @@ export default function Home() {
               <span>Spot {String(demoContract.contract.current_spot ?? "—")}</span>
               <span>Entry {String(demoContract.contract.entry_spot ?? "—")}</span>
               <span>SL {String((demoContract.contract as Record<string, unknown>).stop_loss ?? demoProposal?.protection?.limit_order.stop_loss ?? "—")}</span>
-              <span>TP {String((demoContract.contract as Record<string, unknown>).take_profit ?? demoProposal?.protection?.limit_order.take_profit ?? "—")}
+              <span>TP {String((demoContract.contract as Record<string, unknown>).take_profit ?? demoProposal?.protection?.limit_order.take_profit ?? "—")}</span>
             </div>}
             {demoMessage && <div className="demo-message">{demoMessage}</div>}
           </div>
