@@ -114,7 +114,7 @@ export default function Home() {
       if (latestDecision.decision !== decision?.decision || !latestDecision.paper_eligibility.eligible) {
         setDemoProposal(null); setDemoMessage("The decision changed or the trade is no longer eligible. No demo order was sent."); return;
       }
-      const result = await buyDemoContract(demoProposal.proposal_id, demoProposal.ask_price);
+      const result = await buyDemoContract(demoProposal.proposal_id, demoProposal.ask_price, demoProposal.execution_token);
       setDemoBuy(result); setDemoMessage("Demo contract " + result.contract_id + " opened. Real-money execution remains disabled.");
     } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Demo execution failed safely."); }
     finally { setDemoBusy(false); }
