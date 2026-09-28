@@ -15,7 +15,7 @@ from sqlalchemy import text
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import admin_data, backtest, decisions, deriv, health, market_data, markets, news, paper_trading, research, strategy, technical_analysis
+from app.api.routes import admin_data, backtest, decisions, deriv, health, market_data, markets, news, paper_trading, research, strategy, technical_analysis, reliability
 from app.api.routes.live import router as live_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
@@ -170,6 +170,7 @@ app.include_router(decisions.router)
 app.include_router(paper_trading.router)
 app.include_router(news.router)
 app.include_router(admin_data.router)
+app.include_router(reliability.router)
 
 
 @app.get("/")
