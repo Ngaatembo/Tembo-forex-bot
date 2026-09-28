@@ -16,6 +16,7 @@ from app.database.session import AsyncSessionLocal
 from app.database.models import PaperRuntimePosition, PaperRuntimeState
 
 from app.api.routes.health import health_check
+from app.research.forward_test import forward_test_config_ids, forward_test_limits, is_forward_test
 from app.research.strategy_selector import select_strategy
 from app.research.validated_strategy_config import ValidatedStrategyConfig
 from app.research.instrument_adapter import InstrumentTimeframeInfo
@@ -562,6 +563,12 @@ async def live_decision(
             "the live strategy signal is blocked."
         )
 
+    # Owner-approved forward test: a PROMISING config may run on paper and
+    # the Deriv demo account only. All remaining gates still apply.
+    forward_test = is_forward_test(
+        selection.status, selection.selected_config_id, forward_test_config_ids()
+    )
+
     risk_payload = {
         "status": "NOT_RUN",
         "state": None,
@@ -584,7 +591,7 @@ async def live_decision(
         and effective_entry is not None
         and effective_stop is not None
     ):
-        if selection.status == "TRADEABLE":
+        if selection.status == "TRADEABLE" or forward_test:
             # Risk must use the persistent paper account state, not a
             # fabricated constant balance. This keeps the cockpit's risk
             # calculation aligned with the actual paper runtime.
@@ -622,7 +629,8 @@ async def live_decision(
             risk = evaluate_risk(
                 selection_result=selection,
                 account=account,
-                limits=RiskLimitsConfig(),
+                limits=forward_test_limits(RiskLimitsConfig()) if forward_test else RiskLimitsConfig(),
+                forward_test=forward_test,
                 direction="LONG" if effective_decision == "BUY" else "SHORT",
                 entry_price=effective_entry,
                 stop_price=effective_stop,
@@ -648,8 +656,13 @@ async def live_decision(
             if risk.state == "APPROVED":
                 paper_eligibility = {
                     "eligible": True,
-                    "status": "PAPER_ELIGIBLE",
-                    "reason": "Live researched strategy signal passed the validated-strategy selection and the full risk hierarchy.",
+                    "status": "FORWARD_TEST_ELIGIBLE" if forward_test else "PAPER_ELIGIBLE",
+                    "reason": (
+                        "Forward test: the PROMISING strategy's live signal passed macro risk and the full "
+                        "risk hierarchy at half the normal per-trade risk. Paper and Deriv demo only."
+                        if forward_test
+                        else "Live researched strategy signal passed the validated-strategy selection and the full risk hierarchy."
+                    ),
                     "persistent_state_changed": False,
                     "real_broker_contacted": False,
                     "execution_enabled": False,
@@ -753,6 +766,16 @@ async def live_decision(
         },
         "risk": risk_payload,
         "paper_eligibility": paper_eligibility,
+        "forward_test": {
+            "active": forward_test,
+            "config_id": selection.selected_config_id if forward_test else None,
+            "max_risk_per_trade_pct": forward_test_limits(RiskLimitsConfig()).max_risk_per_trade_pct if forward_test else None,
+            "note": (
+                "This PROMISING strategy is being forward-tested on paper and the Deriv demo account only."
+                if forward_test
+                else None
+            ),
+        },
         "execution": {
             "enabled": False,
             "note": "This endpoint produces analysis only. It does not place orders.",

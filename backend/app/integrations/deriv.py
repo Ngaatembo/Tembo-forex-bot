@@ -24,19 +24,28 @@ class DerivAPIError(RuntimeError):
     pass
 
 
+def _clean_setting(value: str | None) -> str | None:
+    """Drop whitespace and wrapping quotes that often sneak in when pasting env vars."""
+    if value is None:
+        return None
+    cleaned = value.strip().strip('"').strip("'").strip()
+    return cleaned or None
+
+
 class DerivDemoClient:
     def __init__(self) -> None:
         settings = get_settings()
         self.base_url = "https://api.derivws.com"
-        self.token = settings.deriv_api_token
-        self.app_id = settings.deriv_app_id
-        self.account_id = settings.deriv_account_id
-        self.mode = settings.deriv_trading_mode.lower()
+        self.token = _clean_setting(settings.deriv_api_token)
+        self.app_id = _clean_setting(settings.deriv_app_id)
+        self.account_id = _clean_setting(settings.deriv_account_id)
+        raw_mode = _clean_setting(settings.deriv_trading_mode) or "demo"
+        self.mode = raw_mode.lower()
 
         if self.mode != "demo":
             raise DerivConfigurationError(
                 "Tembo's first direct Deriv integration is demo-only. "
-                "Set DERIV_TRADING_MODE=demo."
+                f"DERIV_TRADING_MODE is currently {raw_mode!r}; set its value to exactly: demo"
             )
         if not self.token or not self.account_id:
             raise DerivConfigurationError(

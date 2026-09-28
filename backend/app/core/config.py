@@ -25,6 +25,12 @@ class Settings(BaseSettings):
     deriv_app_id: Optional[str] = None
     deriv_account_id: Optional[str] = None
     deriv_trading_mode: str = "demo"
+    # Comma-separated research config IDs that may be FORWARD-TESTED on the
+    # paper runtime and the Deriv demo account while their research gate is
+    # still PROMISING. Set to an empty value (or "none") to switch it off.
+    # Every other gate (live signal, macro risk, full risk hierarchy) still
+    # applies, and forward tests use half the normal per-trade risk.
+    demo_forward_test_configs: str = "vsc_xauusd_h1_breakout_30_d7479141"
     mt5_bridge_url: Optional[str] = None
     mt5_bridge_token: Optional[str] = None
     news_provider: str = "mock"

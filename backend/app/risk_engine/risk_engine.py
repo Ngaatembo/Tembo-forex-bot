@@ -28,6 +28,11 @@ PAPER_CANDIDATE) is rejected at the "VALIDATED STRATEGY?" stage,
 before any risk/position-sizing calculation even happens. This is
 what makes it structurally impossible for XAU/USD Breakout's current
 PROMISING status to reach APPROVED.
+
+The single exception is an explicit forward test (forward_test=True),
+which the caller may only set for a PROMISING configuration the owner has
+allow-listed for paper / Deriv demo forward testing
+(app.research.forward_test). Every later stage still applies unchanged.
 """
 
 from typing import Optional
@@ -53,6 +58,7 @@ def evaluate_risk(
     entry_price: Optional[float] = None,
     stop_price: Optional[float] = None,
     instrument_info: Optional[InstrumentTimeframeInfo] = None,
+    forward_test: bool = False,
 ) -> RiskDecision:
     kill_switch = check_kill_switch(kill_switch_active=account.kill_switch_active)
     if not kill_switch.allowed:
@@ -62,7 +68,10 @@ def evaluate_risk(
     if not valid:
         return RiskDecision("INSUFFICIENT_ACCOUNT_DATA", reason, hierarchy_stage="account_data")
 
-    if selection_result.status != "TRADEABLE":
+    strategy_allowed = selection_result.status == "TRADEABLE" or (
+        forward_test and selection_result.status == "PROMISING_NOT_TRADEABLE"
+    )
+    if not strategy_allowed:
         return RiskDecision(
             "NO_VALIDATED_EDGE",
             f"Strategy Selector returned status '{selection_result.status}' for "

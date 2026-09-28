@@ -13,6 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.routes.live import live_decision
+from app.research.forward_test import forward_test_config_ids
 from app.data_engine.market_data import get_market_data_provider
 from app.data_engine.normalizer import normalize_candles
 from app.data_engine.validator import validate_candles
@@ -182,7 +183,7 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
     """Run one idempotent paper cycle over the configured cockpit universe."""
     account, state, _ = await _load_account(db)
     configs = _configs()
-    engine = PaperTradingEngine(account, configs, RiskLimitsConfig())
+    engine = PaperTradingEngine(account, configs, RiskLimitsConfig(), forward_test_config_ids=forward_test_config_ids())
     # Position IDs must remain unique across service restarts. Recover the
     # highest persisted counter, including previously closed positions.
     all_position_ids = (await db.execute(

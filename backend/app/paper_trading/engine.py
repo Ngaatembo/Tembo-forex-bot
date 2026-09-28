@@ -33,6 +33,7 @@ from app.paper_trading.account import PaperAccountState
 from app.paper_trading.models import PaperPosition, PaperTrade
 from app.research.instrument_adapter import InstrumentTimeframeInfo
 from app.research.strategy_selector import select_strategy
+from app.research.forward_test import forward_test_limits, is_forward_test
 from app.research.validated_strategy_config import ValidatedStrategyConfig
 from app.risk_engine.risk_engine import evaluate_risk
 from app.risk_engine.risk_models import RiskLimitsConfig
@@ -42,6 +43,7 @@ _VALID_TIMEFRAMES = {"m5", "m15", "h1", "h4", "d1"}
 DECISION_STATES = frozenset({
     "INVALID_INPUT", "NO_VALIDATED_EDGE", "PROMISING_NOT_TRADEABLE", "RESEARCH_REQUIRED",
     "MACRO_EVENT_RISK_BLOCKED", "RISK_REJECTED", "KILL_SWITCH_BLOCKED", "PAPER_TRADE_APPROVED",
+    "FORWARD_TEST_APPROVED",
 })
 
 
@@ -73,10 +75,18 @@ def _check_paper_exit(position: PaperPosition, current_price: float) -> Optional
 
 
 class PaperTradingEngine:
-    def __init__(self, account: PaperAccountState, configs: list[ValidatedStrategyConfig], risk_limits: RiskLimitsConfig):
+    def __init__(
+        self,
+        account: PaperAccountState,
+        configs: list[ValidatedStrategyConfig],
+        risk_limits: RiskLimitsConfig,
+        forward_test_config_ids: frozenset = frozenset(),
+    ):
         self.account = account
         self.configs = configs
         self.risk_limits = risk_limits
+        # PROMISING configs the owner explicitly allowed to forward-test on paper.
+        self.forward_test_config_ids = frozenset(forward_test_config_ids)
         self._position_counter = 0
 
     def evaluate_and_maybe_open(
@@ -107,13 +117,14 @@ class PaperTradingEngine:
                 return PaperTradeDecision("INVALID_INPUT", "SHORT take-profit must be below entry.")
 
         selection = select_strategy(instrument, timeframe_norm, self.configs, current_regime)
+        forward_test = is_forward_test(selection.status, selection.selected_config_id, self.forward_test_config_ids)
         if selection.status == "NO_VALIDATED_EDGE":
             return PaperTradeDecision("NO_VALIDATED_EDGE", selection.reason)
-        if selection.status == "PROMISING_NOT_TRADEABLE":
+        if selection.status == "PROMISING_NOT_TRADEABLE" and not forward_test:
             return PaperTradeDecision("PROMISING_NOT_TRADEABLE", selection.reason)
         if selection.status == "RESEARCH_REQUIRED":
             return PaperTradeDecision("RESEARCH_REQUIRED", selection.reason)
-        if selection.status != "TRADEABLE":
+        if selection.status != "TRADEABLE" and not forward_test:
             return PaperTradeDecision(
                 "RESEARCH_REQUIRED",
                 f"Strategy Selector returned unexpected status '{selection.status}'. "
@@ -137,8 +148,10 @@ class PaperTradingEngine:
             account_snapshot = self.account.to_risk_engine_snapshot(snapshot_prices)
             instrument_info = InstrumentTimeframeInfo(instrument, timeframe_norm, mean_price=entry_price, price_precision_decimals=5)
             risk_decision = evaluate_risk(
-                selection_result=selection, account=account_snapshot, limits=self.risk_limits,
+                selection_result=selection, account=account_snapshot,
+                limits=forward_test_limits(self.risk_limits) if forward_test else self.risk_limits,
                 direction=direction, entry_price=entry_price, stop_price=stop_price, instrument_info=instrument_info,
+                forward_test=forward_test,
             )
             risk_reason = risk_decision.reason
 
@@ -158,6 +171,12 @@ class PaperTradingEngine:
         )
         risk_amount = risk_decision.position_sizing.final_position_size * risk_decision.position_sizing.stop_distance
         self.account.open_position(position, risk_amount=risk_amount)
+        if forward_test:
+            return PaperTradeDecision(
+                "FORWARD_TEST_APPROVED",
+                f"Forward test of PROMISING {selection.selected_config_id}: {risk_decision.reason}",
+                position=position,
+            )
         return PaperTradeDecision("PAPER_TRADE_APPROVED", risk_decision.reason, position=position)
 
     def tick(self, current_prices: dict, current_time: datetime, advance_holding_period_keys: Optional[set[str]] = None) -> list[PaperTrade]:
