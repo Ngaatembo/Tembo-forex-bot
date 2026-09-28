@@ -22,6 +22,8 @@ async def test_demo_proposal_builds_multiplier_request():
         assert payload["underlying_symbol"] == "1HZ100V"
         assert payload["amount"] == 2.5
         assert payload["multiplier"] == 10
+        assert payload["duration"] == 3600
+        assert payload["duration_unit"] == "s"
         return {"proposal": {"id": "p-1", "ask_price": 2.5, "spot": 100.0, "payout": 3.0}}
 
     client._resolve_underlying_symbol = fake_resolve
