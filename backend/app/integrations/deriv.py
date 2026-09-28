@@ -359,21 +359,23 @@ class DerivDemoClient:
         }
 
     async def account_status(self) -> dict[str, Any]:
-        payload = await self._get("/trading/v1/options/accounts")
-        raw_accounts = payload.get("data", [])
-        if isinstance(raw_accounts, dict):
-            raw_accounts = [raw_accounts]
-        account = next(
-            (item for item in raw_accounts if item.get("account_id") == self.account_id),
-            None,
-        )
-        if account is None:
-            raise DerivAPIError(
-                f"Configured Deriv account {self.account_id!r} was not returned by the API."
-            )
-        if str(account.get("account_type", "")).lower() != "demo":
+        """Verify the configured account by obtaining its authenticated WS URL.
+
+        The status check deliberately avoids the account-list REST endpoint.
+        A configured account ID is sufficient for the OTP flow, and the OTP
+        response tells us whether Deriv is issuing a demo or real WebSocket URL.
+        Tembo fails closed unless Deriv explicitly returns the demo endpoint.
+        """
+        if not self.app_id:
             raise DerivConfigurationError(
-                "Tembo refused the configured Deriv account because it is not a demo account."
+                "DERIV_APP_ID is required for the configured Deriv PAT. "
+                "Create/use a current Deriv API application ID; legacy app IDs are not accepted by the new API."
+            )
+
+        ws_url = await self._get_ws_url()
+        if "/trading/v1/options/ws/demo" not in ws_url:
+            raise DerivConfigurationError(
+                "Tembo refused the configured Deriv account because Deriv did not issue a demo WebSocket URL."
             )
 
         balance = await self._ws_request(
@@ -389,11 +391,12 @@ class DerivDemoClient:
         contracts = portfolio.get("portfolio", {}).get("contracts", [])
         return {
             "connected": True,
+            "configured": True,
             "mode": "demo",
             "account_id": self.account_id,
-            "account_type": account.get("account_type"),
-            "status": account.get("status"),
-            "currency": balance_data.get("currency") or account.get("currency"),
+            "account_type": "demo",
+            "status": "authenticated",
+            "currency": balance_data.get("currency"),
             "balance": balance_data.get("balance"),
             "open_positions": len(contracts) if isinstance(contracts, list) else 0,
             "positions": contracts if isinstance(contracts, list) else [],
