@@ -25,13 +25,46 @@ async def test_demo_proposal_builds_multiplier_request():
         assert payload["multiplier"] == 10
         assert payload["duration"] == 3600
         assert payload["duration_unit"] == "s"
+        assert payload["limit_order"] == {"stop_loss": 2.5, "take_profit": 5.0}
         return {"proposal": {"id": "p-1", "ask_price": 2.5, "spot": 100.0, "payout": 3.0}}
 
     client._resolve_underlying_symbol = fake_resolve
     client._ws_request = fake_ws
-    result = await client.proposal(instrument="SYNTH:1HZ100V", direction="BUY", stake=2.5, multiplier=10)
+    result = await client.proposal(
+        instrument="SYNTH:1HZ100V",
+        direction="BUY",
+        stake=2.5,
+        multiplier=10,
+        entry=100.0,
+        stop_loss=90.0,
+        take_profit=120.0,
+    )
     assert result["proposal_id"] == "p-1"
     assert result["contract_type"] == "MULTUP"
+
+
+def test_price_levels_translate_to_deriv_money_thresholds():
+    result = DerivDemoClient._price_levels_to_limit_order(
+        direction="BUY",
+        entry=100.0,
+        stop_loss=90.0,
+        take_profit=120.0,
+        stake=2.5,
+        multiplier=10,
+    )
+    assert result == {"stop_loss": 2.5, "take_profit": 5.0}
+
+
+def test_price_levels_reverse_for_sell():
+    result = DerivDemoClient._price_levels_to_limit_order(
+        direction="SELL",
+        entry=100.0,
+        stop_loss=110.0,
+        take_profit=80.0,
+        stake=2.5,
+        multiplier=10,
+    )
+    assert result == {"stop_loss": 2.5, "take_profit": 5.0}
 
 
 @pytest.mark.asyncio
