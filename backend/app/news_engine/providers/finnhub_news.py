@@ -57,12 +57,15 @@ class NewsMalformedResponseError(NewsProviderError):
 class FinnhubNewsProvider(NewsProvider):
     def __init__(self):
         settings = get_settings()
-        if not settings.news_api_key:
+        # Finnhub uses the same API credential for market news and the economic calendar.
+        # Prefer a dedicated news key, but reuse the calendar key when it is the only
+        # Finnhub credential configured for Tembo.
+        self._api_key = settings.news_api_key or settings.economic_calendar_api_key
+        if not self._api_key:
             raise ValueError(
-                "NEWS_API_KEY is required to use FinnhubNewsProvider. "
-                "Set NEWS_PROVIDER=mock during development instead."
+                "A Finnhub API key is required to use FinnhubNewsProvider. "
+                "Set NEWS_API_KEY or ECONOMIC_CALENDAR_API_KEY."
             )
-        self._api_key = settings.news_api_key
         self._client = httpx.AsyncClient(base_url=_BASE_URL, timeout=30.0)
 
     def __repr__(self) -> str:
