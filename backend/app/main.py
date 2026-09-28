@@ -8,7 +8,7 @@ Run with:
 from contextlib import asynccontextmanager
 import logging
 import asyncio
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import text
 
