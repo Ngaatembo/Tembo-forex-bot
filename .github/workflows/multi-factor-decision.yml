@@ -20,7 +20,6 @@ on:
       - "backend/tests/test_paper_validation.py"
       - "backend/tests/test_paper_runtime_timing.py"
       - "backend/tests/test_paper_runtime_metrics.py"
-      - "backend/tests/test_deriv_demo_execution.py"
       - ".github/workflows/multi-factor-decision.yml"
 
 jobs:
@@ -37,4 +36,4 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
-      - run: pytest -q tests/test_decision_engine.py tests/test_live_decision_api.py tests/test_deriv_synthetics.py tests/test_candlestick_engine.py tests/test_rule_evaluation.py tests/test_risk_engine_security_boundary.py tests/test_paper_trading_engine.py tests/test_paper_validation.py tests/test_paper_runtime_timing.py tests/test_paper_runtime_metrics.py
+      - run: pytest -q tests/test_decision_engine.py tests/test_live_decision_api.py tests/test_deriv_synthetics.py tests/test_candlestick_engine.py tests/test_rule_evaluation.py tests/test_risk_engine_security_boundary.py tests/test_paper_trading_engine.py tests/test_paper_validation.py tests/test_paper_runtime_timing.py tests/test_paper_runtime_metrics.py tests/test_deriv_demo_execution.py
