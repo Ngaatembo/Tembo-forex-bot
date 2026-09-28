@@ -13,10 +13,13 @@ on:
       - "backend/app/risk_engine/**"
       - "backend/tests/test_risk_engine_security_boundary.py"
       - "backend/app/paper_trading/**"
+      - "backend/app/integrations/deriv.py"
+      - "backend/app/api/routes/deriv.py"
+      - "backend/tests/test_deriv_demo_execution.py"
       - "backend/tests/test_paper_trading_engine.py"
       - "backend/tests/test_paper_validation.py"
       - "backend/tests/test_paper_runtime_timing.py"
-      - "backend/tests/test_paper_runtime_metrics.py"
+      - "backend/tests/test_paper_runtime_metrics.py tests/test_deriv_demo_execution.py"
       - ".github/workflows/multi-factor-decision.yml"
 
 jobs:
