@@ -174,6 +174,8 @@ class DerivDemoClient:
                 "basis": "stake",
                 "contract_type": contract_type,
                 "currency": "USD",
+                "duration": 3600,
+                "duration_unit": "s",
                 "multiplier": multiplier,
                 "underlying_symbol": underlying,
                 "req_id": 301,
