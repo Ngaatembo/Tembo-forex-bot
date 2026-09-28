@@ -1,0 +1,51 @@
+name: Deploy Tembo Frontend to Cloudflare Workers
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - "wrangler.jsonc"
+      - ".github/workflows/deploy-cloudflare.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-tembobot
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Build frontend for Workers
+        working-directory: frontend
+        env:
+          NEXT_PUBLIC_API_BASE_URL: https://tembo-forex-bot.onrender.com
+        run: npm run build
+
+      - name: Verify Workers assets
+        run: |
+          test -f frontend/out/index.html
+          test -f frontend/out/live.html
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config wrangler.jsonc
