@@ -551,74 +551,23 @@ async def live_decision(
                 )).scalars().all()
 
             if state is None or state.initial_equity is None:
-                paper_eligibility["reason"] = "Persistent paper account state is unavailable; risk fails closed."
-                return {
-                    "instrument": instrument,
-                    "timeframe": selected_timeframe,
-                    "provider": settings.market_data_provider,
-                    "status": "available",
-                    "decision": decision.decision,
-                    "methodology": decision.methodology,
-                    "macro_risk": {
-                        "level": macro_risk.level,
-                        "reason": macro_risk.reason,
-                        "triggering_event_count": len(macro_risk.triggering_events),
-                    },
-                    "news": {"status": news_context.status, "freshness": news_context.freshness,
-                             "provider": news_context.provider,
-                             "last_successful_fetch": news_context.last_successful_fetch.isoformat() if news_context.last_successful_fetch else None,
-                             "error": news_context.error, "headlines": []},
-                    "macro_events": [],
-                    "data_quality": {
-                        "is_clean": validation.is_clean,
-                        "candle_count": len(candles),
-                        "last_candle": candles[-1].timestamp.isoformat(),
-                    },
-                    "market_evidence": {
-                        "last_close": snapshots[-1].close,
-                        "regime": snapshots[-1].regime,
-                        "rsi_14": snapshots[-1].rsi_14,
-                        "atr_14": snapshots[-1].atr_14,
-                        "atr_percent": snapshots[-1].atr_percent,
-                    },
-                    "strategy_gate": {
-                        "status": selection.status,
-                        "selected_config_id": selection.selected_config_id,
-                        "reason": selection.reason,
-                    },
-                    "trade_plan": decision.to_dict(),
-                    "risk": {
-                        "status": "NOT_EVALUATED",
-                        "state": "INSUFFICIENT_ACCOUNT_DATA",
-                        "hierarchy_stage": "account_data",
-                        "computed_risk_pct": None,
-                        "position_size": None,
-                        "reason": "Persistent paper account state is unavailable; risk fails closed.",
-                    },
-                    "paper_eligibility": {
-                        "eligible": False,
-                        "status": "NOT_ELIGIBLE",
-                        "reason": "Risk state is unknown.",
-                        "persistent_state_changed": False,
-                        "real_broker_contacted": False,
-                        "execution_enabled": False,
-                    },
-                    "execution": {"enabled": False, "note": "Analysis only; no orders are placed."},
-                }
+                # Unknown account state is deliberately fail-closed.
+                account = AccountState(kill_switch_active=True)
+            else:
+                equity = float(state.initial_equity) + float(state.realized_pnl or 0.0)
+                open_risk_amount = sum(float(row.risk_amount or 0.0) for row in open_rows)
+                total_open_risk_pct = open_risk_amount / equity if equity > 0 else 1.0
+                account = AccountState(
+                    equity=equity,
+                    peak_equity=float(state.peak_equity or equity),
+                    daily_start_equity=float(state.daily_start_equity or equity),
+                    daily_realized_pnl=float(state.daily_realized_pnl or 0.0),
+                    daily_unrealized_pnl=0.0,
+                    open_positions_count=len(open_rows),
+                    total_open_risk_pct=total_open_risk_pct,
+                    kill_switch_active=bool(state.kill_switch_active),
+                )
 
-            equity = float(state.initial_equity) + float(state.realized_pnl or 0.0)
-            open_risk_amount = sum(float(row.risk_amount or 0.0) for row in open_rows)
-            total_open_risk_pct = open_risk_amount / equity if equity > 0 else 1.0
-            account = AccountState(
-                equity=equity,
-                peak_equity=float(state.peak_equity or equity),
-                daily_start_equity=float(state.daily_start_equity or equity),
-                daily_realized_pnl=float(state.daily_realized_pnl or 0.0),
-                daily_unrealized_pnl=0.0,
-                open_positions_count=len(open_rows),
-                total_open_risk_pct=total_open_risk_pct,
-                kill_switch_active=bool(state.kill_switch_active),
-            )
             risk = evaluate_risk(
                 selection_result=selection,
                 account=account,
