@@ -111,7 +111,6 @@ export function getDemoProposal(instrument:string,direction:string,stake:number,
 export function buyDemoContract(proposal_id:string,price:number):Promise<DemoBuyResult> {
   return postJson("/deriv/demo/buy",{proposal_id,price});
 }
-export function sellDemoContract(contract_id:number):Promise<{status:string;contract_id:number;sold_for:number|null}> { return postJson("/deriv/demo/sell",{contract_id}); }
 export function getDemoContract(contract_id:number):Promise<{status:string;contract:Record<string,unknown>}> {
   return getJson("/deriv/demo/contract?contract_id="+encodeURIComponent(String(contract_id)));
 }
