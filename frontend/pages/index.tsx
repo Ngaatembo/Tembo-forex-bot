@@ -98,11 +98,19 @@ export default function Home() {
   async function refresh() {
     setLoading(true); setError("");
     try {
-      const [m,a,d,r,rs,p,rel,relRuntime] = await Promise.all([
+      const [m,a,d,r,rs,p] = await Promise.all([
         getMarket(instrument,timeframe), getLiveAnalysis(instrument,timeframe), getLiveDecision(instrument,timeframe),
-        getResearchDecision(instrument,timeframe), getRuntimeStatus(), getRuntimePositions(), getReliabilityStatus(), getReliabilityRuntime()
+        getResearchDecision(instrument,timeframe), getRuntimeStatus(), getRuntimePositions()
       ]);
-      const sh = await getStrategyHealth(instrument,timeframe,a.analysis?.trend?.regime || null); setMarket(m); setAnalysis(a); setDecision(d); setResearch(r); setRuntime(rs); setPositions(p); setStrategyHealth(sh); setReliability(rel); setReliabilityRuntime(relRuntime);
+      const [shResult, relResult, relRuntimeResult] = await Promise.allSettled([
+        getStrategyHealth(instrument,timeframe,a.analysis?.trend?.regime || null),
+        getReliabilityStatus(),
+        getReliabilityRuntime()
+      ]);
+      setMarket(m); setAnalysis(a); setDecision(d); setResearch(r); setRuntime(rs); setPositions(p);
+      if (shResult.status === "fulfilled") setStrategyHealth(shResult.value);
+      if (relResult.status === "fulfilled") setReliability(relResult.value);
+      if (relRuntimeResult.status === "fulfilled") setReliabilityRuntime(relRuntimeResult.value);
       setLastRefresh(new Date().toLocaleTimeString());
     } catch(e) { setError(e instanceof Error ? e.message : "Unable to load Tembo data."); }
     finally { setLoading(false); }
