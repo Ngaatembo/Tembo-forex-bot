@@ -462,7 +462,7 @@ async def live_decision(
         }
 
     from app.live_engine.candlesticks import detect_candlestick_patterns
-    from app.news_engine.context import get_upcoming_macro_events
+    from app.news_engine.context import get_news_context, get_upcoming_macro_events
     from app.news_engine.macro_risk import compute_macro_event_risk
     from app.signal_engine.decision_engine import evaluate_trade_decision
     from app.technical_engine.features import calculate_feature_snapshots
@@ -471,6 +471,7 @@ async def live_decision(
         lookahead_hours=2,
         lookback_hours=0,
     )
+    news_context = await get_news_context(instrument=instrument)
     macro_risk = compute_macro_event_risk(
         instrument,
         macro_events,
@@ -594,6 +595,39 @@ async def live_decision(
             "reason": macro_risk.reason,
             "triggering_event_count": len(macro_risk.triggering_events),
         },
+        "news": {
+            "status": news_context.status,
+            "freshness": news_context.freshness,
+            "provider": news_context.provider,
+            "last_successful_fetch": news_context.last_successful_fetch.isoformat() if news_context.last_successful_fetch else None,
+            "error": news_context.error,
+            "headlines": [
+                {
+                    "news_id": item.news_id,
+                    "timestamp": item.timestamp.isoformat(),
+                    "headline": item.headline,
+                    "source": item.source,
+                    "url": item.url,
+                }
+                for item in news_context.relevant_news[:5]
+            ],
+        },
+        "macro_events": [
+            {
+                "event_id": event.event_id,
+                "timestamp": event.timestamp.isoformat(),
+                "currency": event.currency,
+                "country": event.country,
+                "event_name": event.event_name,
+                "importance": event.importance,
+                "previous": event.previous,
+                "forecast": event.forecast,
+                "actual": event.actual,
+                "source": event.source,
+                "time_confirmed": event.time_confirmed,
+            }
+            for event in (macro_events or [])
+        ],
         "data_quality": {
             "is_clean": validation.is_clean,
             "candle_count": len(candles),
