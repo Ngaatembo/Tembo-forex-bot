@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
-import { buyDemoContract, getDemoContract, getDemoProposal, sellDemoContract, getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getReliabilityRuntime, getReliabilityStatus, getResearchDecision, getRuntimePositions, getRuntimeStatus, getStrategyHealth, getSyntheticSymbols, type DemoBuyResult, type DemoProposal, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ReliabilityRuntime, type ReliabilityStatus, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type StrategyHealth, type SyntheticSymbol } from "../services/api";
+import { buyDemoContract, getDemoContract, getDemoProposal, sellDemoContract, getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getReliabilityRuntime, getReliabilityStatus, getResearchDecision, getRuntimePositions, getRuntimeStatus, getStrategyHealth, getSyntheticSymbols, type DemoBuyResult, type DemoContractResult, type DemoProposal, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ReliabilityRuntime, type ReliabilityStatus, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type StrategyHealth, type SyntheticSymbol } from "../services/api";
 
 const instruments = ["EUR/USD", "GBP/USD", "USD/JPY", "XAU/USD"];
 const timeframes = ["m5", "m15", "h1", "h4", "d1"];
@@ -88,6 +88,7 @@ export default function Home() {
   const [demoMultiplier,setDemoMultiplier]=useState(10);
   const [demoProposal,setDemoProposal]=useState<DemoProposal|null>(null);
   const [demoBuy,setDemoBuy]=useState<DemoBuyResult|null>(null);
+  const [demoContract,setDemoContract]=useState<DemoContractResult|null>(null);
   const [demoBusy,setDemoBusy]=useState(false);
   const [demoMessage,setDemoMessage]=useState("");
   const [error,setError]=useState("");
@@ -115,7 +116,7 @@ export default function Home() {
         setDemoProposal(null); setDemoMessage("The decision changed or the trade is no longer eligible. No demo order was sent."); return;
       }
       const result = await buyDemoContract(demoProposal.proposal_id, demoProposal.ask_price, demoProposal.execution_token);
-      setDemoBuy(result); setDemoMessage("Demo contract " + result.contract_id + " opened. Real-money execution remains disabled.");
+      setDemoBuy(result); setDemoContract(null); setDemoMessage("Demo contract " + result.contract_id + " opened. Real-money execution remains disabled.");
     } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Demo execution failed safely."); }
     finally { setDemoBusy(false); }
   }
@@ -125,6 +126,7 @@ export default function Home() {
     setDemoBusy(true);
     try {
       const result = await sellDemoContract(demoBuy.contract_id);
+      setDemoContract(null);
       setDemoMessage("Demo contract " + result.contract_id + " closed. Sold for " + String(result.sold_for ?? "—") + " USD.");
     } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Unable to close demo contract."); }
     finally { setDemoBusy(false); }
@@ -135,6 +137,7 @@ export default function Home() {
     try {
       const result = await getDemoContract(demoBuy.contract_id);
       const contract = result.contract || {};
+      setDemoContract(result);
       setDemoMessage("Demo contract " + demoBuy.contract_id + ": " + String(contract.status || "UNKNOWN") + ", P&L " + String(contract.profit ?? "—") + " USD.");
     } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Unable to read demo contract."); }
     finally { setDemoBusy(false); }
@@ -168,6 +171,17 @@ export default function Home() {
   }
   useEffect(()=>{ void refresh(); },[instrument,timeframe]);
   useEffect(()=>{ void getSyntheticSymbols().then(r=>setSynthetics(r.symbols)).catch(()=>setSynthetics([])); void getDerivStatus().then(setDerivStatus).catch(()=>setDerivStatus(null)); void refreshMarkets(); },[]);
+  useEffect(()=>{
+    if (!demoBuy?.contract_id) return;
+    const poll = window.setInterval(async ()=>{
+      try {
+        const result = await getDemoContract(demoBuy.contract_id);
+        setDemoContract(result);
+      } catch {}
+    },15000);
+    return ()=>window.clearInterval(poll);
+  },[demoBuy?.contract_id]);
+
   useEffect(()=>{ const timer = window.setInterval(()=>{ void refresh(); void refreshMarkets(); }, 15000); return ()=>window.clearInterval(timer); },[instrument,timeframe]);
 
   const latest = useMemo(()=>market?.candles?.[market.candles.length-1], [market]);
@@ -303,6 +317,12 @@ export default function Home() {
             </div>}
             {demoBuy && <div className="demo-open">DEMO CONTRACT #{demoBuy.contract_id} · BUY ${demoBuy.buy_price.toFixed(2)}</div>}
             {demoProposal?.protection?.attached && <div className="demo-message">Broker-side demo protection attached from Tembo's price plan: SL loss ${demoProposal.protection.limit_order.stop_loss ?? "—"} · TP profit ${demoProposal.protection.limit_order.take_profit ?? "—"}.</div>}
+            {demoContract?.contract && <div className="demo-proposal">
+              <span>Status {String(demoContract.contract.status || "—")}</span>
+              <span>P&amp;L ${String(demoContract.contract.profit ?? "—")}</span>
+              <span>Spot {String(demoContract.contract.current_spot ?? "—")}</span>
+              <span>Entry {String(demoContract.contract.entry_spot ?? "—")}</span>
+            </div>}
             {demoMessage && <div className="demo-message">{demoMessage}</div>}
           </div>
           <div className="demo-gate-card">
