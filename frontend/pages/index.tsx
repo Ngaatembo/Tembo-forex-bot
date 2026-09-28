@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
-import { buyDemoContract, getDemoContract, getDemoProposal, sellDemoContract, getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getReliabilityRuntime, getReliabilityStatus, getResearchDecision, getRuntimePositions, getRuntimeStatus, getStrategyHealth, getSyntheticSymbols, type DemoBuyResult, type DemoContractResult, type DemoProposal, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ReliabilityRuntime, type ReliabilityStatus, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type StrategyHealth, type SyntheticSymbol } from "../services/api";
+import { buyDemoContract, getDemoContract, getDemoProposal, sellDemoContract, updateDemoProtection, getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getReliabilityRuntime, getReliabilityStatus, getResearchDecision, getRuntimePositions, getRuntimeStatus, getStrategyHealth, getSyntheticSymbols, type DemoBuyResult, type DemoContractResult, type DemoProposal, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ReliabilityRuntime, type ReliabilityStatus, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type StrategyHealth, type SyntheticSymbol } from "../services/api";
 
 const instruments = ["EUR/USD", "GBP/USD", "USD/JPY", "XAU/USD"];
 const timeframes = ["m5", "m15", "h1", "h4", "d1"];
@@ -116,9 +116,39 @@ export default function Home() {
         setDemoProposal(null); setDemoMessage("The decision changed or the trade is no longer eligible. No demo order was sent."); return;
       }
       const result = await buyDemoContract(demoProposal.proposal_id, demoProposal.ask_price, demoProposal.execution_token);
-      setDemoBuy(result); setDemoContract(null); setDemoMessage("Demo contract " + result.contract_id + " opened. Real-money execution remains disabled.");
+      setDemoBuy(result); setDemoContract(null);
+      if (demoProposal.protection?.attached) {
+        try {
+          await updateDemoProtection(result.contract_id, demoProposal.protection.limit_order.stop_loss ?? null, demoProposal.protection.limit_order.take_profit ?? null);
+          setDemoMessage("Demo contract " + result.contract_id + " opened. Broker-side protection synchronized. Real-money execution remains disabled.");
+        } catch {
+          setDemoMessage("Demo contract " + result.contract_id + " opened with proposal protection. Post-entry synchronization needs attention.");
+        }
+      } else {
+        setDemoMessage("Demo contract " + result.contract_id + " opened. No broker-side protection was attached.");
+      }
     } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Demo execution failed safely."); }
     finally { setDemoBusy(false); }
+  }
+
+  async function syncDemoProtection() {
+    if (!demoBuy?.contract_id || !demoProposal?.protection?.attached) {
+      setDemoMessage("No broker-side protection plan is available to sync.");
+      return;
+    }
+    setDemoBusy(true);
+    try {
+      const result = await updateDemoProtection(
+        demoBuy.contract_id,
+        demoProposal.protection.limit_order.stop_loss ?? null,
+        demoProposal.protection.limit_order.take_profit ?? null,
+      );
+      setDemoMessage("Broker-side protection synchronized for demo contract " + result.contract_id + ".");
+      const refreshed = await getDemoContract(demoBuy.contract_id);
+      setDemoContract(refreshed);
+    } catch (e) {
+      setDemoMessage(e instanceof Error ? e.message : "Unable to synchronize demo protection.");
+    } finally { setDemoBusy(false); }
   }
 
   async function closeDemoTrade() {
@@ -306,7 +336,9 @@ export default function Home() {
             <div className="demo-actions">
               <button className="secondary-button" onClick={()=>void requestDemoProposal()} disabled={demoBusy || !demoExecutionEligible}>{demoBusy?"Working…":"Get demo proposal"}</button>
               <button className="primary-button" onClick={()=>void executeDemoTrade()} disabled={demoBusy || !demoProposal || !demoExecutionEligible}>Execute demo trade</button>
-              {demoBuy && <button className="secondary-button" onClick={()=>void refreshDemoContract()} disabled={demoBusy}>Refresh contract</button>}{demoBuy && <button className="secondary-button" onClick={()=>void closeDemoTrade()} disabled={demoBusy}>Close demo</button>}
+              {demoBuy && demoProposal?.protection?.attached && <button className="secondary-button" onClick={()=>void syncDemoProtection()} disabled={demoBusy}>Sync protection</button>}
+              {demoBuy && <button className="secondary-button" onClick={()=>void refreshDemoContract()} disabled={demoBusy}>Refresh contract</button>}
+              {demoBuy && <button className="secondary-button" onClick={()=>void closeDemoTrade()} disabled={demoBusy}>Close demo</button>
             </div>
             {demoProposal && <div className="demo-proposal">
               <span>Proposal {demoProposal.proposal_id}</span>
@@ -322,6 +354,8 @@ export default function Home() {
               <span>P&amp;L ${String(demoContract.contract.profit ?? "—")}</span>
               <span>Spot {String(demoContract.contract.current_spot ?? "—")}</span>
               <span>Entry {String(demoContract.contract.entry_spot ?? "—")}</span>
+              <span>SL {String((demoContract.contract as Record<string, unknown>).stop_loss ?? demoProposal?.protection?.limit_order.stop_loss ?? "—")}</span>
+              <span>TP {String((demoContract.contract as Record<string, unknown>).take_profit ?? demoProposal?.protection?.limit_order.take_profit ?? "—")}
             </div>}
             {demoMessage && <div className="demo-message">{demoMessage}</div>}
           </div>
