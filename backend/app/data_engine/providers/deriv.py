@@ -184,7 +184,7 @@ class DerivMarketDataProvider(MarketDataProvider):
             return cached[1]
 
         response = await self._request(
-            {"ticks": resolved["underlying_symbol"], "subscribe": 0, "req_id": 12},
+            {"ticks": resolved["underlying_symbol"] , "req_id": 12},
             "tick",
         )
         try:
@@ -216,7 +216,6 @@ class DerivMarketDataProvider(MarketDataProvider):
                 "count": count,
                 "style": "candles",
                 "granularity": granularity,
-                "subscribe": 0,
                 "req_id": 13,
             },
             "candles",
@@ -265,7 +264,6 @@ class DerivMarketDataProvider(MarketDataProvider):
                 "end": int(end.astimezone(timezone.utc).timestamp()),
                 "style": "candles",
                 "granularity": granularity,
-                "subscribe": 0,
                 "req_id": 14,
             },
             "candles",
