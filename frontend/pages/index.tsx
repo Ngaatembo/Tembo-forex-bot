@@ -146,6 +146,10 @@ export default function Home() {
       setDemoMessage("Broker-side protection synchronized for demo contract " + result.contract_id + ".");
       const refreshed = await getDemoContract(demoBuy.contract_id);
       setDemoContract(refreshed);
+      try {
+        const history = await getDemoProtectionHistory(demoBuy.contract_id);
+        setDemoProtectionHistory(history.history);
+      } catch {}
     } catch (e) {
       setDemoMessage(e instanceof Error ? e.message : "Unable to synchronize demo protection.");
     } finally { setDemoBusy(false); }
@@ -168,6 +172,10 @@ export default function Home() {
       const result = await getDemoContract(demoBuy.contract_id);
       const contract = result.contract || {};
       setDemoContract(result);
+      try {
+        const history = await getDemoProtectionHistory(demoBuy.contract_id);
+        setDemoProtectionHistory(history.history);
+      } catch {}
       setDemoMessage("Demo contract " + demoBuy.contract_id + ": " + String(contract.status || "UNKNOWN") + ", P&L " + String(contract.profit ?? "—") + " USD.");
     } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Unable to read demo contract."); }
     finally { setDemoBusy(false); }
@@ -181,6 +189,10 @@ export default function Home() {
         const result = await getDemoContract(contractId);
         if (!active) return;
         setDemoContract(result);
+        try {
+          const history = await getDemoProtectionHistory(contractId);
+          if (active) setDemoProtectionHistory(history.history);
+        } catch {}
       } catch {
         if (active) setDemoMessage("Live demo contract monitor temporarily unavailable.");
       }
