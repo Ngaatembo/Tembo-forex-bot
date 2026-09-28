@@ -15,7 +15,7 @@ from sqlalchemy import text
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import admin_data, backtest, decisions, deriv, health, market_data, markets, news, paper_trading, research, strategy, technical_analysis, reliability
+from app.api.routes import admin_data, backtest, decisions, deriv, health, market_data, markets, news, paper_trading, research, strategy, technical_analysis, reliability, strategy_health
 from app.api.routes.live import router as live_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
@@ -92,8 +92,6 @@ async def lifespan(_: FastAPI):
             while True:
                 try:
                     async with AsyncSessionLocal() as session:
-                        # Keep persistent H1 history synchronized with the live
-                        # provider; the one-time bootstrap otherwise becomes stale.
                         if settings.market_data_provider != "mock":
                             refresh_end = datetime.now(timezone.utc).replace(
                                 minute=0, second=0, microsecond=0
@@ -171,6 +169,7 @@ app.include_router(paper_trading.router)
 app.include_router(news.router)
 app.include_router(admin_data.router)
 app.include_router(reliability.router)
+app.include_router(strategy_health.router)
 
 
 @app.get("/")
