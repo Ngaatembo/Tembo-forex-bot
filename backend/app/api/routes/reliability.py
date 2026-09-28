@@ -55,6 +55,52 @@ async def monte_carlo(payload: dict) -> dict:
     }
 
 
+@router.get("/runtime")
+async def reliability_runtime() -> dict:
+    """Report the persistent paper runtime's drawdown governor state.
+
+    This is diagnostic only: it never changes risk, positions, or execution.
+    The drawdown is based on persisted paper-runtime equity state.
+    """
+    from app.database.session import AsyncSessionLocal
+    from app.database.models import PaperRuntimeState
+    from sqlalchemy import select
+
+    async with AsyncSessionLocal() as db:
+        state = (await db.execute(
+            select(PaperRuntimeState).where(PaperRuntimeState.account_key == "default_paper")
+        )).scalar_one_or_none()
+
+    if state is None:
+        result = drawdown_governor(0.0)
+        return {
+            "status": "NOT_STARTED",
+            "drawdown_pct": 0.0,
+            "governor": result.status,
+            "size_multiplier": result.size_multiplier,
+            "reason": "PAPER_RUNTIME_NOT_STARTED",
+        }
+
+    initial_equity = float(state.initial_equity or 0.0)
+    realized_pnl = float(state.realized_pnl or 0.0)
+    peak_equity = float(state.peak_equity or initial_equity)
+    current_equity = initial_equity + realized_pnl
+    if peak_equity <= 0:
+        result = drawdown_governor(float("nan"))
+        drawdown_pct = None
+    else:
+        drawdown_pct = max(0.0, (peak_equity - current_equity) / peak_equity * 100.0)
+        result = drawdown_governor(drawdown_pct)
+
+    return {
+        "status": "AVAILABLE",
+        "drawdown_pct": drawdown_pct,
+        "governor": result.status,
+        "size_multiplier": result.size_multiplier,
+        "reason": result.reason,
+        "equity_basis": "INITIAL_PLUS_REALIZED_PNL",
+    }
+
 @router.get("/status")
 async def reliability_status() -> dict:
     return {
