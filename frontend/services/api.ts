@@ -98,6 +98,21 @@ export type DemoBuyResult = {
   status: string; contract_id: number; transaction_id?: number | string | null;
   buy_price: number; balance_after: number | null;
 };
+export type DemoContractResult = {
+  status: string;
+  contract: {
+    contract_id?: number | string;
+    status?: string;
+    is_sold?: number | boolean;
+    profit?: number | string;
+    current_spot?: number | string;
+    entry_spot?: number | string;
+    buy_price?: number | string;
+    payout?: number | string;
+    sell_price?: number | string;
+    [key: string]: unknown;
+  };
+};
 export function getDerivMarkets():Promise<DerivMarketsResponse> { return getJson("/deriv/markets"); }
 async function postJson(path:string, body:unknown) {
   const res = await fetch(API_BASE_URL + path, {
@@ -112,7 +127,7 @@ export function getDemoProposal(instrument:string,direction:string,stake:number,
 export function buyDemoContract(proposal_id:string,price:number,execution_token:string):Promise<DemoBuyResult> {
   return postJson("/deriv/demo/buy",{proposal_id,price,execution_token});
 }
-export function getDemoContract(contract_id:number):Promise<{status:string;contract:Record<string,unknown>}> {
+export function getDemoContract(contract_id:number):Promise<DemoContractResult> {
   return getJson("/deriv/demo/contract?contract_id="+encodeURIComponent(String(contract_id)));
 }
 export function sellDemoContract(contract_id:number):Promise<{status:string;contract_id:number;sold_for:number|null}> {
