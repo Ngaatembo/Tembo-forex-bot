@@ -131,6 +131,10 @@ export function getDemoContract(contract_id:number):Promise<DemoContractResult> 
   return getJson("/deriv/demo/contract?contract_id="+encodeURIComponent(String(contract_id)));
 }
 export type DemoProtectionUpdate = { status:string; contract_id:number; protection: Record<string, unknown> };
+export type DemoProtectionHistory = { status:string; contract_id:number; history:Array<Record<string, unknown>> };
+export function getDemoProtectionHistory(contract_id:number):Promise<DemoProtectionHistory> {
+  return getJson("/deriv/demo/contract/history?contract_id="+encodeURIComponent(String(contract_id)));
+}
 export function updateDemoProtection(contract_id:number, stop_loss?:number|null, take_profit?:number|null):Promise<DemoProtectionUpdate> {
   return postJson("/deriv/demo/contract/update",{contract_id,stop_loss:stop_loss ?? undefined,take_profit:take_profit ?? undefined});
 }
