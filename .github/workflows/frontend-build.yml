@@ -23,3 +23,7 @@ jobs:
       - run: npm --version
       - run: npm install
       - run: npm run build
+      - name: Verify static cockpit routes
+        run: |
+          test -f out/index.html
+          test -f out/live.html
