@@ -117,3 +117,33 @@ def test_demo_execution_authorization_rejects_tampering(monkeypatch):
     )
     with pytest.raises(DerivAPIError):
         _verify_demo_authorization(token, proposal_id="p-1", price=2.6)
+
+
+@pytest.mark.asyncio
+async def test_demo_contract_update_sends_broker_protection():
+    client = client_without_init()
+
+    async def fake_ws(payload, expected):
+        assert expected == "contract_update"
+        assert payload == {
+            "contract_update": 1,
+            "contract_id": 12345,
+            "limit_order": {"stop_loss": 2.5, "take_profit": 5.0},
+            "req_id": 305,
+        }
+        return {"contract_update": {"stop_loss": {"order_amount": 2.5}, "take_profit": {"order_amount": 5.0}}}
+
+    client._ws_request = fake_ws
+    result = await client.update_contract_protection(
+        contract_id=12345, stop_loss=2.5, take_profit=5.0
+    )
+    assert result["status"] == "UPDATED_DEMO"
+    assert result["contract_id"] == 12345
+    assert result["protection"]["stop_loss"]["order_amount"] == 2.5
+
+
+@pytest.mark.asyncio
+async def test_demo_contract_update_rejects_empty_protection():
+    client = client_without_init()
+    with pytest.raises(DerivAPIError, match="At least one protection"):
+        await client.update_contract_protection(contract_id=12345)
