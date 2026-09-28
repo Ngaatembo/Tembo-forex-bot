@@ -288,6 +288,44 @@ class DerivDemoClient:
         )
         return {"status": "AVAILABLE", "contract": response.get("proposal_open_contract") or {}}
 
+    async def update_contract_protection(
+        self,
+        *,
+        contract_id: int,
+        stop_loss: float | None = None,
+        take_profit: float | None = None,
+    ) -> dict[str, Any]:
+        """Update broker-side monetary protection on an open demo contract."""
+        if contract_id <= 0:
+            raise DerivAPIError("Invalid demo contract id.")
+        limit_order: dict[str, float] = {}
+        if stop_loss is not None:
+            if not 0 < float(stop_loss) <= 10000:
+                raise DerivAPIError("Stop-loss protection must be between 0 and 10000 USD.")
+            limit_order["stop_loss"] = round(float(stop_loss), 2)
+        if take_profit is not None:
+            if not 0 < float(take_profit) <= 10000:
+                raise DerivAPIError("Take-profit protection must be between 0 and 10000 USD.")
+            limit_order["take_profit"] = round(float(take_profit), 2)
+        if not limit_order:
+            raise DerivAPIError("At least one protection threshold is required.")
+
+        response = await self._ws_request(
+            {
+                "contract_update": 1,
+                "contract_id": int(contract_id),
+                "limit_order": limit_order,
+                "req_id": 305,
+            },
+            "contract_update",
+        )
+        updated = response.get("contract_update") or {}
+        return {
+            "status": "UPDATED_DEMO",
+            "contract_id": int(contract_id),
+            "protection": updated,
+        }
+
     async def sell_demo(self, contract_id: int) -> dict[str, Any]:
         response = await self._ws_request(
             {"sell": int(contract_id), "price": 0, "req_id": 304},
