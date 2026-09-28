@@ -116,56 +116,6 @@ class DerivDemoClient:
         symbols = await provider.get_active_markets()
         return {"status": "AVAILABLE", "symbols": symbols}
 
-    async def proposal(
-        self,
-        underlying_symbol: str,
-        contract_type: str,
-        amount: float,
-        duration: int = 60,
-        duration_unit: str = "s",
-        multiplier: float | None = None,
-    ) -> dict[str, Any]:
-        if amount <= 0:
-            raise DerivAPIError("Demo stake must be greater than zero.")
-        contract_type = contract_type.upper()
-        allowed = {"CALL", "PUT", "MULTUP", "MULTDOWN"}
-        if contract_type not in allowed:
-            raise DerivAPIError("Unsupported demo contract type.")
-        payload: dict[str, Any] = {
-            "proposal": 1,
-            "amount": amount,
-            "basis": "stake",
-            "contract_type": contract_type,
-            "currency": "USD",
-            "duration": duration,
-            "duration_unit": duration_unit,
-            "underlying_symbol": underlying_symbol,
-            "req_id": 201,
-        }
-        if multiplier is not None:
-            if multiplier <= 0:
-                raise DerivAPIError("Multiplier must be greater than zero.")
-            payload["multiplier"] = multiplier
-        return await self._ws_exchange(payload, "proposal")
-
-    async def buy_demo_contract(self, proposal_id: str, price: float) -> dict[str, Any]:
-        if not proposal_id:
-            raise DerivAPIError("A Deriv proposal ID is required.")
-        if price <= 0:
-            raise DerivAPIError("Proposal price must be greater than zero.")
-        return await self._ws_exchange(
-            {"buy": proposal_id, "price": price, "req_id": 202},
-            "buy",
-        )
-
-    async def open_contract(self, contract_id: str) -> dict[str, Any]:
-        if not contract_id:
-            raise DerivAPIError("A Deriv contract ID is required.")
-        return await self._ws_exchange(
-            {"proposal_open_contract": 1, "contract_id": contract_id, "req_id": 203},
-            "proposal_open_contract",
-        )
-
     async def account_status(self) -> dict[str, Any]:
         payload = await self._get("/trading/v1/options/accounts")
         raw_accounts = payload.get("data", [])
