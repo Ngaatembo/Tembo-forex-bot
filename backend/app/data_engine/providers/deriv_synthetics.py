@@ -42,8 +42,15 @@ class MalformedResponseError(DerivSyntheticProviderError):
 
 
 class DerivSyntheticProvider(MarketDataProvider):
+    # Deriv's current public API rejects a "subscribe" field on one-off
+    # ticks/ticks_history requests ("Input validation failed: subscribe"),
+    # so requests below deliberately omit it, like the forex adapter.
     _symbols_cache: tuple[float, list[dict]] | None = None
     _symbols_ttl = 300.0
+    _price_cache: dict[str, tuple[float, float]] = {}
+    _price_ttl = 2.0
+    _candles_cache: dict[tuple[str, str, int], tuple[float, list[Candle]]] = {}
+    _candles_ttl = 20.0
 
     def __init__(self):
         settings = get_settings()
@@ -142,14 +149,19 @@ class DerivSyntheticProvider(MarketDataProvider):
     async def get_current_price(self, symbol: str) -> float:
         provider_symbol = self.provider_symbol(symbol)
         await self._metadata(symbol)
+        cached = self._price_cache.get(symbol)
+        if cached and time.monotonic() - cached[0] < self._price_ttl:
+            return cached[1]
         response = await self._request(
-            {"ticks": provider_symbol, "subscribe": 0, "req_id": 2},
+            {"ticks": provider_symbol, "req_id": 2},
             "tick",
         )
         try:
-            return float(response["tick"]["quote"])
+            price = float(response["tick"]["quote"])
         except (KeyError, TypeError, ValueError) as exc:
             raise MalformedResponseError("Deriv tick response did not contain a numeric quote.") from exc
+        self._price_cache[symbol] = (time.monotonic(), price)
+        return price
 
     @staticmethod
     def _granularity(timeframe: str) -> int:
@@ -164,14 +176,18 @@ class DerivSyntheticProvider(MarketDataProvider):
         provider_symbol = self.provider_symbol(symbol)
         await self._metadata(symbol)
         granularity = self._granularity(timeframe)
+        count = min(max(limit, 1), 5000)
+        cache_key = (symbol, timeframe.lower(), count)
+        cached = self._candles_cache.get(cache_key)
+        if cached and time.monotonic() - cached[0] < self._candles_ttl:
+            return list(cached[1])
         response = await self._request(
             {
                 "ticks_history": provider_symbol,
                 "end": "latest",
-                "count": min(max(limit, 1), 5000),
+                "count": count,
                 "style": "candles",
                 "granularity": granularity,
-                "subscribe": 0,
                 "req_id": 3,
             },
             "candles",
@@ -199,7 +215,9 @@ class DerivSyntheticProvider(MarketDataProvider):
         except (KeyError, TypeError, ValueError, OverflowError) as exc:
             raise MalformedResponseError(f"Could not parse Deriv candles: {exc}") from exc
 
-        return sorted(parsed, key=lambda candle: candle.timestamp)
+        parsed.sort(key=lambda candle: candle.timestamp)
+        self._candles_cache[cache_key] = (time.monotonic(), parsed)
+        return list(parsed)
 
     async def get_historical_data(
         self, symbol: str, timeframe: str, start: datetime, end: datetime
@@ -216,7 +234,6 @@ class DerivSyntheticProvider(MarketDataProvider):
                 "end": end_epoch,
                 "style": "candles",
                 "granularity": granularity,
-                "subscribe": 0,
                 "req_id": 4,
             },
             "candles",

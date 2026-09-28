@@ -29,7 +29,7 @@ from app.strategy_engine.service import evaluate_live_strategy
 
 router = APIRouter(prefix="/live", tags=["live"])
 
-INSTRUMENTS = ("EUR/USD", "GBP/USD", "XAU/USD")
+INSTRUMENTS = ("EUR/USD", "GBP/USD", "USD/JPY", "XAU/USD")
 
 
 def _is_synthetic_instrument(instrument: str) -> bool:

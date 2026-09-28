@@ -1,3 +1,0 @@
-backend/app/api/routes/admin_data.py
-backend/tests/test_admin_data_download.py
-run-backtest.yml

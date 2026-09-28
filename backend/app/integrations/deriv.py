@@ -283,7 +283,7 @@ class DerivDemoClient:
 
     async def open_contract(self, contract_id: int) -> dict[str, Any]:
         response = await self._ws_request(
-            {"proposal_open_contract": 1, "contract_id": int(contract_id), "subscribe": 0, "req_id": 303},
+            {"proposal_open_contract": 1, "contract_id": int(contract_id), "req_id": 303},
             "proposal_open_contract",
         )
         return {"status": "AVAILABLE", "contract": response.get("proposal_open_contract") or {}}
