@@ -89,6 +89,7 @@ export default function Home() {
   const [demoProposal,setDemoProposal]=useState<DemoProposal|null>(null);
   const [demoBuy,setDemoBuy]=useState<DemoBuyResult|null>(null);
   const [demoContract,setDemoContract]=useState<DemoContractResult|null>(null);
+  const [demoProtectionHistory,setDemoProtectionHistory]=useState<Record<string, unknown>[]>([]);
   const [demoBusy,setDemoBusy]=useState(false);
   const [demoMessage,setDemoMessage]=useState("");
   const [error,setError]=useState("");
