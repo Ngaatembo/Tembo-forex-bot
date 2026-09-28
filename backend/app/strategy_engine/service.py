@@ -55,7 +55,7 @@ def _candidate_number(
             pass
 
     # Older research snapshots stored some parameters only in candidate_id.
-    match = re.search(rf"{re.escape(key)}[_-]?(\\d+)", config.candidate_id.lower())
+    match = re.search(rf"{re.escape(key)}[_-]?(\d+)", config.candidate_id.lower())
     return int(match.group(1)) if match else default
 
 
