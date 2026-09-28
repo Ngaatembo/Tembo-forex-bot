@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
-import { getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getReliabilityRuntime, getReliabilityStatus, getResearchDecision, getRuntimePositions, getRuntimeStatus, getStrategyHealth, getSyntheticSymbols, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ReliabilityRuntime, type ReliabilityStatus, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type StrategyHealth, type SyntheticSymbol } from "../services/api";
+import { buyDemoContract, getDemoContract, getDemoProposal, getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getReliabilityRuntime, getReliabilityStatus, getResearchDecision, getRuntimePositions, getRuntimeStatus, getStrategyHealth, getSyntheticSymbols, type DemoBuyResult, type DemoProposal, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ReliabilityRuntime, type ReliabilityStatus, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type StrategyHealth, type SyntheticSymbol } from "../services/api";
 
 const instruments = ["EUR/USD", "GBP/USD", "USD/JPY", "XAU/USD"];
 const timeframes = ["m5", "m15", "h1", "h4", "d1"];
@@ -84,10 +84,52 @@ export default function Home() {
   const [strategyHealth,setStrategyHealth]=useState<StrategyHealth|null>(null);
   const [reliability,setReliability]=useState<ReliabilityStatus|null>(null);
   const [reliabilityRuntime,setReliabilityRuntime]=useState<ReliabilityRuntime|null>(null);
+  const [demoStake,setDemoStake]=useState(1);
+  const [demoMultiplier,setDemoMultiplier]=useState(10);
+  const [demoProposal,setDemoProposal]=useState<DemoProposal|null>(null);
+  const [demoBuy,setDemoBuy]=useState<DemoBuyResult|null>(null);
+  const [demoBusy,setDemoBusy]=useState(false);
+  const [demoMessage,setDemoMessage]=useState("");
   const [error,setError]=useState("");
   const [loading,setLoading]=useState(true);
   const [lastRefresh,setLastRefresh]=useState("");
 
+  const demoExecutionEligible = Boolean(derivStatus?.connected && decision?.decision && decision.decision !== "NO_TRADE" && decision?.paper_eligibility?.eligible && decision?.paper_eligibility?.execution_enabled === false);
+
+  async function requestDemoProposal() {
+    if (!demoExecutionEligible) { setDemoMessage("Demo execution is locked until Tembo authorizes the setup."); return; }
+    setDemoBusy(true); setDemoMessage(""); setDemoProposal(null);
+    try {
+      const proposal = await getDemoProposal(instrument, decision!.decision, demoStake, demoMultiplier);
+      setDemoProposal(proposal); setDemoMessage("Demo proposal received. Nothing has been purchased.");
+    } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Unable to obtain a demo proposal."); }
+    finally { setDemoBusy(false); }
+  }
+
+  async function executeDemoTrade() {
+    if (!demoProposal || !demoExecutionEligible) { setDemoMessage("Execution is locked. Pass every Tembo gate first."); return; }
+    setDemoBusy(true); setDemoMessage("");
+    try {
+      const latestDecision = await getLiveDecision(instrument,timeframe);
+      if (latestDecision.decision !== decision?.decision || !latestDecision.paper_eligibility.eligible) {
+        setDemoProposal(null); setDemoMessage("The decision changed or the trade is no longer eligible. No demo order was sent."); return;
+      }
+      const result = await buyDemoContract(demoProposal.proposal_id, demoProposal.ask_price);
+      setDemoBuy(result); setDemoMessage("Demo contract " + result.contract_id + " opened. Real-money execution remains disabled.");
+    } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Demo execution failed safely."); }
+    finally { setDemoBusy(false); }
+  }
+
+  async function refreshDemoContract() {
+    if (!demoBuy?.contract_id) return;
+    setDemoBusy(true);
+    try {
+      const result = await getDemoContract(demoBuy.contract_id);
+      const contract = result.contract || {};
+      setDemoMessage("Demo contract " + demoBuy.contract_id + ": " + String(contract.status || "UNKNOWN") + ", P&L " + String(contract.profit ?? "—") + " USD.");
+    } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Unable to read demo contract."); }
+    finally { setDemoBusy(false); }
+  }
   async function refreshMarkets() {
     try {
       const result = await getDerivMarkets();
@@ -135,7 +177,7 @@ export default function Home() {
     <Head><title>Tembo Forex Bot — Multi-Market Cockpit</title><meta name="description" content="Tembo live-data paper trading cockpit"/></Head>
     <main>
       <header className="topbar">
-        <div><div className="brand">TEMBO</div><div className="subbrand">LIVE-DATA PAPER TRADING COCKPIT</div></div>
+        <div><div className="brand">TEMBO</div><div className="subbrand">LIVE-DATA · CONTROLLED DEMO EXECUTION COCKPIT</div></div>
         <div className="live-state"><span className="dot"/> PAPER ONLY • BROKER OFF<div className="broker-chip"><span className={derivStatus?.connected ? "broker-dot on" : "broker-dot"}/>DERIV {derivStatus?.connected ? "DEMO CONNECTED" : derivStatus?.configured ? "CHECKING" : "NOT CONFIGURED"}</div></div>
       </header>
 
@@ -227,7 +269,38 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section"><div className="section-title"><span>02</span> Live analysis</div>
+            <section className="section demo-execution-section">
+        <div className="section-title"><span>03</span> Demo execution desk</div>
+        <div className="demo-execution-grid">
+          <div className="demo-execution-card">
+            <div className="guidance-card-title">CONTROLLED DERIV DEMO</div>
+            <h3>{demoExecutionEligible ? "Tembo has authorized a " + signal + " demo setup" : "Demo execution is locked"}</h3>
+            <p className="guidance-muted">The server re-checks the live decision immediately before purchase. This desk cannot use a real-money account.</p>
+            <div className="demo-controls">
+              <label>Stake (USD)<input type="number" min="0.01" max="10" step="0.01" value={demoStake} onChange={e=>setDemoStake(Math.min(10,Math.max(0.01,Number(e.target.value)||0.01)))} /></label>
+              <label>Multiplier<input type="number" min="1" max="50" step="1" value={demoMultiplier} onChange={e=>setDemoMultiplier(Math.min(50,Math.max(1,Number(e.target.value)||1)))} /></label>
+            </div>
+            <div className="demo-actions">
+              <button className="secondary-button" onClick={()=>void requestDemoProposal()} disabled={demoBusy || !demoExecutionEligible}>{demoBusy?"Working…":"Get demo proposal"}</button>
+              <button className="primary-button" onClick={()=>void executeDemoTrade()} disabled={demoBusy || !demoProposal || !demoExecutionEligible}>Execute demo trade</button>
+              {demoBuy && <button className="secondary-button" onClick={()=>void refreshDemoContract()} disabled={demoBusy}>Refresh contract</button>}
+            </div>
+            {demoProposal && <div className="demo-proposal"><span>Proposal {demoProposal.proposal_id}</span><span>Ask ${demoProposal.ask_price.toFixed(2)}</span><span>Spot {demoProposal.spot == null ? "—" : demoProposal.spot}</span><span>{demoProposal.contract_type} ×{demoProposal.multiplier}</span></div>}
+            {demoBuy && <div className="demo-open">DEMO CONTRACT #{demoBuy.contract_id} · BUY ${demoBuy.buy_price.toFixed(2)}</div>}
+            {demoMessage && <div className="demo-message">{demoMessage}</div>}
+          </div>
+          <div className="demo-gate-card">
+            <div className="guidance-card-title">EXECUTION GATES</div>
+            <div className="gate-line"><span>Deriv demo</span><Pill value={derivStatus?.connected ? "CONNECTED" : "NOT CONNECTED"} tone={derivStatus?.connected ? "good" : "bad"}/></div>
+            <div className="gate-line"><span>Tembo signal</span><Pill value={signal} tone={signal === "NO_TRADE" ? "bad" : "good"}/></div>
+            <div className="gate-line"><span>Paper eligibility</span><Pill value={decision?.paper_eligibility?.status || "WAITING"} tone={toneFor(decision?.paper_eligibility?.status)}/></div>
+            <div className="gate-line"><span>Broker mode</span><Pill value="DEMO ONLY" tone="warn"/></div>
+            <div className="gate-line"><span>Real-money execution</span><Pill value="DISABLED" tone="good"/></div>
+            <p className="guidance-muted">No browser credentials are used. The server holds the Deriv credentials and enforces demo-only mode.</p>
+          </div>
+        </div>
+      </section>
+<section className="section"><div className="section-title"><span>02</span> Live analysis</div>
         <div className="analysis-grid">
           <div className="analysis-card"><div className="analysis-label">Market state</div><div className="analysis-main">{analysis?.analysis?.trend?.state || "WAITING"}</div><div className="analysis-sub">{analysis?.analysis?.trend?.regime || analysis?.status || "No verified analysis yet."}</div></div>
           <div className="analysis-card"><div className="analysis-label">Momentum</div><div className="analysis-main">{analysis?.analysis?.momentum?.state || "—"}</div><div className="analysis-sub">RSI 14: {fmt(analysis?.analysis?.momentum?.rsi_14,2)}</div></div>
@@ -357,14 +430,14 @@ export default function Home() {
       .pill{display:inline-flex;border:1px solid #344052;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}.pill.good{border-color:#2f7650;color:#77e39d;background:#102219}.pill.warn{border-color:#756332;color:#e1c87b;background:#211d11}.pill.bad{border-color:#713a42;color:#ee9ca7;background:#241419}
       .selected,.position{margin-top:12px;background:#0e1219;border:1px solid #1e2530;border-radius:9px;padding:14px}.strategy-health{background:#0e1219;border:1px solid #1e2530;border-radius:10px;padding:16px}.strategy-health-summary{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.strategy-health-summary h3{font-size:22px;margin:8px 0}.strategy-health-summary p{color:#8994a6;font-size:12px;line-height:1.55;margin:0;max-width:850px}.strategy-health-grid{display:grid;grid-template-columns:1fr 1fr 2fr;gap:10px;margin-top:12px}.strategy-health-grid>div{background:#0b0f15;border:1px solid #202832;border-radius:8px;padding:12px}.strategy-health-grid span{display:block;color:#707c8e;font-size:9px;text-transform:uppercase;letter-spacing:.08em}.strategy-health-grid strong{display:block;color:#e6ebf3;font-size:12px;margin-top:7px;line-height:1.4}.strategy-candidates{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.strategy-candidate{background:#0b0f15;border:1px solid #202832;border-radius:8px;padding:11px}.strategy-candidate>div{display:flex;justify-content:space-between;gap:8px;align-items:center}.strategy-candidate b{font-size:10px;overflow:hidden;text-overflow:ellipsis}.strategy-candidate p{color:#778294;font-size:10px;line-height:1.45;margin:8px 0 0}.reliability-panel{background:#0e1219;border:1px solid #1e2530;border-radius:10px;padding:16px}.reliability-summary{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.reliability-summary h3{font-size:22px;margin:8px 0}.reliability-summary p{color:#8994a6;font-size:12px;line-height:1.55;margin:0;max-width:850px}.reliability-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.reliability-grid>div{background:#0b0f15;border:1px solid #202832;border-radius:8px;padding:12px}.reliability-grid span{display:block;color:#707c8e;font-size:9px;text-transform:uppercase;letter-spacing:.08em}.reliability-grid strong{display:block;color:#e6ebf3;font-size:13px;margin-top:7px}.guardrail-list{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.guardrail-chip{border:1px solid #2a3442;border-radius:999px;padding:6px 9px;color:#b7c0cf;font-size:9px;text-transform:uppercase;letter-spacing:.05em}.reliability-note{color:#687487;font-size:10px;line-height:1.55;margin:12px 0 0}.boundary{background:#0e1219;border:1px solid #25302b;border-radius:9px;padding:17px}
       .guidance-section{padding-top:28px}.guidance-header{display:flex;justify-content:space-between;gap:20px;align-items:center;background:linear-gradient(135deg,#0d1716,#0e1219);border:1px solid #244235;border-radius:14px;padding:22px;margin-bottom:12px}.guidance-kicker{color:#69d99a;font-size:10px;letter-spacing:.14em;font-weight:800}.guidance-header h2{font-size:25px;margin:7px 0 6px;letter-spacing:-.02em}.guidance-header p{color:#8994a6;font-size:13px;line-height:1.55;margin:0;max-width:760px}.decision-badge{min-width:110px;text-align:center;border-radius:12px;padding:18px 16px;font-size:22px;font-weight:900;letter-spacing:.04em}.decision-badge.buy{background:#0c3b24;border:1px solid #32a867;color:#72e6a0}.decision-badge.sell{background:#3d171d;border:1px solid #a44c58;color:#f09aa5}.decision-badge.wait{background:#2d2815;border:1px solid #8a7131;color:#e7ce78}.guidance-metrics{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.guidance-metric{background:#0e1219;border:1px solid #1e2530;border-radius:9px;padding:14px}.guidance-metric span,.guidance-card-title{display:block;color:#727e91;font-size:10px;text-transform:uppercase;letter-spacing:.1em}.guidance-metric strong{display:block;font-size:18px;margin-top:8px}.guidance-metric small{display:block;color:#687487;font-size:10px;margin-top:5px}.guidance-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;margin-top:10px}.guidance-card{background:#0e1219;border:1px solid #1e2530;border-radius:10px;padding:17px}.guidance-big{font-size:22px;font-weight:850;margin-top:10px}.guidance-card p{color:#8791a3;font-size:12px;line-height:1.55;margin:7px 0 14px}.guidance-row,.level-row,.gate-line{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #1c232e;padding:9px 0;color:#778295;font-size:11px}.guidance-row b,.level-row strong{color:#e8edf5}.guidance-muted{font-size:10px!important;color:#687487!important}.guidance-news-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.guidance-plan{margin-top:10px;background:#0b1016;border:1px solid #27313d;border-radius:10px;padding:16px;display:flex;justify-content:space-between;gap:20px;align-items:center}.guidance-plan p{margin:7px 0 0;color:#9aa4b5;font-size:12px;line-height:1.55;max-width:900px}.guidance-warning{white-space:nowrap;border:1px solid #715f2e;background:#211d11;color:#dfc875;border-radius:999px;padding:7px 10px;font-size:9px;font-weight:800;letter-spacing:.08em}
-      .market-chart-section{padding-top:18px}.chart-wrap{background:#0e1219;border:1px solid #202632;border-radius:12px;padding:18px}
+      .demo-execution-section{padding-top:18px}.demo-execution-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:10px}.demo-execution-card,.demo-gate-card{background:#0e1219;border:1px solid #202632;border-radius:12px;padding:18px}.demo-execution-card h3{margin:7px 0;font-size:18px}.demo-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.demo-controls label{display:flex;flex-direction:column;gap:6px;color:#778295;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.demo-controls input{background:#0a0e14;color:#eef2f7;border:1px solid #27313d;border-radius:8px;padding:10px}.demo-actions{display:flex;flex-wrap:wrap;gap:8px}.primary-button,.secondary-button{border-radius:8px;padding:10px 13px;font-weight:800;font-size:11px;cursor:pointer}.primary-button{background:#d9f5e4;color:#0a1710;border:1px solid #8ed0a7}.secondary-button{background:#151b24;color:#dce3ec;border:1px solid #2a3441}.primary-button:disabled,.secondary-button:disabled{opacity:.45;cursor:not-allowed}.demo-proposal{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;padding:10px;border:1px solid #27313d;border-radius:8px;color:#aeb7c6;font-size:10px}.demo-open{margin-top:10px;color:#72d99a;font-weight:800;font-size:11px}.demo-message{margin-top:10px;padding:9px;border-radius:8px;background:#111722;color:#aeb7c6;font-size:11px;line-height:1.45}.market-chart-section{padding-top:18px}.chart-wrap{background:#0e1219;border:1px solid #202632;border-radius:12px;padding:18px}
       .chart-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:12px}.chart-title{font-size:20px;font-weight:800;margin-top:6px}
       .chart-legend{display:flex;gap:14px;flex-wrap:wrap;color:#778295;font-size:11px}.chart-legend span{display:inline-flex;align-items:center;gap:6px}.chart-legend i{display:inline-block;width:8px;height:8px;border-radius:2px}.legend-up{background:#55d991}.legend-down{background:#ed707c}
       .chart-scroll{width:100%;overflow-x:auto;overflow-y:hidden}.candle-chart{display:block;width:100%;min-width:720px;height:auto}
       .grid-line{stroke:#202732;stroke-width:1}.axis-label,.time-label{fill:#667184;font-size:11px;font-family:inherit}.wick-up,.wick-down{stroke-width:1.5}.wick-up{stroke:#55d991}.wick-down{stroke:#ed707c}.body-up{fill:#55d991;stroke:#55d991}.body-down{fill:#ed707c;stroke:#ed707c}
       .chart-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;color:#6f7b8d;font-size:11px}.chart-foot span:nth-child(2){color:#70d99a;font-weight:700}.chart-empty{padding:80px 20px;text-align:center;color:#778295}
       footer{border-top:1px solid #202632;margin-top:10px;padding:20px 0 30px;color:#697486;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
-      @media(max-width:850px){.strategy-health-grid,.strategy-candidates,.reliability-grid{grid-template-columns:1fr}.strategy-health-summary,.reliability-summary{flex-direction:column}.cockpit-shell{display:block}.sidebar{position:relative;height:auto;border-right:0;border-bottom:1px solid #1e2530}.side-nav{display:flex;overflow-x:auto}.side-nav button{white-space:nowrap}.side-bottom{display:none}.cockpit-main{padding:16px}.market-list{grid-template-columns:repeat(2,1fr)}.guidance-news-grid{grid-template-columns:1fr}.chart-head{align-items:flex-start;flex-direction:column}.hero-grid,.gates,.analysis-grid,.analysis-grid-wide,.guidance-grid{grid-template-columns:1fr}.metrics,.plan,.guidance-metrics{grid-template-columns:repeat(2,1fr)}.controls{flex-wrap:wrap}.refresh-note{width:100%;margin:0}.guidance-header,.guidance-plan{align-items:flex-start;flex-direction:column}.decision-badge{width:100%}}
+      @media(max-width:850px){.demo-execution-grid{grid-template-columns:1fr}.strategy-health-grid,.strategy-candidates,.reliability-grid{grid-template-columns:1fr}.strategy-health-summary,.reliability-summary{flex-direction:column}.cockpit-shell{display:block}.sidebar{position:relative;height:auto;border-right:0;border-bottom:1px solid #1e2530}.side-nav{display:flex;overflow-x:auto}.side-nav button{white-space:nowrap}.side-bottom{display:none}.cockpit-main{padding:16px}.market-list{grid-template-columns:repeat(2,1fr)}.guidance-news-grid{grid-template-columns:1fr}.chart-head{align-items:flex-start;flex-direction:column}.hero-grid,.gates,.analysis-grid,.analysis-grid-wide,.guidance-grid{grid-template-columns:1fr}.metrics,.plan,.guidance-metrics{grid-template-columns:repeat(2,1fr)}.controls{flex-wrap:wrap}.refresh-note{width:100%;margin:0}.guidance-header,.guidance-plan{align-items:flex-start;flex-direction:column}.decision-badge{width:100%}}
     `}</style>
   </>;
 }
