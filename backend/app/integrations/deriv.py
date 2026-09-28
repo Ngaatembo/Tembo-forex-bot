@@ -288,6 +288,25 @@ class DerivDemoClient:
         )
         return {"status": "AVAILABLE", "contract": response.get("proposal_open_contract") or {}}
 
+    async def contract_update_history(self, contract_id: int) -> dict[str, Any]:
+        """Return broker-confirmed SL/TP update history for a demo contract."""
+        if contract_id <= 0:
+            raise DerivAPIError("Invalid demo contract id.")
+        response = await self._ws_request(
+            {
+                "contract_update_history": 1,
+                "contract_id": int(contract_id),
+                "limit": 20,
+                "req_id": 306,
+            },
+            "contract_update_history",
+        )
+        return {
+            "status": "AVAILABLE",
+            "contract_id": int(contract_id),
+            "history": response.get("contract_update_history") or [],
+        }
+
     async def update_contract_protection(
         self,
         *,
