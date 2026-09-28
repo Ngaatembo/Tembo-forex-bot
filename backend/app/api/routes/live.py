@@ -25,6 +25,7 @@ from app.core.config import get_settings
 from app.data_engine.market_data import get_market_data_provider
 from app.data_engine.normalizer import normalize_candles
 from app.data_engine.validator import validate_candles
+from app.strategy_engine.service import evaluate_live_strategy
 
 router = APIRouter(prefix="/live", tags=["live"])
 
@@ -489,14 +490,19 @@ async def live_decision(
         )
 
     patterns = detect_candlestick_patterns(candles)
-    decision = evaluate_trade_decision(
+    technical_decision = evaluate_trade_decision(
         snapshots[-1],
         patterns,
         macro_risk_level=macro_risk.level,
     )
 
+    # The researched configuration is now the strategy source of truth for
+    # the live signal. The multi-factor engine remains visible as supporting
+    # technical evidence, but it can no longer invent a BUY/SELL that the
+    # selected researched strategy did not trigger.
+    #
     # Complete the chain without opening or mutating a paper position:
-    # market evidence -> multi-factor decision -> validated strategy -> risk -> paper eligibility.
+    # market -> researched strategy -> macro gate -> research gate -> risk -> paper eligibility.
     registry_path = Path(__file__).resolve().parents[4] / "research" / "results" / "validated_strategy_configs.json"
     configs: list[ValidatedStrategyConfig] = []
     if registry_path.exists():
@@ -515,6 +521,47 @@ async def live_decision(
         current_regime=snapshots[-1].regime,
     )
 
+    selected_config = next(
+        (config for config in configs if config.config_id == selection.selected_config_id),
+        None,
+    )
+    strategy_result = (
+        evaluate_live_strategy(
+            candles,
+            instrument,
+            selected_config,
+            atr=snapshots[-1].atr_14,
+        )
+        if selected_config is not None
+        else None
+    )
+
+    strategy_signal = strategy_result.direction if strategy_result is not None else "WAIT"
+    strategy_triggered = bool(strategy_result and strategy_result.triggered)
+    macro_blocked = macro_risk.level in {"HIGH", "MEDIUM", "UNKNOWN"}
+
+    if strategy_triggered and not macro_blocked and strategy_result.stop_loss is not None:
+        effective_decision = strategy_signal
+        effective_entry = strategy_result.entry
+        effective_stop = strategy_result.stop_loss
+        effective_target = strategy_result.take_profit
+    else:
+        effective_decision = "NO_TRADE"
+        effective_entry = strategy_result.entry if strategy_result else None
+        effective_stop = None
+        effective_target = None
+
+    strategy_reason = (
+        strategy_result.reason
+        if strategy_result is not None
+        else selection.reason
+    )
+    if macro_blocked and strategy_triggered:
+        strategy_reason = (
+            f"{strategy_reason} Macro risk is {macro_risk.level}; "
+            "the live strategy signal is blocked."
+        )
+
     risk_payload = {
         "status": "NOT_RUN",
         "state": None,
@@ -532,7 +579,11 @@ async def live_decision(
         "execution_enabled": False,
     }
 
-    if decision.decision in {"BUY", "SELL"} and decision.entry is not None and decision.stop_loss is not None:
+    if (
+        effective_decision in {"BUY", "SELL"}
+        and effective_entry is not None
+        and effective_stop is not None
+    ):
         if selection.status == "TRADEABLE":
             # Risk must use the persistent paper account state, not a
             # fabricated constant balance. This keeps the cockpit's risk
@@ -572,13 +623,13 @@ async def live_decision(
                 selection_result=selection,
                 account=account,
                 limits=RiskLimitsConfig(),
-                direction="LONG" if decision.direction == "BUY" else "SHORT",
-                entry_price=decision.entry,
-                stop_price=decision.stop_loss,
+                direction="LONG" if effective_decision == "BUY" else "SHORT",
+                entry_price=effective_entry,
+                stop_price=effective_stop,
                 instrument_info=InstrumentTimeframeInfo(
                     instrument,
                     selected_timeframe,
-                    mean_price=decision.entry,
+                    mean_price=effective_entry,
                     price_precision_decimals=5,
                 ),
             )
@@ -598,7 +649,7 @@ async def live_decision(
                 paper_eligibility = {
                     "eligible": True,
                     "status": "PAPER_ELIGIBLE",
-                    "reason": "Multi-factor decision passed validated-strategy selection and the full risk hierarchy.",
+                    "reason": "Live researched strategy signal passed the validated-strategy selection and the full risk hierarchy.",
                     "persistent_state_changed": False,
                     "real_broker_contacted": False,
                     "execution_enabled": False,
@@ -616,8 +667,9 @@ async def live_decision(
         "timeframe": selected_timeframe,
         "provider": settings.market_data_provider,
         "status": "available",
-        "decision": decision.decision,
-        "methodology": decision.methodology,
+        "decision": effective_decision,
+        "methodology": "RESEARCHED_STRATEGY_LIVE_V1",
+        "technical_decision": technical_decision.to_dict(),
         "macro_risk": {
             "level": macro_risk.level,
             "reason": macro_risk.reason,
@@ -672,8 +724,33 @@ async def live_decision(
             "status": selection.status,
             "selected_config_id": selection.selected_config_id,
             "reason": selection.reason,
+            "live_evaluation": (
+                {
+                    "config_id": strategy_result.config_id,
+                    "strategy_family": strategy_result.strategy_family,
+                    "status": strategy_result.status,
+                    "direction": strategy_result.direction,
+                    "triggered": strategy_result.triggered,
+                    "entry": strategy_result.entry,
+                    "stop_loss": strategy_result.stop_loss,
+                    "take_profit": strategy_result.take_profit,
+                    "risk_reward": strategy_result.risk_reward,
+                    "reason": strategy_result.reason,
+                    "parameters": strategy_result.parameter_summary,
+                }
+                if strategy_result is not None
+                else None
+            ),
         },
-        "trade_plan": decision.to_dict(),
+        "trade_plan": {
+            "decision": effective_decision,
+            "direction": strategy_signal,
+            "entry": effective_entry,
+            "stop_loss": effective_stop,
+            "take_profit": effective_target,
+            "risk_reward": strategy_result.risk_reward if strategy_result else None,
+            "reason": strategy_reason,
+        },
         "risk": risk_payload,
         "paper_eligibility": paper_eligibility,
         "execution": {
