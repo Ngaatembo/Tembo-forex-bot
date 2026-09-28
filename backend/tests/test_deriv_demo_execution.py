@@ -9,9 +9,8 @@ def client_without_init() -> DerivDemoClient:
 
 
 @pytest.mark.asyncio
-async def test_demo_proposal_builds_multiplier_request(monkeypatch):
+async def test_demo_proposal_builds_multiplier_request():
     client = client_without_init()
-    monkeypatch.setattr(client, "_resolve_underlying_symbol", lambda instrument: _resolved(instrument, "1HZ100V"))
 
     async def fake_resolve(instrument):
         return "1HZ100V"
@@ -55,6 +54,3 @@ async def test_demo_buy_returns_contract(monkeypatch):
     assert result["contract_id"] == 12345
     assert result["balance_after"] == 997.5
 
-
-def _resolved(instrument: str, symbol: str) -> str:
-    return symbol
