@@ -92,6 +92,26 @@ async def lifespan(_: FastAPI):
             while True:
                 try:
                     async with AsyncSessionLocal() as session:
+                        # Keep persistent H1 history synchronized with the live
+                        # provider; the one-time bootstrap otherwise becomes stale.
+                        if settings.market_data_provider != "mock":
+                            refresh_end = datetime.now(timezone.utc).replace(
+                                minute=0, second=0, microsecond=0
+                            )
+                            refresh_start = refresh_end - timedelta(days=3)
+                            provider = get_market_data_provider(settings.market_data_provider)
+                            refresh_result = await ingest_historical_range(
+                                session,
+                                provider,
+                                refresh_start,
+                                refresh_end,
+                                request_spacing_seconds=2.0,
+                            )
+                            logger.info(
+                                "Recent market history synchronized: fetched=%s inserted=%s.",
+                                refresh_result["fetched_candles"],
+                                refresh_result["inserted_candles"],
+                            )
                         await run_paper_cycle(session)
                         logger.info("Paper runtime cycle completed.")
                 except asyncio.CancelledError:
