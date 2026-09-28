@@ -172,6 +172,27 @@ export default function Home() {
     } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Unable to read demo contract."); }
     finally { setDemoBusy(false); }
   }
+  useEffect(() => {
+    const contractId = demoBuy?.contract_id;
+    if (!contractId) return;
+    let active = true;
+    const poll = async () => {
+      try {
+        const result = await getDemoContract(contractId);
+        if (!active) return;
+        setDemoContract(result);
+      } catch {
+        if (active) setDemoMessage("Live demo contract monitor temporarily unavailable.");
+      }
+    };
+    void poll();
+    const timer = window.setInterval(() => void poll(), 3000);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
+  }, [demoBuy?.contract_id]);
+
   async function refreshMarkets() {
     try {
       const result = await getDerivMarkets();
