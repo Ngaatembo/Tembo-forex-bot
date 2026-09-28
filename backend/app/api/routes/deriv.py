@@ -7,6 +7,7 @@ server-side credentials and reads the demo account balance/portfolio.
 from fastapi import APIRouter, HTTPException
 
 from app.core.config import get_settings
+from app.data_engine.providers.deriv import DerivMarketDataProvider
 from app.integrations.deriv import (
     DerivAPIError,
     DerivConfigurationError,
@@ -47,6 +48,7 @@ async def deriv_status() -> dict:
 @router.get("/markets")
 async def deriv_markets() -> dict:
     try:
-        return await DerivDemoClient().markets()
+        symbols = await DerivMarketDataProvider().get_active_markets()
+        return {"status": "AVAILABLE", "symbols": symbols}
     except (DerivConfigurationError, DerivAPIError) as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
