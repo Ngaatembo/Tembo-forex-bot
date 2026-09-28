@@ -159,7 +159,13 @@ class DerivMarketDataProvider(MarketDataProvider):
                 self._normalize(item.get("symbol")),
                 self._normalize(item.get("display_name")),
             }
-            if values.intersection(aliases):
+            # The current Deriv API commonly exposes forex underlyings with
+            # an FRX prefix (for example frxEURUSD), while Tembo's canonical
+            # aliases are EURUSD/GBPUSD/USDJPY. Match both representations.
+            values_without_frx = {
+                value[3:] for value in values if value.startswith("FRX")
+            }
+            if values.intersection(aliases) or values_without_frx.intersection(aliases):
                 return item
 
         raise UnsupportedInstrumentError(
