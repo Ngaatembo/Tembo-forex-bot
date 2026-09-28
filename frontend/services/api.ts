@@ -41,6 +41,13 @@ export type StrategyHealth = {
   selected_config_id: string | null; reason: string; research_recommendation: string | null;
   considered: Array<{ config_id: string; gate_status: string; reason: string }>;
 };
+export type ReliabilityStatus = {
+  status: string; mode: string; execution: string; guardrails: string[]; policy: string;
+};
+export type ReliabilityRuntime = {
+  status: string; drawdown_pct: number | null; governor: string; size_multiplier: number;
+  reason: string; equity_basis?: string;
+};
 export type MarketResponse = {
   instrument: string; timeframe: string; provider: string; status: string; current_price: number | null;
   instrument_metadata?: { symbol: string; display_name: string; pip_size: number; asset_class: string };
@@ -101,6 +108,8 @@ export function getStrategyHealth(instrument:string,timeframe:string,currentRegi
   if (currentRegime) params.set("current_regime", currentRegime);
   return getJson("/strategy-health/instrument?" + params);
 }
+export function getReliabilityStatus():Promise<ReliabilityStatus> { return getJson("/reliability/status"); }
+export function getReliabilityRuntime():Promise<ReliabilityRuntime> { return getJson("/reliability/runtime"); }
 export function getRuntimeStatus():Promise<RuntimeStatus> { return getJson("/paper/runtime/status"); }
 export function getRuntimePositions():Promise<RuntimePosition[]> { return getJson("/paper/runtime/positions"); }
 async function readApiError(res:Response) {
