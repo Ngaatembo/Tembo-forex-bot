@@ -150,6 +150,45 @@ class DerivDemoClient:
                 return str(item["underlying_symbol"])
         raise DerivAPIError(f"Could not resolve {instrument!r} to an active Deriv symbol.")
 
+    @staticmethod
+    def _price_levels_to_limit_order(
+        *,
+        direction: str,
+        entry: float | None,
+        stop_loss: float | None,
+        take_profit: float | None,
+        stake: float,
+        multiplier: float,
+    ) -> dict[str, float]:
+        """Translate Tembo price levels into Deriv multiplier P/L thresholds.
+
+        Deriv multiplier limit orders are monetary profit/loss thresholds, not
+        underlying-market price levels. Tembo converts its price plan using
+        the documented multiplier relationship: percentage move x multiplier x stake.
+
+        A level that cannot be converted safely is omitted rather than guessed.
+        """
+        if entry is None or not entry > 0:
+            return {}
+        side = direction.upper()
+        if side not in {"BUY", "SELL"}:
+            return {}
+
+        def gross_pnl(level: float | None) -> float | None:
+            if level is None or not level > 0:
+                return None
+            move = ((level - entry) / entry) if side == "BUY" else ((entry - level) / entry)
+            return move * multiplier * stake
+
+        stop_value = gross_pnl(stop_loss)
+        take_value = gross_pnl(take_profit)
+        result: dict[str, float] = {}
+        if stop_value is not None and stop_value < 0:
+            result["stop_loss"] = round(abs(stop_value), 2)
+        if take_value is not None and take_value > 0:
+            result["take_profit"] = round(take_value, 2)
+        return result
+
     async def proposal(
         self,
         *,
@@ -157,6 +196,9 @@ class DerivDemoClient:
         direction: str,
         stake: float,
         multiplier: float,
+        entry: float | None = None,
+        stop_loss: float | None = None,
+        take_profit: float | None = None,
     ) -> dict[str, Any]:
         if not 0 < stake <= 10:
             raise DerivAPIError("Demo stake must be greater than 0 and no more than 10 USD.")
@@ -167,21 +209,29 @@ class DerivDemoClient:
             raise DerivAPIError("Direction must be BUY or SELL.")
         underlying = await self._resolve_underlying_symbol(instrument)
         contract_type = "MULTUP" if side == "BUY" else "MULTDOWN"
-        response = await self._ws_request(
-            {
-                "proposal": 1,
-                "amount": round(stake, 2),
-                "basis": "stake",
-                "contract_type": contract_type,
-                "currency": "USD",
-                "duration": 3600,
-                "duration_unit": "s",
-                "multiplier": multiplier,
-                "underlying_symbol": underlying,
-                "req_id": 301,
-            },
-            "proposal",
+        limit_order = self._price_levels_to_limit_order(
+            direction=side,
+            entry=entry,
+            stop_loss=stop_loss,
+            take_profit=take_profit,
+            stake=stake,
+            multiplier=multiplier,
         )
+        request: dict[str, Any] = {
+            "proposal": 1,
+            "amount": round(stake, 2),
+            "basis": "stake",
+            "contract_type": contract_type,
+            "currency": "USD",
+            "duration": 3600,
+            "duration_unit": "s",
+            "multiplier": multiplier,
+            "underlying_symbol": underlying,
+            "req_id": 301,
+        }
+        if limit_order:
+            request["limit_order"] = limit_order
+        response = await self._ws_request(request, "proposal")
         proposal = response.get("proposal") or {}
         proposal_id = proposal.get("id")
         ask_price = proposal.get("ask_price")
@@ -200,6 +250,11 @@ class DerivDemoClient:
             "spot": float(proposal["spot"]) if proposal.get("spot") is not None else None,
             "payout": float(proposal["payout"]) if proposal.get("payout") is not None else None,
             "currency": proposal.get("currency") or "USD",
+            "protection": {
+                "attached": bool(limit_order),
+                "limit_order": limit_order,
+                "source": "TEMBO_PRICE_PLAN",
+            },
         }
 
     async def buy_demo(
