@@ -107,11 +107,15 @@ async def deriv_demo_proposal(payload: dict) -> dict:
             raise DerivAPIError("Tembo execution gate rejected the setup: " + str(decision.get("paper_eligibility", {}).get("reason", "not eligible")))
         if decision.get("decision") != direction:
             raise DerivAPIError("Requested direction does not match Tembo's current live decision.")
+        trade_plan = decision.get("trade_plan") or {}
         result = await DerivDemoClient().proposal(
             instrument=instrument,
             direction=direction,
             stake=stake,
             multiplier=multiplier,
+            entry=float(trade_plan["entry"]) if trade_plan.get("entry") is not None else None,
+            stop_loss=float(trade_plan["stop_loss"]) if trade_plan.get("stop_loss") is not None else None,
+            take_profit=float(trade_plan["take_profit"]) if trade_plan.get("take_profit") is not None else None,
         )
         result["execution_token"] = _sign_demo_authorization(
             proposal_id=str(result["proposal_id"]),
