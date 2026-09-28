@@ -83,6 +83,9 @@ async def health_check() -> dict:
             market_data_status = "unavailable"
         else:
             market_data_status = _market_data_status(settings.market_data_provider)
+    elif settings.market_data_provider == "deriv":
+        # Deriv public market data does not require an account token.
+        market_data_status = _market_data_status(settings.market_data_provider)
     elif not settings.market_data_api_key:
         market_data_status = "unavailable"
     else:
