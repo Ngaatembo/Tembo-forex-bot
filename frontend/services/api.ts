@@ -12,23 +12,16 @@ export type LiveDecision = {
   news: { status: string; freshness: string; provider: string; last_successful_fetch: string | null; error: string | null; headlines: Array<{ news_id: string; timestamp: string; headline: string; source: string; url: string | null }> };
   macro_events: Array<{ event_id: string; timestamp: string; currency: string; country: string | null; event_name: string; importance: string; previous: number | null; forecast: number | null; actual: number | null; source: string; time_confirmed: boolean }>;
   risk: { status: string; state: string | null; hierarchy_stage: string | null; computed_risk_pct: number | null; position_size: number | null; reason: string };
-  strategy_gate: { status: string; selected_config_id: string | null; reason: string };
+  strategy_gate: { status: string; selected_config_id: string | null; reason: string; live_evaluation?: { status?: string; decision?: string; strategy_family?: string; config_id?: string | null; reason?: string; entry?: number | null; stop_loss?: number | null; take_profit?: number | null; risk_reward?: number | null } };
   paper_eligibility: { eligible: boolean; status: string; reason: string; persistent_state_changed: boolean; real_broker_contacted: boolean; execution_enabled: boolean };
   data_quality: { is_clean: boolean; candle_count: number; last_candle: string };
   trade_plan: { decision: string; direction: string; entry: number | null; stop_loss: number | null; take_profit: number | null; risk_reward: number | null; rejection_reasons?: string[] } | null;
 };
 export type LiveAnalysis = {
-  instrument: string;
-  timeframe: string;
-  provider: string;
-  status: string;
-  message: string;
+  instrument: string; timeframe: string; provider: string; status: string; message: string;
   data_quality?: { is_clean: boolean; ohlc_violations: number; duplicate_timestamps: number; unexpected_gaps: number };
   analysis: {
-    status: string;
-    reason?: string;
-    as_of?: string;
-    close?: number;
+    status: string; reason?: string; as_of?: string; close?: number;
     trend?: { state: string; regime: string; sma_10: number | null; sma_50: number | null; sma_50_slope: number | null; sma_distance_pct: number | null };
     momentum?: { state: string; rsi_14: number | null };
     volatility?: { state: string; atr_14: number | null; atr_percent: number | null };
@@ -42,6 +35,11 @@ export type ResearchDecision = {
   instrument: string; timeframe: string; selector_status: string; has_validated_edge: boolean;
   selected_config: { config_id: string; strategy_family: string; gate_status: string; verdict: string; statistical_level: string } | null;
   research_gate_status: string | null; reason: string; research_recommendation: string | null;
+};
+export type StrategyHealth = {
+  instrument: string; timeframe: string; current_regime: string | null; status: string;
+  selected_config_id: string | null; reason: string; research_recommendation: string | null;
+  considered: Array<{ config_id: string; gate_status: string; reason: string }>;
 };
 export type MarketResponse = {
   instrument: string; timeframe: string; provider: string; status: string; current_price: number | null;
@@ -61,7 +59,7 @@ export type RuntimePosition = {
 };
 
 async function getJson(path: string) {
-  const res = await fetch(`${API_BASE_URL}${path}`, { cache: "no-store" });
+  const res = await fetch(API_BASE_URL + path, { cache: "no-store" });
   if (!res.ok) throw new Error(await readApiError(res));
   return res.json();
 }
@@ -85,24 +83,27 @@ export type DerivMarket = {
 export type DerivMarketsResponse = { status: string; symbols: DerivMarket[] };
 export function getDerivMarkets():Promise<DerivMarketsResponse> { return getJson("/deriv/markets"); }
 
-export function getSyntheticSymbols():Promise<SyntheticSymbolsResponse> {
-  return getJson("/live/synthetic-symbols");
-}
+export function getSyntheticSymbols():Promise<SyntheticSymbolsResponse> { return getJson("/live/synthetic-symbols"); }
 export function getMarket(instrument:string,timeframe:string):Promise<MarketResponse> {
-  return getJson(`/live/market?${new URLSearchParams({instrument,timeframe,limit:"120"})}`);
+  return getJson("/live/market?" + new URLSearchParams({instrument,timeframe,limit:"120"}));
 }
 export function getLiveDecision(instrument:string,timeframe:string):Promise<LiveDecision> {
-  return getJson(`/live/decision?${new URLSearchParams({instrument,timeframe})}`);
+  return getJson("/live/decision?" + new URLSearchParams({instrument,timeframe}));
 }
 export function getLiveAnalysis(instrument:string,timeframe:string):Promise<LiveAnalysis> {
-  return getJson(`/live/analysis?${new URLSearchParams({instrument,timeframe})}`);
+  return getJson("/live/analysis?" + new URLSearchParams({instrument,timeframe}));
 }
 export function getResearchDecision(instrument:string,timeframe:string):Promise<ResearchDecision> {
-  return getJson(`/decisions?${new URLSearchParams({instrument,timeframe})}`);
+  return getJson("/decisions?" + new URLSearchParams({instrument,timeframe}));
+}
+export function getStrategyHealth(instrument:string,timeframe:string,currentRegime?:string|null):Promise<StrategyHealth> {
+  const params = new URLSearchParams({instrument,timeframe});
+  if (currentRegime) params.set("current_regime", currentRegime);
+  return getJson("/strategy-health/instrument?" + params);
 }
 export function getRuntimeStatus():Promise<RuntimeStatus> { return getJson("/paper/runtime/status"); }
 export function getRuntimePositions():Promise<RuntimePosition[]> { return getJson("/paper/runtime/positions"); }
 async function readApiError(res:Response) {
   try { const body=await res.json(); if(typeof body?.detail==="string") return body.detail; } catch {}
-  return `API request failed: ${res.status}`;
+  return "API request failed: " + res.status;
 }
