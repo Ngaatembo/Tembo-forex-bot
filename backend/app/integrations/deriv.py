@@ -1,9 +1,8 @@
-"""Small, server-side Deriv demo-account client.
+"""Server-side Deriv demo-account client.
 
-Credentials never leave the backend. This module deliberately exposes only
-read-only account telemetry for the first integration step. Trade methods can
-be added behind the existing risk/execution gates after demo connectivity is
-verified.
+Credentials never leave the backend. This client is explicitly demo-only.
+It supports account telemetry and controlled demo contract operations; it
+cannot connect to a real-money Deriv endpoint.
 """
 
 from __future__ import annotations
@@ -105,6 +104,67 @@ class DerivDemoClient:
             raise
         except Exception as exc:
             raise DerivAPIError(f"Deriv WebSocket connection failed: {exc}") from exc
+
+    async def _ws_exchange(self, payload: dict[str, Any], expected: str) -> dict[str, Any]:
+        return await self._ws_request(payload, expected)
+
+    async def markets(self) -> dict[str, Any]:
+        # Reuse the public catalogue through the same backend so the browser
+        # never needs to know Deriv's WebSocket URL or credentials.
+        from app.data_engine.providers.deriv import DerivMarketDataProvider
+        provider = DerivMarketDataProvider()
+        symbols = await provider.get_active_markets()
+        return {"status": "AVAILABLE", "symbols": symbols}
+
+    async def proposal(
+        self,
+        underlying_symbol: str,
+        contract_type: str,
+        amount: float,
+        duration: int = 60,
+        duration_unit: str = "s",
+        multiplier: float | None = None,
+    ) -> dict[str, Any]:
+        if amount <= 0:
+            raise DerivAPIError("Demo stake must be greater than zero.")
+        contract_type = contract_type.upper()
+        allowed = {"CALL", "PUT", "MULTUP", "MULTDOWN"}
+        if contract_type not in allowed:
+            raise DerivAPIError("Unsupported demo contract type.")
+        payload: dict[str, Any] = {
+            "proposal": 1,
+            "amount": amount,
+            "basis": "stake",
+            "contract_type": contract_type,
+            "currency": "USD",
+            "duration": duration,
+            "duration_unit": duration_unit,
+            "underlying_symbol": underlying_symbol,
+            "req_id": 201,
+        }
+        if multiplier is not None:
+            if multiplier <= 0:
+                raise DerivAPIError("Multiplier must be greater than zero.")
+            payload["multiplier"] = multiplier
+        return await self._ws_exchange(payload, "proposal")
+
+    async def buy_demo_contract(self, proposal_id: str, price: float) -> dict[str, Any]:
+        if not proposal_id:
+            raise DerivAPIError("A Deriv proposal ID is required.")
+        if price <= 0:
+            raise DerivAPIError("Proposal price must be greater than zero.")
+        return await self._ws_exchange(
+            {"buy": proposal_id, "price": price, "req_id": 202},
+            "buy",
+        )
+
+    async def open_contract(self, contract_id: str) -> dict[str, Any]:
+        if not contract_id:
+            raise DerivAPIError("A Deriv contract ID is required.")
+        return await self._ws_exchange(
+            {"proposal_open_contract": 1, "contract_id": contract_id, "req_id": 203},
+            "proposal_open_contract",
+        )
 
     async def account_status(self) -> dict[str, Any]:
         payload = await self._get("/trading/v1/options/accounts")
