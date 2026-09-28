@@ -105,7 +105,7 @@ export default function Home() {
     finally { setLoading(false); }
   }
   useEffect(()=>{ void refresh(); },[instrument,timeframe]);
-  useEffect(()=>{ void getSyntheticSymbols().then(r=>setSynthetics(r.symbols)).catch(()=>setSynthetics([])); void getDerivStatus().then(setDerivStatus).catch(()=>setDerivStatus(null)); },[]);
+  useEffect(()=>{ void getSyntheticSymbols().then(r=>setSynthetics(r.symbols)).catch(()=>setSynthetics([])); void getDerivStatus().then(setDerivStatus).catch(()=>setDerivStatus(null)); void refreshMarkets(); },[]);
   useEffect(()=>{ const timer = window.setInterval(()=>{ void refresh(); }, 15000); return ()=>window.clearInterval(timer); },[instrument,timeframe]);
 
   const latest = useMemo(()=>market?.candles?.[market.candles.length-1], [market]);
