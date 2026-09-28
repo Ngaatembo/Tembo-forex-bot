@@ -96,11 +96,11 @@ export default function Home() {
   async function refresh() {
     setLoading(true); setError("");
     try {
-      const [m,a,d,r,rs,p,sh] = await Promise.all([
+      const [m,a,d,r,rs,p] = await Promise.all([
         getMarket(instrument,timeframe), getLiveAnalysis(instrument,timeframe), getLiveDecision(instrument,timeframe),
-        getResearchDecision(instrument,timeframe), getRuntimeStatus(), getRuntimePositions(), getStrategyHealth(instrument,timeframe,a.analysis?.trend?.regime || null)
+        getResearchDecision(instrument,timeframe), getRuntimeStatus(), getRuntimePositions()
       ]);
-      setMarket(m); setAnalysis(a); setDecision(d); setResearch(r); setRuntime(rs); setPositions(p); setStrategyHealth(sh);
+      const sh = await getStrategyHealth(instrument,timeframe,a.analysis?.trend?.regime || null); setMarket(m); setAnalysis(a); setDecision(d); setResearch(r); setRuntime(rs); setPositions(p); setStrategyHealth(sh);
       setLastRefresh(new Date().toLocaleTimeString());
     } catch(e) { setError(e instanceof Error ? e.message : "Unable to load Tembo data."); }
     finally { setLoading(false); }
