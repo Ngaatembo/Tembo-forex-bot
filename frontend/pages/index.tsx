@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
-import { buyDemoContract, getDemoContract, getDemoProposal, getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getReliabilityRuntime, getReliabilityStatus, getResearchDecision, getRuntimePositions, getRuntimeStatus, getStrategyHealth, getSyntheticSymbols, type DemoBuyResult, type DemoProposal, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ReliabilityRuntime, type ReliabilityStatus, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type StrategyHealth, type SyntheticSymbol } from "../services/api";
+import { buyDemoContract, getDemoContract, getDemoProposal, sellDemoContract, getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getReliabilityRuntime, getReliabilityStatus, getResearchDecision, getRuntimePositions, getRuntimeStatus, getStrategyHealth, getSyntheticSymbols, type DemoBuyResult, type DemoProposal, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ReliabilityRuntime, type ReliabilityStatus, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type StrategyHealth, type SyntheticSymbol } from "../services/api";
 
 const instruments = ["EUR/USD", "GBP/USD", "USD/JPY", "XAU/USD"];
 const timeframes = ["m5", "m15", "h1", "h4", "d1"];
@@ -120,6 +120,15 @@ export default function Home() {
     finally { setDemoBusy(false); }
   }
 
+  async function closeDemoTrade() {
+    if (!demoBuy?.contract_id) return;
+    setDemoBusy(true);
+    try {
+      const result = await sellDemoContract(demoBuy.contract_id);
+      setDemoMessage("Demo contract " + result.contract_id + " closed. Sold for " + String(result.sold_for ?? "—") + " USD.");
+    } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Unable to close demo contract."); }
+    finally { setDemoBusy(false); }
+  }
   async function refreshDemoContract() {
     if (!demoBuy?.contract_id) return;
     setDemoBusy(true);
@@ -283,7 +292,7 @@ export default function Home() {
             <div className="demo-actions">
               <button className="secondary-button" onClick={()=>void requestDemoProposal()} disabled={demoBusy || !demoExecutionEligible}>{demoBusy?"Working…":"Get demo proposal"}</button>
               <button className="primary-button" onClick={()=>void executeDemoTrade()} disabled={demoBusy || !demoProposal || !demoExecutionEligible}>Execute demo trade</button>
-              {demoBuy && <button className="secondary-button" onClick={()=>void refreshDemoContract()} disabled={demoBusy}>Refresh contract</button>}
+              {demoBuy && <button className="secondary-button" onClick={()=>void refreshDemoContract()} disabled={demoBusy}>Refresh contract</button>}{demoBuy && <button className="secondary-button" onClick={()=>void closeDemoTrade()} disabled={demoBusy}>Close demo</button>}
             </div>
             {demoProposal && <div className="demo-proposal"><span>Proposal {demoProposal.proposal_id}</span><span>Ask ${demoProposal.ask_price.toFixed(2)}</span><span>Spot {demoProposal.spot == null ? "—" : demoProposal.spot}</span><span>{demoProposal.contract_type} ×{demoProposal.multiplier}</span></div>}
             {demoBuy && <div className="demo-open">DEMO CONTRACT #{demoBuy.contract_id} · BUY ${demoBuy.buy_price.toFixed(2)}</div>}
