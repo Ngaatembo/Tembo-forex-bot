@@ -9,6 +9,11 @@ export type LiveDecision = {
   instrument: string; timeframe: string; provider: string; status: string; decision: string;
   methodology: string;
   macro_risk: { level: string; reason: string; triggering_event_count: number };
+  news: { status: string; freshness: string; provider: string; last_successful_fetch: string | null; error: string | null; headlines: Array<{ news_id: string; timestamp: string; headline: string; source: string; url: string | null }> };
+  macro_events: Array<{ event_id: string; timestamp: string; currency: string; country: string | null; event_name: string; importance: string; previous: number | null; forecast: number | null; actual: number | null; source: string; time_confirmed: boolean }>;
+  risk: { status: string; state: string | null; hierarchy_stage: string | null; computed_risk_pct: number | null; position_size: number | null; reason: string };
+  strategy_gate: { status: string; selected_config_id: string | null; reason: string };
+  paper_eligibility: { eligible: boolean; status: string; reason: string; persistent_state_changed: boolean; real_broker_contacted: boolean; execution_enabled: boolean };
   data_quality: { is_clean: boolean; candle_count: number; last_candle: string };
   trade_plan: { decision: string; direction: string; entry: number | null; stop_loss: number | null; take_profit: number | null; risk_reward: number | null; rejection_reasons?: string[] } | null;
 };
