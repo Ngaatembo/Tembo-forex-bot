@@ -77,6 +77,13 @@ export type DerivStatus = {
 };
 
 export function getDerivStatus():Promise<DerivStatus> { return getJson("/deriv/status"); }
+export type DerivMarket = {
+  underlying_symbol: string; display_name: string; symbol: string;
+  underlying_symbol_type?: string | null; market?: string | null;
+  pip_size: number; exchange_is_open: boolean;
+};
+export type DerivMarketsResponse = { status: string; symbols: DerivMarket[] };
+export function getDerivMarkets():Promise<DerivMarketsResponse> { return getJson("/deriv/markets"); }
 
 export function getSyntheticSymbols():Promise<SyntheticSymbolsResponse> {
   return getJson("/live/synthetic-symbols");
