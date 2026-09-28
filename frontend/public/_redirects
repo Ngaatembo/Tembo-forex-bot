@@ -1,0 +1,5 @@
+# Cloudflare/Pages route safety net.
+# The cockpit is the canonical live-data UI, so an unmatched /live request
+# must never render a blank page.
+ /live / 200
+ /live/ / 200
