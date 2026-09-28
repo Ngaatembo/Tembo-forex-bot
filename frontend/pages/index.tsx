@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
-import { getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getResearchDecision, getRuntimePositions, getRuntimeStatus, getSyntheticSymbols, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type SyntheticSymbol } from "../services/api";
+import { getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getResearchDecision, getRuntimePositions, getRuntimeStatus, getSyntheticSymbols, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type SyntheticSymbol } from "../services/api";
 
-const instruments = ["EUR/USD", "GBP/USD", "XAU/USD"];
+const instruments = ["EUR/USD", "GBP/USD", "USD/JPY", "XAU/USD"];
 const timeframes = ["m5", "m15", "h1", "h4", "d1"];
 
 function fmt(value: number | null | undefined, digits = 5) {
@@ -72,6 +72,8 @@ export default function Home() {
   const [instrument,setInstrument]=useState("EUR/USD");
   const [timeframe,setTimeframe]=useState("h1");
   const [synthetics,setSynthetics]=useState<SyntheticSymbol[]>([]);
+  const [derivMarkets,setDerivMarkets]=useState<DerivMarket[]>([]);
+  const [marketFilter,setMarketFilter]=useState("forex");
   const [derivStatus,setDerivStatus]=useState<DerivStatus|null>(null);
   const [market,setMarket]=useState<MarketResponse|null>(null);
   const [decision,setDecision]=useState<LiveDecision|null>(null);
@@ -82,6 +84,13 @@ export default function Home() {
   const [error,setError]=useState("");
   const [loading,setLoading]=useState(true);
   const [lastRefresh,setLastRefresh]=useState("");
+
+  async function refreshMarkets() {
+    try {
+      const result = await getDerivMarkets();
+      setDerivMarkets(result.symbols || []);
+    } catch {}
+  }
 
   async function refresh() {
     setLoading(true); setError("");
@@ -269,6 +278,7 @@ export default function Home() {
       main{min-height:100vh;max-width:1280px;margin:auto;padding:24px}.topbar{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #202632;padding-bottom:22px}
       .brand{font-size:28px;font-weight:900;letter-spacing:.16em}.subbrand,.eyebrow,.section-title span,label{color:#8993a5;font-size:11px;letter-spacing:.13em;text-transform:uppercase}.subbrand{margin-top:4px}
       .live-state{font-size:11px;letter-spacing:.08em;color:#9ba5b7}.broker-chip{margin-top:8px;color:#7f899b;font-size:10px;letter-spacing:.08em;text-transform:uppercase}.broker-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#6a7180;margin-right:6px}.broker-dot.on{background:#5ee08b}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#5ee08b;margin-right:7px}
+      .market-watch{background:#0b0f15;border:1px solid #202632;border-radius:12px;padding:16px;margin:18px 0 0}.market-watch-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.market-watch-title{font-size:18px;font-weight:800;margin-top:5px}.market-filter{display:flex;gap:6px}.market-filter button{font-size:10px;text-transform:uppercase;letter-spacing:.06em;padding:7px 9px}.market-filter .active-filter{border-color:#3c7658;background:#102219;color:#78dfa0}.market-list{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px;max-height:310px;overflow:auto}.market-row{display:flex;justify-content:space-between;align-items:center;text-align:left;gap:8px;background:#0e1219;border:1px solid #1d2530;border-radius:8px;padding:10px;color:#dfe5ef}.market-row:hover,.selected-market{border-color:#3b6e54;background:#101c17}.market-row b{display:block;font-size:12px}.market-row small{display:block;color:#667184;font-size:9px;margin-top:3px}.market-open{color:#67d995;font-size:8px;font-weight:800}.market-closed{color:#777f8c;font-size:8px;font-weight:800}.market-empty{grid-column:1/-1;color:#737f91;font-size:12px;padding:18px}.active-filter{color:#fff}
       .controls{display:flex;align-items:end;gap:12px;padding:22px 0;border-bottom:1px solid #202632}label{display:block;margin-bottom:7px}
       select,button{background:#11151d;border:1px solid #2a3240;color:#edf1f8;border-radius:8px;padding:10px 13px;font:inherit}button{cursor:pointer;font-weight:700}button:disabled{opacity:.5;cursor:default}.refresh-note{margin-left:auto;color:#727d90;font-size:12px;padding-bottom:10px}
       .error{margin-top:18px;padding:13px 15px;border:1px solid #60333a;background:#211217;color:#f2b6bd;border-radius:9px}.hero-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:14px;padding:22px 0}
@@ -288,7 +298,7 @@ export default function Home() {
       .grid-line{stroke:#202732;stroke-width:1}.axis-label,.time-label{fill:#667184;font-size:11px;font-family:inherit}.wick-up,.wick-down{stroke-width:1.5}.wick-up{stroke:#55d991}.wick-down{stroke:#ed707c}.body-up{fill:#55d991;stroke:#55d991}.body-down{fill:#ed707c;stroke:#ed707c}
       .chart-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;color:#6f7b8d;font-size:11px}.chart-foot span:nth-child(2){color:#70d99a;font-weight:700}.chart-empty{padding:80px 20px;text-align:center;color:#778295}
       footer{border-top:1px solid #202632;margin-top:10px;padding:20px 0 30px;color:#697486;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
-      @media(max-width:850px){main{padding:16px}.guidance-news-grid{grid-template-columns:1fr}.chart-head{align-items:flex-start;flex-direction:column}.hero-grid,.gates,.analysis-grid,.analysis-grid-wide,.guidance-grid{grid-template-columns:1fr}.metrics,.plan,.guidance-metrics{grid-template-columns:repeat(2,1fr)}.controls{flex-wrap:wrap}.refresh-note{width:100%;margin:0}.guidance-header,.guidance-plan{align-items:flex-start;flex-direction:column}.decision-badge{width:100%}}
+      @media(max-width:850px){main{padding:16px}.market-list{grid-template-columns:repeat(2,1fr)}.guidance-news-grid{grid-template-columns:1fr}.chart-head{align-items:flex-start;flex-direction:column}.hero-grid,.gates,.analysis-grid,.analysis-grid-wide,.guidance-grid{grid-template-columns:1fr}.metrics,.plan,.guidance-metrics{grid-template-columns:repeat(2,1fr)}.controls{flex-wrap:wrap}.refresh-note{width:100%;margin:0}.guidance-header,.guidance-plan{align-items:flex-start;flex-direction:column}.decision-badge{width:100%}}
     `}</style>
   </>;
 }
