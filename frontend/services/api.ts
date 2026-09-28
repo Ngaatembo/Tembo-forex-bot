@@ -88,7 +88,35 @@ export type DerivMarket = {
   pip_size: number; exchange_is_open: boolean;
 };
 export type DerivMarketsResponse = { status: string; symbols: DerivMarket[] };
+export type DemoProposal = {
+  status: string; instrument: string; underlying_symbol: string; direction: string;
+  contract_type: string; stake: number; multiplier: number; proposal_id: string;
+  ask_price: number; spot: number | null; payout: number | null; currency: string;
+};
+export type DemoBuyResult = {
+  status: string; contract_id: number; transaction_id?: number | string | null;
+  buy_price: number; balance_after: number | null;
+};
 export function getDerivMarkets():Promise<DerivMarketsResponse> { return getJson("/deriv/markets"); }
+async function postJson(path:string, body:unknown) {
+  const res = await fetch(API_BASE_URL + path, {
+    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(await readApiError(res));
+  return res.json();
+}
+export function getDemoProposal(instrument:string,direction:string,stake:number,multiplier:number):Promise<DemoProposal> {
+  return postJson("/deriv/demo/proposal",{instrument,direction,stake,multiplier});
+}
+export function buyDemoContract(proposal_id:string,price:number):Promise<DemoBuyResult> {
+  return postJson("/deriv/demo/buy",{proposal_id,price});
+}
+export function getDemoContract(contract_id:number):Promise<{status:string;contract:Record<string,unknown>}> {
+  return getJson("/deriv/demo/contract?contract_id="+encodeURIComponent(String(contract_id)));
+}
+export function sellDemoContract(contract_id:number):Promise<{status:string;contract_id:number;sold_for:number|null}> {
+  return postJson("/deriv/demo/sell",{contract_id});
+}
 
 export function getSyntheticSymbols():Promise<SyntheticSymbolsResponse> { return getJson("/live/synthetic-symbols"); }
 export function getMarket(instrument:string,timeframe:string):Promise<MarketResponse> {
