@@ -69,11 +69,21 @@ def _directional_factors(
     factors: list[FactorEvidence] = []
     reasons: list[str] = []
 
-    # Trend: require a directional regime and price/SMA alignment.
+    # Trend: require a directional regime, price/SMA alignment and
+    # a confirming SMA50 slope. A trend label alone is not enough.
+    slope = feature.sma_50_slope
     if feature.regime == "TRENDING_UP":
-        factors.append(_factor("trend", 25, "BUY", "Price and SMA structure are aligned upward."))
+        if slope is not None and slope > 0:
+            factors.append(_factor("trend", 25, "BUY", "Price/SMA structure and SMA50 slope are aligned upward."))
+        else:
+            factors.append(_factor("trend", 0, "NONE", "Uptrend label lacks confirming positive SMA50 slope."))
+            reasons.append("Trend slope does not confirm the uptrend.")
     elif feature.regime == "TRENDING_DOWN":
-        factors.append(_factor("trend", 25, "SELL", "Price and SMA structure are aligned downward."))
+        if slope is not None and slope < 0:
+            factors.append(_factor("trend", 25, "SELL", "Price/SMA structure and SMA50 slope are aligned downward."))
+        else:
+            factors.append(_factor("trend", 0, "NONE", "Downtrend label lacks confirming negative SMA50 slope."))
+            reasons.append("Trend slope does not confirm the downtrend.")
     elif feature.regime == "UNKNOWN":
         factors.append(_factor("trend", 0, "NONE", "Trend regime is not available during feature warm-up."))
         reasons.append("Trend regime is unknown.")
