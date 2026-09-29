@@ -184,3 +184,107 @@ async def deriv_demo_sell(payload: dict) -> dict:
         return await DerivDemoClient().sell_demo(contract_id)
     except (DerivConfigurationError, DerivAPIError, ValueError, TypeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+# ---------------------------------------------------------------------------
+# Demo connection test
+# ---------------------------------------------------------------------------
+# Proves the whole demo execution path works (login -> quote with SL/TP ->
+# buy -> read contract -> close) BEFORE the first real Tembo signal arrives.
+# It is NOT a trading decision: fixed $1 demo stake, closed within seconds,
+# demo account only (DerivDemoClient refuses anything else), rate-limited.
+
+SELFTEST_STAKE = 1.0
+SELFTEST_MULTIPLIERS = (50, 40, 30, 20, 10)
+SELFTEST_COOLDOWN_SECONDS = 120
+_last_selftest = {"at": 0.0}
+
+
+@router.post("/demo/selftest")
+async def deriv_demo_selftest(payload: dict | None = None) -> dict:
+    import asyncio
+
+    from app.api.routes.live import INSTRUMENTS
+    from app.data_engine.market_data import get_market_data_provider
+
+    instrument = str((payload or {}).get("instrument") or "USD/JPY").strip()
+    if instrument not in INSTRUMENTS:
+        raise HTTPException(status_code=400, detail=f"Connection test supports {', '.join(INSTRUMENTS)}.")
+    now = time.time()
+    wait = SELFTEST_COOLDOWN_SECONDS - (now - _last_selftest["at"])
+    if wait > 0:
+        raise HTTPException(status_code=429, detail=f"Please wait {int(wait)} seconds before running another connection test.")
+    _last_selftest["at"] = now
+
+    steps: list[dict] = []
+
+    def step(name: str, ok: bool, detail: str) -> None:
+        steps.append({"step": name, "ok": ok, "detail": detail})
+
+    try:
+        client = DerivDemoClient()
+        status = await client.account_status()
+        step("Log in to Deriv demo", True, f"{status.get('account_id')} · balance {status.get('balance')} {status.get('currency') or ''}".strip())
+    except (DerivConfigurationError, DerivAPIError) as exc:
+        step("Log in to Deriv demo", False, str(exc))
+        return {"status": "FAILED", "instrument": instrument, "steps": steps}
+
+    try:
+        price = float(await get_market_data_provider(get_settings().market_data_provider, instrument).get_current_price(instrument))
+    except Exception as exc:
+        step("Get live price", False, str(exc))
+        return {"status": "FAILED", "instrument": instrument, "steps": steps}
+    step("Get live price", True, f"{instrument} {price}")
+
+    proposal = None
+    errors = []
+    for multiplier in SELFTEST_MULTIPLIERS:
+        try:
+            proposal = await client.proposal(
+                instrument=instrument, direction="BUY", stake=SELFTEST_STAKE, multiplier=multiplier,
+                entry=price, stop_loss=price * 0.995, take_profit=price * 1.005,
+            )
+            break
+        except DerivAPIError as exc:
+            errors.append(f"x{multiplier}: {exc}")
+            if "multiplier" not in str(exc).lower():
+                break
+    if proposal is None:
+        step("Get a quote with stop loss / take profit", False, " | ".join(errors))
+        return {"status": "FAILED", "instrument": instrument, "steps": steps}
+    step(
+        "Get a quote with stop loss / take profit", True,
+        f"x{proposal['multiplier']:g}, stake {proposal['ask_price']} {proposal['currency']}, "
+        f"protection {'attached' if proposal['protection']['attached'] else 'NOT attached'} {proposal['protection']['limit_order']}",
+    )
+
+    try:
+        bought = await client.buy_demo(proposal_id=str(proposal["proposal_id"]), price=float(proposal["ask_price"]))
+    except DerivAPIError as exc:
+        step("Open the demo contract", False, str(exc))
+        return {"status": "FAILED", "instrument": instrument, "steps": steps}
+    contract_id = bought["contract_id"]
+    step("Open the demo contract", True, f"contract {contract_id} bought for {bought['buy_price']}")
+
+    await asyncio.sleep(3)
+    try:
+        contract = (await client.open_contract(contract_id)).get("contract") or {}
+        step("Read the open contract", True, f"profit {contract.get('profit')} · status {contract.get('status')}")
+    except DerivAPIError as exc:
+        step("Read the open contract", False, str(exc))
+
+    try:
+        sold = await client.sell_demo(contract_id)
+        step("Close the demo contract", True, f"sold for {sold.get('sold_for')}")
+    except DerivAPIError as exc:
+        step("Close the demo contract", False, f"{exc} — close contract {contract_id} manually in Deriv if it is still open.")
+        return {"status": "FAILED", "instrument": instrument, "contract_id": contract_id, "steps": steps}
+
+    try:
+        after = await client.account_status()
+        step("Check balance after", True, f"balance {after.get('balance')} {after.get('currency') or ''} · open contracts {after.get('open_positions')}")
+    except DerivAPIError as exc:
+        step("Check balance after", False, str(exc))
+
+    ok = all(s["ok"] for s in steps)
+    return {"status": "PASSED" if ok else "PARTIAL", "instrument": instrument, "contract_id": contract_id, "steps": steps}

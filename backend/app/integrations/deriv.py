@@ -232,15 +232,20 @@ class DerivDemoClient:
             "basis": "stake",
             "contract_type": contract_type,
             "currency": "USD",
-            "duration": 3600,
-            "duration_unit": "s",
             "multiplier": multiplier,
             "underlying_symbol": underlying,
             "req_id": 301,
         }
         if limit_order:
             request["limit_order"] = limit_order
-        response = await self._ws_request(request, "proposal")
+        # Multiplier contracts normally have no fixed expiry. If Deriv insists
+        # on a duration, retry once with the previously used 1-hour duration.
+        try:
+            response = await self._ws_request(request, "proposal")
+        except DerivAPIError as exc:
+            if "duration" not in str(exc).lower():
+                raise
+            response = await self._ws_request({**request, "duration": 3600, "duration_unit": "s"}, "proposal")
         proposal = response.get("proposal") or {}
         proposal_id = proposal.get("id")
         ask_price = proposal.get("ask_price")

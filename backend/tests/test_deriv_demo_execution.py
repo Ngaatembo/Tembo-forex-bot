@@ -23,8 +23,7 @@ async def test_demo_proposal_builds_multiplier_request():
         assert payload["underlying_symbol"] == "1HZ100V"
         assert payload["amount"] == 2.5
         assert payload["multiplier"] == 10
-        assert payload["duration"] == 3600
-        assert payload["duration_unit"] == "s"
+        assert "duration" not in payload  # multipliers have no fixed expiry
         assert payload["limit_order"] == {"stop_loss": 2.5, "take_profit": 5.0}
         return {"proposal": {"id": "p-1", "ask_price": 2.5, "spot": 100.0, "payout": 3.0}}
 
@@ -41,6 +40,27 @@ async def test_demo_proposal_builds_multiplier_request():
     )
     assert result["proposal_id"] == "p-1"
     assert result["contract_type"] == "MULTUP"
+
+
+@pytest.mark.asyncio
+async def test_demo_proposal_retries_with_duration_only_if_deriv_requires_it():
+    client = client_without_init()
+    sent = []
+
+    async def fake_resolve(instrument):
+        return "frxUSDJPY"
+
+    async def fake_ws(payload, expected):
+        sent.append(payload)
+        if "duration" not in payload:
+            raise DerivAPIError("Deriv InputValidationFailed: duration is required")
+        return {"proposal": {"id": "p-2", "ask_price": 1.0}}
+
+    client._resolve_underlying_symbol = fake_resolve
+    client._ws_request = fake_ws
+    result = await client.proposal(instrument="USD/JPY", direction="SELL", stake=1, multiplier=50)
+    assert result["proposal_id"] == "p-2" and result["contract_type"] == "MULTDOWN"
+    assert len(sent) == 2 and sent[1]["duration"] == 3600
 
 
 def test_price_levels_translate_to_deriv_money_thresholds():
@@ -147,3 +167,56 @@ async def test_demo_contract_update_rejects_empty_protection():
     client = client_without_init()
     with pytest.raises(DerivAPIError, match="At least one protection"):
         await client.update_contract_protection(contract_id=12345)
+
+
+@pytest.mark.asyncio
+async def test_connection_test_opens_and_closes_a_one_dollar_demo_contract(monkeypatch):
+    from app.api.routes import deriv as routes
+
+    calls = []
+
+    class FakeClient:
+        async def account_status(self):
+            calls.append("status")
+            return {"account_id": "DOT1", "balance": 100.0, "currency": "USD", "open_positions": 0}
+
+        async def proposal(self, **kw):
+            calls.append(("proposal", kw["stake"], kw["multiplier"]))
+            if kw["multiplier"] == 50:
+                raise DerivAPIError("Multiplier is not in acceptable range")
+            return {"proposal_id": "p1", "ask_price": 1.0, "currency": "USD", "multiplier": kw["multiplier"],
+                    "protection": {"attached": True, "limit_order": {"stop_loss": 0.2}}}
+
+        async def buy_demo(self, *, proposal_id, price):
+            calls.append(("buy", proposal_id, price))
+            return {"contract_id": 7, "buy_price": price}
+
+        async def open_contract(self, contract_id):
+            return {"contract": {"profit": -0.01, "status": "open"}}
+
+        async def sell_demo(self, contract_id):
+            calls.append(("sell", contract_id))
+            return {"sold_for": 0.99}
+
+    class FakeProvider:
+        async def get_current_price(self, instrument):
+            return 150.0
+
+    async def no_sleep(_):
+        return None
+
+    monkeypatch.setattr(routes, "DerivDemoClient", FakeClient)
+    monkeypatch.setattr("app.data_engine.market_data.get_market_data_provider", lambda *a, **k: FakeProvider())
+    monkeypatch.setattr("asyncio.sleep", no_sleep)
+    routes._last_selftest["at"] = 0.0
+
+    result = await routes.deriv_demo_selftest({"instrument": "USD/JPY"})
+    assert result["status"] == "PASSED", result
+    assert ("proposal", 1.0, 50) in calls and ("proposal", 1.0, 40) in calls  # falls back to an accepted multiplier
+    assert ("buy", "p1", 1.0) in calls and ("sell", 7) in calls  # always closed again
+
+    from fastapi import HTTPException
+    with pytest.raises(HTTPException) as exc:  # rate-limited
+        await routes.deriv_demo_selftest({"instrument": "USD/JPY"})
+    assert exc.value.status_code == 429
+    routes._last_selftest["at"] = 0.0
