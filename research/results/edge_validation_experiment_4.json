@@ -1,0 +1,3029 @@
+{
+ "experiment": "edge_validation_experiment_4",
+ "generated_at": "2026-09-29T04:04:28.639089+00:00",
+ "data_source": "https://github.com/ejtraderLabs/historical-data (Apache-2.0)",
+ "exit": {
+  "atr_stop_multiple": 2.0,
+  "atr_take_profit_multiple": 4.0,
+  "max_holding_candles": 100
+ },
+ "cost_tiers": {
+  "EUR/USD": {
+   "LOW": [
+    5e-05,
+    1e-05
+   ],
+   "BASE": [
+    0.0001,
+    2e-05
+   ],
+   "HIGH": [
+    0.0002,
+    5e-05
+   ]
+  },
+  "GBP/USD": {
+   "LOW": [
+    8e-05,
+    1e-05
+   ],
+   "BASE": [
+    0.00015,
+    3e-05
+   ],
+   "HIGH": [
+    0.0003,
+    6e-05
+   ]
+  },
+  "USD/JPY": {
+   "LOW": [
+    0.008,
+    0.001
+   ],
+   "BASE": [
+    0.012,
+    0.003
+   ],
+   "HIGH": [
+    0.025,
+    0.006
+   ]
+  },
+  "XAU/USD": {
+   "LOW": [
+    0.2,
+    0.02
+   ],
+   "BASE": [
+    0.35,
+    0.05
+   ],
+   "HIGH": [
+    0.6,
+    0.1
+   ]
+  }
+ },
+ "cells": [
+  {
+   "instrument": "EUR/USD",
+   "timeframe": "m15",
+   "candles": 230400,
+   "periods": {
+    "development": [
+     "2012-11-14T15:00:00+00:00",
+     "2019-05-24T10:30:00+00:00"
+    ],
+    "validation": [
+     "2019-05-24T10:45:00+00:00",
+     "2020-10-14T06:30:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-10-14T06:45:00+00:00",
+     "2022-03-04T23:30:00+00:00"
+    ]
+   },
+   "position_size": 9989.320853402955,
+   "families": {
+    "breakout": {
+     "primary_param": "55",
+     "development": {
+      "trades": 3905,
+      "profit_factor": 0.931,
+      "win_rate": 0.325,
+      "net_pnl": -3207.79,
+      "return_pct": -32.08,
+      "max_drawdown_pct": 0.35
+     },
+     "validation": {
+      "trades": 843,
+      "profit_factor": 0.921,
+      "win_rate": 0.336,
+      "net_pnl": -648.6,
+      "return_pct": -6.49,
+      "max_drawdown_pct": 0.08
+     },
+     "out_of_sample": {
+      "trades": 877,
+      "profit_factor": 0.904,
+      "win_rate": 0.333,
+      "net_pnl": -761.49,
+      "return_pct": -7.61,
+      "max_drawdown_pct": 0.11
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.904,
+      "LOW": 0.944,
+      "HIGH": 0.822
+     },
+     "neighbourhood_oos_pf": {
+      "20": 0.86,
+      "30": 0.928,
+      "40": 0.883,
+      "55": 0.904
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "RANGING": 2160,
+      "TRENDING_UP": 757,
+      "LOW_VOLATILITY": 1741,
+      "TRENDING_DOWN": 803,
+      "HIGH_VOLATILITY": 164
+     }
+    },
+    "momentum": {
+     "primary_param": "40",
+     "development": {
+      "trades": 12494,
+      "profit_factor": 0.738,
+      "win_rate": 0.263,
+      "net_pnl": -18978.48,
+      "return_pct": -189.78,
+      "max_drawdown_pct": 1.89
+     },
+     "validation": {
+      "trades": 2724,
+      "profit_factor": 0.675,
+      "win_rate": 0.246,
+      "net_pnl": -4306.58,
+      "return_pct": -43.07,
+      "max_drawdown_pct": 0.43
+     },
+     "out_of_sample": {
+      "trades": 2624,
+      "profit_factor": 0.633,
+      "win_rate": 0.237,
+      "net_pnl": -4748.77,
+      "return_pct": -47.49,
+      "max_drawdown_pct": 0.48
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.633,
+      "LOW": 0.726,
+      "HIGH": 0.479
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.587,
+      "20": 0.65,
+      "40": 0.633
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "WEAK",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 7,
+      "LOW_VOLATILITY": 8566,
+      "RANGING": 8567,
+      "TRENDING_DOWN": 231,
+      "TRENDING_UP": 221,
+      "HIGH_VOLATILITY": 250
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 4462,
+      "profit_factor": 0.915,
+      "win_rate": 0.323,
+      "net_pnl": -3360.31,
+      "return_pct": -33.6,
+      "max_drawdown_pct": 0.36
+     },
+     "validation": {
+      "trades": 1012,
+      "profit_factor": 0.877,
+      "win_rate": 0.324,
+      "net_pnl": -924.32,
+      "return_pct": -9.24,
+      "max_drawdown_pct": 0.11
+     },
+     "out_of_sample": {
+      "trades": 953,
+      "profit_factor": 0.77,
+      "win_rate": 0.291,
+      "net_pnl": -1614.03,
+      "return_pct": -16.14,
+      "max_drawdown_pct": 0.18
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.77,
+      "LOW": 0.822,
+      "HIGH": 0.668
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 0.77,
+      "(5, 20)": 0.726,
+      "(20, 100)": 0.853
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "LOW_VOLATILITY": 2712,
+      "RANGING": 3572,
+      "HIGH_VOLATILITY": 143
+     }
+    }
+   },
+   "seconds": 173.0,
+   "candidate_configs": []
+  },
+  {
+   "instrument": "EUR/USD",
+   "timeframe": "h1",
+   "candles": 57600,
+   "periods": {
+    "development": [
+     "2012-11-16T00:00:00+00:00",
+     "2019-05-24T14:00:00+00:00"
+    ],
+    "validation": [
+     "2019-05-24T15:00:00+00:00",
+     "2020-10-14T10:00:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-10-14T11:00:00+00:00",
+     "2022-03-04T22:00:00+00:00"
+    ]
+   },
+   "position_size": 9989.474409981203,
+   "families": {
+    "breakout": {
+     "primary_param": "30",
+     "development": {
+      "trades": 1264,
+      "profit_factor": 0.995,
+      "win_rate": 0.335,
+      "net_pnl": -136.14,
+      "return_pct": -1.36,
+      "max_drawdown_pct": 0.24
+     },
+     "validation": {
+      "trades": 267,
+      "profit_factor": 1.133,
+      "win_rate": 0.382,
+      "net_pnl": 611.95,
+      "return_pct": 6.12,
+      "max_drawdown_pct": 0.06
+     },
+     "out_of_sample": {
+      "trades": 280,
+      "profit_factor": 0.945,
+      "win_rate": 0.329,
+      "net_pnl": -267.48,
+      "return_pct": -2.67,
+      "max_drawdown_pct": 0.08
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.945,
+      "LOW": 0.966,
+      "HIGH": 0.898
+     },
+     "neighbourhood_oos_pf": {
+      "20": 0.904,
+      "30": 0.945,
+      "40": 1.054,
+      "55": 0.961
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 3,
+      "RANGING": 719,
+      "TRENDING_UP": 282,
+      "TRENDING_DOWN": 257,
+      "HIGH_VOLATILITY": 544,
+      "LOW_VOLATILITY": 6
+     }
+    },
+    "momentum": {
+     "primary_param": "40",
+     "development": {
+      "trades": 2766,
+      "profit_factor": 0.812,
+      "win_rate": 0.292,
+      "net_pnl": -6496.79,
+      "return_pct": -64.97,
+      "max_drawdown_pct": 0.66
+     },
+     "validation": {
+      "trades": 541,
+      "profit_factor": 0.982,
+      "win_rate": 0.301,
+      "net_pnl": -84.34,
+      "return_pct": -0.84,
+      "max_drawdown_pct": 0.07
+     },
+     "out_of_sample": {
+      "trades": 620,
+      "profit_factor": 0.756,
+      "win_rate": 0.284,
+      "net_pnl": -1604.54,
+      "return_pct": -16.05,
+      "max_drawdown_pct": 0.18
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.756,
+      "LOW": 0.801,
+      "HIGH": 0.666
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.757,
+      "20": 0.773,
+      "40": 0.756
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 3,
+      "RANGING": 2637,
+      "TRENDING_UP": 171,
+      "HIGH_VOLATILITY": 915,
+      "TRENDING_DOWN": 160,
+      "LOW_VOLATILITY": 41
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 1076,
+      "profit_factor": 0.956,
+      "win_rate": 0.32,
+      "net_pnl": -927.98,
+      "return_pct": -9.28,
+      "max_drawdown_pct": 0.16
+     },
+     "validation": {
+      "trades": 200,
+      "profit_factor": 1.06,
+      "win_rate": 0.33,
+      "net_pnl": 183.46,
+      "return_pct": 1.83,
+      "max_drawdown_pct": 0.05
+     },
+     "out_of_sample": {
+      "trades": 262,
+      "profit_factor": 0.908,
+      "win_rate": 0.313,
+      "net_pnl": -354.97,
+      "return_pct": -3.55,
+      "max_drawdown_pct": 0.11
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.908,
+      "LOW": 0.936,
+      "HIGH": 0.848
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 0.908,
+      "(5, 20)": 0.873,
+      "(20, 100)": 0.723
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "RANGING": 1104,
+      "HIGH_VOLATILITY": 424,
+      "LOW_VOLATILITY": 10
+     }
+    }
+   },
+   "seconds": 43.6,
+   "candidate_configs": []
+  },
+  {
+   "instrument": "EUR/USD",
+   "timeframe": "h4",
+   "candles": 14400,
+   "periods": {
+    "development": [
+     "2012-11-26T20:00:00+00:00",
+     "2019-05-27T12:00:00+00:00"
+    ],
+    "validation": [
+     "2019-05-27T16:00:00+00:00",
+     "2020-10-14T20:00:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-10-15T00:00:00+00:00",
+     "2022-03-04T16:00:00+00:00"
+    ]
+   },
+   "position_size": 9990.198188070372,
+   "families": {
+    "breakout": {
+     "primary_param": "55",
+     "development": {
+      "trades": 240,
+      "profit_factor": 0.904,
+      "win_rate": 0.321,
+      "net_pnl": -1121.11,
+      "return_pct": -11.21,
+      "max_drawdown_pct": 0.2
+     },
+     "validation": {
+      "trades": 45,
+      "profit_factor": 1.33,
+      "win_rate": 0.422,
+      "net_pnl": 529.67,
+      "return_pct": 5.3,
+      "max_drawdown_pct": 0.03
+     },
+     "out_of_sample": {
+      "trades": 58,
+      "profit_factor": 0.835,
+      "win_rate": 0.293,
+      "net_pnl": -359.25,
+      "return_pct": -3.59,
+      "max_drawdown_pct": 0.08
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.835,
+      "LOW": 0.844,
+      "HIGH": 0.816
+     },
+     "neighbourhood_oos_pf": {
+      "20": 1.005,
+      "30": 1.085,
+      "40": 0.709,
+      "55": 0.835
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "HIGH_VOLATILITY": 329,
+      "TRENDING_UP": 3,
+      "TRENDING_DOWN": 9,
+      "RANGING": 2
+     }
+    },
+    "momentum": {
+     "primary_param": "10",
+     "development": {
+      "trades": 1447,
+      "profit_factor": 0.747,
+      "win_rate": 0.305,
+      "net_pnl": -8358.66,
+      "return_pct": -83.59,
+      "max_drawdown_pct": 0.85
+     },
+     "validation": {
+      "trades": 288,
+      "profit_factor": 1.082,
+      "win_rate": 0.344,
+      "net_pnl": 394.96,
+      "return_pct": 3.95,
+      "max_drawdown_pct": 0.07
+     },
+     "out_of_sample": {
+      "trades": 302,
+      "profit_factor": 0.902,
+      "win_rate": 0.364,
+      "net_pnl": -488.59,
+      "return_pct": -4.89,
+      "max_drawdown_pct": 0.1
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.902,
+      "LOW": 0.937,
+      "HIGH": 0.827
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.902,
+      "20": 0.937,
+      "40": 0.596
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 15,
+      "HIGH_VOLATILITY": 1895,
+      "RANGING": 34,
+      "TRENDING_DOWN": 68,
+      "TRENDING_UP": 25
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 262,
+      "profit_factor": 1.238,
+      "win_rate": 0.385,
+      "net_pnl": 2317.81,
+      "return_pct": 23.18,
+      "max_drawdown_pct": 0.06
+     },
+     "validation": {
+      "trades": 57,
+      "profit_factor": 0.904,
+      "win_rate": 0.351,
+      "net_pnl": -186.25,
+      "return_pct": -1.86,
+      "max_drawdown_pct": 0.08
+     },
+     "out_of_sample": {
+      "trades": 55,
+      "profit_factor": 1.011,
+      "win_rate": 0.327,
+      "net_pnl": 17.85,
+      "return_pct": 0.18,
+      "max_drawdown_pct": 0.07
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 1.011,
+      "LOW": 1.024,
+      "HIGH": 0.98
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 1.011,
+      "(5, 20)": 0.849,
+      "(20, 100)": 0.492
+     },
+     "verdict": "OVERFIT_SUSPECTED",
+     "gate_status": "ROBUSTNESS_REQUIRED",
+     "gate_reason": "Verdict is OVERFIT_SUSPECTED \u2014 an edge appears in some periods but not consistently. More robustness evidence is required before this can advance.",
+     "scorecard_levels": {
+      "edge": "MODERATE",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "MODERATE"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 1,
+      "HIGH_VOLATILITY": 356,
+      "RANGING": 17
+     }
+    }
+   },
+   "seconds": 11.5,
+   "candidate_configs": []
+  },
+  {
+   "instrument": "EUR/USD",
+   "timeframe": "d1",
+   "candles": 2400,
+   "periods": {
+    "development": [
+     "2012-12-04T00:00:00+00:00",
+     "2019-05-27T00:00:00+00:00"
+    ],
+    "validation": [
+     "2019-05-28T00:00:00+00:00",
+     "2020-10-14T00:00:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-10-15T00:00:00+00:00",
+     "2022-03-03T00:00:00+00:00"
+    ]
+   },
+   "position_size": 9991.5153618014,
+   "families": {
+    "breakout": {
+     "primary_param": "20",
+     "development": {
+      "trades": 68,
+      "profit_factor": 0.776,
+      "win_rate": 0.294,
+      "net_pnl": -1847.6,
+      "return_pct": -18.48,
+      "max_drawdown_pct": 0.24
+     },
+     "validation": {
+      "trades": 12,
+      "profit_factor": 2.166,
+      "win_rate": 0.5,
+      "net_pnl": 895.23,
+      "return_pct": 8.95,
+      "max_drawdown_pct": 0.04
+     },
+     "out_of_sample": {
+      "trades": 14,
+      "profit_factor": 0.625,
+      "win_rate": 0.286,
+      "net_pnl": -484.53,
+      "return_pct": -4.85,
+      "max_drawdown_pct": 0.09
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.625,
+      "LOW": 0.628,
+      "HIGH": 0.618
+     },
+     "neighbourhood_oos_pf": {
+      "20": 0.625,
+      "30": 0.781,
+      "40": 0.438,
+      "55": 0.607
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 4,
+      "HIGH_VOLATILITY": 90
+     }
+    },
+    "momentum": {
+     "primary_param": "10",
+     "development": {
+      "trades": 233,
+      "profit_factor": 0.872,
+      "win_rate": 0.339,
+      "net_pnl": -1578.22,
+      "return_pct": -15.78,
+      "max_drawdown_pct": 0.28
+     },
+     "validation": {
+      "trades": 54,
+      "profit_factor": 1.158,
+      "win_rate": 0.37,
+      "net_pnl": 280.85,
+      "return_pct": 2.81,
+      "max_drawdown_pct": 0.1
+     },
+     "out_of_sample": {
+      "trades": 58,
+      "profit_factor": 0.988,
+      "win_rate": 0.414,
+      "net_pnl": -24.06,
+      "return_pct": -0.24,
+      "max_drawdown_pct": 0.07
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.988,
+      "LOW": 1.007,
+      "HIGH": 0.946
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.988,
+      "20": 1.022,
+      "40": 1.064
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "MODERATE",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 10,
+      "HIGH_VOLATILITY": 335
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 49,
+      "profit_factor": 0.712,
+      "win_rate": 0.327,
+      "net_pnl": -1383.2,
+      "return_pct": -13.83,
+      "max_drawdown_pct": 0.18
+     },
+     "validation": {
+      "trades": 10,
+      "profit_factor": 0.594,
+      "win_rate": 0.3,
+      "net_pnl": -381.78,
+      "return_pct": -3.82,
+      "max_drawdown_pct": 0.06
+     },
+     "out_of_sample": {
+      "trades": 9,
+      "profit_factor": 0.388,
+      "win_rate": 0.222,
+      "net_pnl": -499.35,
+      "return_pct": -4.99,
+      "max_drawdown_pct": 0.08
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.388,
+      "LOW": 0.391,
+      "HIGH": 0.383
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 0.388,
+      "(5, 20)": 1.795,
+      "(20, 100)": 0.882
+     },
+     "verdict": "INCONCLUSIVE",
+     "gate_status": "RESEARCH",
+     "gate_reason": "Verdict is INCONCLUSIVE \u2014 insufficient trade count in at least one period to judge either way. This still deserves investigation, not rejection.",
+     "scorecard_levels": {
+      "edge": "UNKNOWN",
+      "robustness": "WEAK",
+      "risk": "MODERATE",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "HIGH_VOLATILITY": 68
+     }
+    }
+   },
+   "seconds": 1.8,
+   "candidate_configs": []
+  },
+  {
+   "instrument": "GBP/USD",
+   "timeframe": "m15",
+   "candles": 230400,
+   "periods": {
+    "development": [
+     "2012-11-14T20:15:00+00:00",
+     "2019-05-24T10:45:00+00:00"
+    ],
+    "validation": [
+     "2019-05-24T11:00:00+00:00",
+     "2020-10-14T06:15:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-10-14T06:30:00+00:00",
+     "2022-03-04T23:30:00+00:00"
+    ]
+   },
+   "position_size": 8385.096377442265,
+   "families": {
+    "breakout": {
+     "primary_param": "40",
+     "development": {
+      "trades": 4661,
+      "profit_factor": 0.977,
+      "win_rate": 0.34,
+      "net_pnl": -1226.48,
+      "return_pct": -12.26,
+      "max_drawdown_pct": 0.18
+     },
+     "validation": {
+      "trades": 1028,
+      "profit_factor": 0.92,
+      "win_rate": 0.334,
+      "net_pnl": -988.75,
+      "return_pct": -9.89,
+      "max_drawdown_pct": 0.14
+     },
+     "out_of_sample": {
+      "trades": 1032,
+      "profit_factor": 0.855,
+      "win_rate": 0.324,
+      "net_pnl": -1633.07,
+      "return_pct": -16.33,
+      "max_drawdown_pct": 0.19
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.855,
+      "LOW": 0.898,
+      "HIGH": 0.781
+     },
+     "neighbourhood_oos_pf": {
+      "20": 0.837,
+      "30": 0.844,
+      "40": 0.855,
+      "55": 0.866
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "RANGING": 2927,
+      "LOW_VOLATILITY": 1734,
+      "TRENDING_UP": 868,
+      "TRENDING_DOWN": 976,
+      "HIGH_VOLATILITY": 215,
+      "UNKNOWN": 1
+     }
+    },
+    "momentum": {
+     "primary_param": "40",
+     "development": {
+      "trades": 12806,
+      "profit_factor": 0.696,
+      "win_rate": 0.249,
+      "net_pnl": -24334.31,
+      "return_pct": -243.34,
+      "max_drawdown_pct": 2.44
+     },
+     "validation": {
+      "trades": 2715,
+      "profit_factor": 0.716,
+      "win_rate": 0.25,
+      "net_pnl": -4919.13,
+      "return_pct": -49.19,
+      "max_drawdown_pct": 0.5
+     },
+     "out_of_sample": {
+      "trades": 2722,
+      "profit_factor": 0.657,
+      "win_rate": 0.239,
+      "net_pnl": -5581.24,
+      "return_pct": -55.81,
+      "max_drawdown_pct": 0.57
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.657,
+      "LOW": 0.763,
+      "HIGH": 0.51
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.581,
+      "20": 0.628,
+      "40": 0.657
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "WEAK",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 6,
+      "LOW_VOLATILITY": 7038,
+      "RANGING": 10283,
+      "TRENDING_UP": 273,
+      "TRENDING_DOWN": 250,
+      "HIGH_VOLATILITY": 393
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 4492,
+      "profit_factor": 0.86,
+      "win_rate": 0.31,
+      "net_pnl": -6044.78,
+      "return_pct": -60.45,
+      "max_drawdown_pct": 0.61
+     },
+     "validation": {
+      "trades": 935,
+      "profit_factor": 0.96,
+      "win_rate": 0.334,
+      "net_pnl": -359.76,
+      "return_pct": -3.6,
+      "max_drawdown_pct": 0.09
+     },
+     "out_of_sample": {
+      "trades": 935,
+      "profit_factor": 0.815,
+      "win_rate": 0.316,
+      "net_pnl": -1579.22,
+      "return_pct": -15.79,
+      "max_drawdown_pct": 0.18
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.815,
+      "LOW": 0.873,
+      "HIGH": 0.719
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 0.815,
+      "(5, 20)": 0.763,
+      "(20, 100)": 0.929
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "RANGING": 4060,
+      "LOW_VOLATILITY": 2127,
+      "HIGH_VOLATILITY": 175
+     }
+    }
+   },
+   "seconds": 175.0,
+   "candidate_configs": []
+  },
+  {
+   "instrument": "GBP/USD",
+   "timeframe": "h1",
+   "candles": 57600,
+   "periods": {
+    "development": [
+     "2012-11-16T05:00:00+00:00",
+     "2019-05-24T16:00:00+00:00"
+    ],
+    "validation": [
+     "2019-05-24T17:00:00+00:00",
+     "2020-10-14T10:00:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-10-14T11:00:00+00:00",
+     "2022-03-04T22:00:00+00:00"
+    ]
+   },
+   "position_size": 8385.5187258529,
+   "families": {
+    "breakout": {
+     "primary_param": "40",
+     "development": {
+      "trades": 1123,
+      "profit_factor": 1.055,
+      "win_rate": 0.348,
+      "net_pnl": 1478.27,
+      "return_pct": 14.78,
+      "max_drawdown_pct": 0.13
+     },
+     "validation": {
+      "trades": 254,
+      "profit_factor": 1.241,
+      "win_rate": 0.394,
+      "net_pnl": 1409.42,
+      "return_pct": 14.09,
+      "max_drawdown_pct": 0.05
+     },
+     "out_of_sample": {
+      "trades": 235,
+      "profit_factor": 1.005,
+      "win_rate": 0.345,
+      "net_pnl": 22.91,
+      "return_pct": 0.23,
+      "max_drawdown_pct": 0.07
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 1.005,
+      "LOW": 1.027,
+      "HIGH": 0.964
+     },
+     "neighbourhood_oos_pf": {
+      "20": 0.944,
+      "30": 1.025,
+      "40": 1.005,
+      "55": 0.917
+     },
+     "verdict": "PROMISING",
+     "gate_status": "ROBUSTNESS_REQUIRED",
+     "gate_reason": "Robustness evidence is WEAK despite a positive verdict \u2014 Parameter neighborhood is mixed \u2014 some values above 1.0, some not \u2014 consistent with a fragile, isolated result rather than a stable pattern (see e.g. Phase 8.1's H1 finding).",
+     "scorecard_levels": {
+      "edge": "STRONG",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "MODERATE"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 2,
+      "RANGING": 454,
+      "TRENDING_DOWN": 225,
+      "TRENDING_UP": 226,
+      "HIGH_VOLATILITY": 703,
+      "LOW_VOLATILITY": 2
+     }
+    },
+    "momentum": {
+     "primary_param": "40",
+     "development": {
+      "trades": 2666,
+      "profit_factor": 0.958,
+      "win_rate": 0.306,
+      "net_pnl": -1405.03,
+      "return_pct": -14.05,
+      "max_drawdown_pct": 0.23
+     },
+     "validation": {
+      "trades": 525,
+      "profit_factor": 0.88,
+      "win_rate": 0.331,
+      "net_pnl": -866.04,
+      "return_pct": -8.66,
+      "max_drawdown_pct": 0.17
+     },
+     "out_of_sample": {
+      "trades": 547,
+      "profit_factor": 0.933,
+      "win_rate": 0.305,
+      "net_pnl": -416.81,
+      "return_pct": -4.17,
+      "max_drawdown_pct": 0.1
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.933,
+      "LOW": 0.998,
+      "HIGH": 0.825
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.79,
+      "20": 0.818,
+      "40": 0.933
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 4,
+      "RANGING": 2184,
+      "TRENDING_UP": 172,
+      "TRENDING_DOWN": 168,
+      "HIGH_VOLATILITY": 1189,
+      "LOW_VOLATILITY": 21
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 1010,
+      "profit_factor": 1.001,
+      "win_rate": 0.344,
+      "net_pnl": 31.3,
+      "return_pct": 0.31,
+      "max_drawdown_pct": 0.14
+     },
+     "validation": {
+      "trades": 194,
+      "profit_factor": 1.159,
+      "win_rate": 0.387,
+      "net_pnl": 617.45,
+      "return_pct": 6.17,
+      "max_drawdown_pct": 0.06
+     },
+     "out_of_sample": {
+      "trades": 220,
+      "profit_factor": 0.953,
+      "win_rate": 0.327,
+      "net_pnl": -202.66,
+      "return_pct": -2.03,
+      "max_drawdown_pct": 0.09
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.953,
+      "LOW": 0.979,
+      "HIGH": 0.906
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 0.953,
+      "(5, 20)": 1.015,
+      "(20, 100)": 0.8
+     },
+     "verdict": "OUT_OF_SAMPLE_FAILED",
+     "gate_status": "CLOSED",
+     "gate_reason": "Verdict is OUT_OF_SAMPLE_FAILED \u2014 the full development/validation/out-of-sample evaluation ran and out-of-sample did not confirm the development-period edge. A strong development result alone can never override this.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "RANGING": 850,
+      "HIGH_VOLATILITY": 568,
+      "LOW_VOLATILITY": 6
+     }
+    }
+   },
+   "seconds": 41.8,
+   "candidate_configs": []
+  },
+  {
+   "instrument": "GBP/USD",
+   "timeframe": "h4",
+   "candles": 14400,
+   "periods": {
+    "development": [
+     "2012-11-26T20:00:00+00:00",
+     "2019-05-27T12:00:00+00:00"
+    ],
+    "validation": [
+     "2019-05-27T16:00:00+00:00",
+     "2020-10-14T20:00:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-10-15T00:00:00+00:00",
+     "2022-03-04T16:00:00+00:00"
+    ]
+   },
+   "position_size": 8386.838271723052,
+   "families": {
+    "breakout": {
+     "primary_param": "20",
+     "development": {
+      "trades": 414,
+      "profit_factor": 1.153,
+      "win_rate": 0.36,
+      "net_pnl": 2805.93,
+      "return_pct": 28.06,
+      "max_drawdown_pct": 0.1
+     },
+     "validation": {
+      "trades": 81,
+      "profit_factor": 1.396,
+      "win_rate": 0.383,
+      "net_pnl": 1226.15,
+      "return_pct": 12.26,
+      "max_drawdown_pct": 0.07
+     },
+     "out_of_sample": {
+      "trades": 92,
+      "profit_factor": 0.706,
+      "win_rate": 0.293,
+      "net_pnl": -1212.25,
+      "return_pct": -12.12,
+      "max_drawdown_pct": 0.18
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.706,
+      "LOW": 0.715,
+      "HIGH": 0.69
+     },
+     "neighbourhood_oos_pf": {
+      "20": 0.706,
+      "30": 0.798,
+      "40": 0.847,
+      "55": 0.806
+     },
+     "verdict": "OUT_OF_SAMPLE_FAILED",
+     "gate_status": "CLOSED",
+     "gate_reason": "Verdict is OUT_OF_SAMPLE_FAILED \u2014 the full development/validation/out-of-sample evaluation ran and out-of-sample did not confirm the development-period edge. A strong development result alone can never override this.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 4,
+      "HIGH_VOLATILITY": 568,
+      "RANGING": 8,
+      "TRENDING_UP": 2,
+      "TRENDING_DOWN": 5
+     }
+    },
+    "momentum": {
+     "primary_param": "20",
+     "development": {
+      "trades": 898,
+      "profit_factor": 0.898,
+      "win_rate": 0.317,
+      "net_pnl": -2375.83,
+      "return_pct": -23.76,
+      "max_drawdown_pct": 0.37
+     },
+     "validation": {
+      "trades": 182,
+      "profit_factor": 1.411,
+      "win_rate": 0.352,
+      "net_pnl": 1530.83,
+      "return_pct": 15.31,
+      "max_drawdown_pct": 0.04
+     },
+     "out_of_sample": {
+      "trades": 223,
+      "profit_factor": 0.603,
+      "win_rate": 0.287,
+      "net_pnl": -1986.87,
+      "return_pct": -19.87,
+      "max_drawdown_pct": 0.24
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.603,
+      "LOW": 0.63,
+      "HIGH": 0.556
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.817,
+      "20": 0.603,
+      "40": 0.609
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "MODERATE",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 9,
+      "HIGH_VOLATILITY": 1241,
+      "TRENDING_UP": 10,
+      "RANGING": 28,
+      "TRENDING_DOWN": 15
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 259,
+      "profit_factor": 1.112,
+      "win_rate": 0.363,
+      "net_pnl": 1154.2,
+      "return_pct": 11.54,
+      "max_drawdown_pct": 0.12
+     },
+     "validation": {
+      "trades": 60,
+      "profit_factor": 2.078,
+      "win_rate": 0.45,
+      "net_pnl": 1862.18,
+      "return_pct": 18.62,
+      "max_drawdown_pct": 0.03
+     },
+     "out_of_sample": {
+      "trades": 51,
+      "profit_factor": 0.774,
+      "win_rate": 0.333,
+      "net_pnl": -466.4,
+      "return_pct": -4.66,
+      "max_drawdown_pct": 0.11
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.774,
+      "LOW": 0.786,
+      "HIGH": 0.752
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 0.774,
+      "(5, 20)": 0.646,
+      "(20, 100)": 1.556
+     },
+     "verdict": "OUT_OF_SAMPLE_FAILED",
+     "gate_status": "CLOSED",
+     "gate_reason": "Verdict is OUT_OF_SAMPLE_FAILED \u2014 the full development/validation/out-of-sample evaluation ran and out-of-sample did not confirm the development-period edge. A strong development result alone can never override this.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "HIGH_VOLATILITY": 359,
+      "RANGING": 11
+     }
+    }
+   },
+   "seconds": 10.5,
+   "candidate_configs": []
+  },
+  {
+   "instrument": "GBP/USD",
+   "timeframe": "d1",
+   "candles": 2400,
+   "periods": {
+    "development": [
+     "2012-12-04T00:00:00+00:00",
+     "2019-05-27T00:00:00+00:00"
+    ],
+    "validation": [
+     "2019-05-28T00:00:00+00:00",
+     "2020-10-14T00:00:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-10-15T00:00:00+00:00",
+     "2022-03-03T00:00:00+00:00"
+    ]
+   },
+   "position_size": 8388.413546441927,
+   "families": {
+    "breakout": {
+     "primary_param": "55",
+     "development": {
+      "trades": 42,
+      "profit_factor": 0.769,
+      "win_rate": 0.31,
+      "net_pnl": -1351.86,
+      "return_pct": -13.52,
+      "max_drawdown_pct": 0.32
+     },
+     "validation": {
+      "trades": 9,
+      "profit_factor": 1.436,
+      "win_rate": 0.444,
+      "net_pnl": 477.02,
+      "return_pct": 4.77,
+      "max_drawdown_pct": 0.09
+     },
+     "out_of_sample": {
+      "trades": 5,
+      "profit_factor": 0.606,
+      "win_rate": 0.2,
+      "net_pnl": -253.15,
+      "return_pct": -2.53,
+      "max_drawdown_pct": 0.06
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.606,
+      "LOW": 0.608,
+      "HIGH": 0.601
+     },
+     "neighbourhood_oos_pf": {
+      "20": 0.994,
+      "30": 0.324,
+      "40": 0.407,
+      "55": 0.606
+     },
+     "verdict": "INCONCLUSIVE",
+     "gate_status": "RESEARCH",
+     "gate_reason": "Verdict is INCONCLUSIVE \u2014 insufficient trade count in at least one period to judge either way. This still deserves investigation, not rejection.",
+     "scorecard_levels": {
+      "edge": "UNKNOWN",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "HIGH_VOLATILITY": 56
+     }
+    },
+    "momentum": {
+     "primary_param": "20",
+     "development": {
+      "trades": 154,
+      "profit_factor": 0.926,
+      "win_rate": 0.377,
+      "net_pnl": -741.01,
+      "return_pct": -7.41,
+      "max_drawdown_pct": 0.32
+     },
+     "validation": {
+      "trades": 37,
+      "profit_factor": 1.001,
+      "win_rate": 0.351,
+      "net_pnl": 1.04,
+      "return_pct": 0.01,
+      "max_drawdown_pct": 0.09
+     },
+     "out_of_sample": {
+      "trades": 34,
+      "profit_factor": 0.888,
+      "win_rate": 0.353,
+      "net_pnl": -205.32,
+      "return_pct": -2.05,
+      "max_drawdown_pct": 0.1
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.888,
+      "LOW": 0.902,
+      "HIGH": 0.862
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.868,
+      "20": 0.888,
+      "40": 0.791
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 9,
+      "HIGH_VOLATILITY": 216
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 54,
+      "profit_factor": 0.513,
+      "win_rate": 0.222,
+      "net_pnl": -3400.52,
+      "return_pct": -34.01,
+      "max_drawdown_pct": 0.41
+     },
+     "validation": {
+      "trades": 8,
+      "profit_factor": 0.829,
+      "win_rate": 0.375,
+      "net_pnl": -150.85,
+      "return_pct": -1.51,
+      "max_drawdown_pct": 0.07
+     },
+     "out_of_sample": {
+      "trades": 9,
+      "profit_factor": 0.177,
+      "win_rate": 0.333,
+      "net_pnl": -606.91,
+      "return_pct": -6.07,
+      "max_drawdown_pct": 0.08
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.177,
+      "LOW": 0.181,
+      "HIGH": 0.168
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 0.177,
+      "(5, 20)": 0.888,
+      "(20, 100)": 0.0
+     },
+     "verdict": "INCONCLUSIVE",
+     "gate_status": "RESEARCH",
+     "gate_reason": "Verdict is INCONCLUSIVE \u2014 insufficient trade count in at least one period to judge either way. This still deserves investigation, not rejection.",
+     "scorecard_levels": {
+      "edge": "UNKNOWN",
+      "robustness": "WEAK",
+      "risk": "WEAK",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "HIGH_VOLATILITY": 71
+     }
+    }
+   },
+   "seconds": 1.6,
+   "candidate_configs": []
+  },
+  {
+   "instrument": "USD/JPY",
+   "timeframe": "m15",
+   "candles": 230400,
+   "periods": {
+    "development": [
+     "2012-11-14T21:15:00+00:00",
+     "2019-05-24T10:30:00+00:00"
+    ],
+    "validation": [
+     "2019-05-24T10:45:00+00:00",
+     "2020-10-14T06:15:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-10-14T06:30:00+00:00",
+     "2022-03-04T23:30:00+00:00"
+    ]
+   },
+   "position_size": 108.43264043032273,
+   "families": {
+    "breakout": {
+     "primary_param": "55",
+     "development": {
+      "trades": 3653,
+      "profit_factor": 0.999,
+      "win_rate": 0.353,
+      "net_pnl": -44.69,
+      "return_pct": -0.45,
+      "max_drawdown_pct": 0.17
+     },
+     "validation": {
+      "trades": 764,
+      "profit_factor": 0.994,
+      "win_rate": 0.344,
+      "net_pnl": -47.51,
+      "return_pct": -0.48,
+      "max_drawdown_pct": 0.06
+     },
+     "out_of_sample": {
+      "trades": 814,
+      "profit_factor": 0.95,
+      "win_rate": 0.355,
+      "net_pnl": -349.68,
+      "return_pct": -3.5,
+      "max_drawdown_pct": 0.05
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.95,
+      "LOW": 1.002,
+      "HIGH": 0.839
+     },
+     "neighbourhood_oos_pf": {
+      "20": 0.844,
+      "30": 0.897,
+      "40": 0.907,
+      "55": 0.95
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "TRENDING_UP": 926,
+      "RANGING": 1765,
+      "LOW_VOLATILITY": 1471,
+      "TRENDING_DOWN": 852,
+      "HIGH_VOLATILITY": 217
+     }
+    },
+    "momentum": {
+     "primary_param": "40",
+     "development": {
+      "trades": 11358,
+      "profit_factor": 0.763,
+      "win_rate": 0.258,
+      "net_pnl": -18330.91,
+      "return_pct": -183.31,
+      "max_drawdown_pct": 1.82
+     },
+     "validation": {
+      "trades": 2502,
+      "profit_factor": 0.663,
+      "win_rate": 0.231,
+      "net_pnl": -4670.1,
+      "return_pct": -46.7,
+      "max_drawdown_pct": 0.47
+     },
+     "out_of_sample": {
+      "trades": 2460,
+      "profit_factor": 0.606,
+      "win_rate": 0.232,
+      "net_pnl": -4903.19,
+      "return_pct": -49.03,
+      "max_drawdown_pct": 0.49
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.606,
+      "LOW": 0.718,
+      "HIGH": 0.427
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.542,
+      "20": 0.579,
+      "40": 0.606
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "WEAK",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 3,
+      "RANGING": 9295,
+      "TRENDING_DOWN": 272,
+      "TRENDING_UP": 251,
+      "LOW_VOLATILITY": 6110,
+      "HIGH_VOLATILITY": 389
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 4207,
+      "profit_factor": 0.955,
+      "win_rate": 0.326,
+      "net_pnl": -1961.71,
+      "return_pct": -19.62,
+      "max_drawdown_pct": 0.26
+     },
+     "validation": {
+      "trades": 953,
+      "profit_factor": 0.847,
+      "win_rate": 0.292,
+      "net_pnl": -1172.14,
+      "return_pct": -11.72,
+      "max_drawdown_pct": 0.12
+     },
+     "out_of_sample": {
+      "trades": 892,
+      "profit_factor": 0.853,
+      "win_rate": 0.309,
+      "net_pnl": -964.25,
+      "return_pct": -9.64,
+      "max_drawdown_pct": 0.12
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.853,
+      "LOW": 0.92,
+      "HIGH": 0.717
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 0.853,
+      "(5, 20)": 0.69,
+      "(20, 100)": 0.874
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "RANGING": 3824,
+      "LOW_VOLATILITY": 2061,
+      "HIGH_VOLATILITY": 167
+     }
+    }
+   },
+   "seconds": 160.8,
+   "candidate_configs": []
+  },
+  {
+   "instrument": "USD/JPY",
+   "timeframe": "h1",
+   "candles": 57600,
+   "periods": {
+    "development": [
+     "2012-11-16T12:00:00+00:00",
+     "2019-05-24T15:00:00+00:00"
+    ],
+    "validation": [
+     "2019-05-24T16:00:00+00:00",
+     "2020-10-14T10:00:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-10-14T11:00:00+00:00",
+     "2022-03-04T22:00:00+00:00"
+    ]
+   },
+   "position_size": 108.41888718957556,
+   "families": {
+    "breakout": {
+     "primary_param": "55",
+     "development": {
+      "trades": 968,
+      "profit_factor": 1.106,
+      "win_rate": 0.358,
+      "net_pnl": 2533.86,
+      "return_pct": 25.34,
+      "max_drawdown_pct": 0.08
+     },
+     "validation": {
+      "trades": 194,
+      "profit_factor": 1.415,
+      "win_rate": 0.407,
+      "net_pnl": 1427.11,
+      "return_pct": 14.27,
+      "max_drawdown_pct": 0.03
+     },
+     "out_of_sample": {
+      "trades": 211,
+      "profit_factor": 1.069,
+      "win_rate": 0.374,
+      "net_pnl": 234.02,
+      "return_pct": 2.34,
+      "max_drawdown_pct": 0.03
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 1.069,
+      "LOW": 1.098,
+      "HIGH": 1.003
+     },
+     "neighbourhood_oos_pf": {
+      "20": 1.102,
+      "30": 1.058,
+      "40": 1.049,
+      "55": 1.069
+     },
+     "verdict": "PROMISING",
+     "gate_status": "PROMISING",
+     "gate_reason": "Verdict is positive and robustness/risk are not weak, but statistical and/or realism evidence isn't yet strong enough to justify PAPER_CANDIDATE status. Worth continued research, not yet worth a paper-trading discussion.",
+     "scorecard_levels": {
+      "edge": "STRONG",
+      "robustness": "STRONG",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "STRONG"
+     },
+     "regime_evidence": {
+      "TRENDING_UP": 372,
+      "HIGH_VOLATILITY": 515,
+      "TRENDING_DOWN": 240,
+      "RANGING": 240,
+      "LOW_VOLATILITY": 6
+     }
+    },
+    "momentum": {
+     "primary_param": "20",
+     "development": {
+      "trades": 3969,
+      "profit_factor": 0.864,
+      "win_rate": 0.302,
+      "net_pnl": -6588.8,
+      "return_pct": -65.89,
+      "max_drawdown_pct": 0.68
+     },
+     "validation": {
+      "trades": 864,
+      "profit_factor": 0.823,
+      "win_rate": 0.273,
+      "net_pnl": -1451.29,
+      "return_pct": -14.51,
+      "max_drawdown_pct": 0.15
+     },
+     "out_of_sample": {
+      "trades": 845,
+      "profit_factor": 0.772,
+      "win_rate": 0.285,
+      "net_pnl": -1686.18,
+      "return_pct": -16.86,
+      "max_drawdown_pct": 0.19
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.772,
+      "LOW": 0.847,
+      "HIGH": 0.629
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.775,
+      "20": 0.772,
+      "40": 0.857
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 19,
+      "HIGH_VOLATILITY": 1887,
+      "RANGING": 2254,
+      "TRENDING_DOWN": 677,
+      "TRENDING_UP": 796,
+      "LOW_VOLATILITY": 45
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 1045,
+      "profit_factor": 1.1,
+      "win_rate": 0.36,
+      "net_pnl": 2146.91,
+      "return_pct": 21.47,
+      "max_drawdown_pct": 0.07
+     },
+     "validation": {
+      "trades": 231,
+      "profit_factor": 0.812,
+      "win_rate": 0.29,
+      "net_pnl": -741.77,
+      "return_pct": -7.42,
+      "max_drawdown_pct": 0.11
+     },
+     "out_of_sample": {
+      "trades": 214,
+      "profit_factor": 1.203,
+      "win_rate": 0.36,
+      "net_pnl": 567.19,
+      "return_pct": 5.67,
+      "max_drawdown_pct": 0.04
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 1.203,
+      "LOW": 1.251,
+      "HIGH": 1.099
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 1.203,
+      "(5, 20)": 0.836,
+      "(20, 100)": 1.244
+     },
+     "verdict": "OVERFIT_SUSPECTED",
+     "gate_status": "ROBUSTNESS_REQUIRED",
+     "gate_reason": "Verdict is OVERFIT_SUSPECTED \u2014 an edge appears in some periods but not consistently. More robustness evidence is required before this can advance.",
+     "scorecard_levels": {
+      "edge": "MODERATE",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "STRONG"
+     },
+     "regime_evidence": {
+      "RANGING": 945,
+      "HIGH_VOLATILITY": 531,
+      "LOW_VOLATILITY": 13,
+      "UNKNOWN": 1
+     }
+    }
+   },
+   "seconds": 42.1,
+   "candidate_configs": [
+    {
+     "config_id": "vsc_exp4_usdjpy_h1_breakout_55",
+     "candidate_id": "exp4_breakout_lookback_55",
+     "instrument": "USD/JPY",
+     "timeframe": "h1",
+     "strategy_family": "breakout",
+     "parameters": {
+      "lookback": 55
+     },
+     "exit_config_summary": {
+      "atr_stop_multiple": 2.0,
+      "atr_take_profit_multiple": 4.0,
+      "max_holding_candles": 100
+     },
+     "cost_assumptions": {
+      "tier": "BASE",
+      "spread": 0.012,
+      "slippage": 0.003
+     },
+     "evidence_period_start": "2012-11-16T12:00:00+00:00",
+     "evidence_period_end": "2022-03-04T22:00:00+00:00",
+     "gate_status": "PROMISING",
+     "verdict": "PROMISING",
+     "statistical_level": "WEAK",
+     "regime_evidence": {
+      "TRENDING_UP": 372,
+      "HIGH_VOLATILITY": 515,
+      "TRENDING_DOWN": 240,
+      "RANGING": 240,
+      "LOW_VOLATILITY": 6
+     }
+    }
+   ]
+  },
+  {
+   "instrument": "USD/JPY",
+   "timeframe": "h4",
+   "candles": 14400,
+   "periods": {
+    "development": [
+     "2012-11-26T20:00:00+00:00",
+     "2019-05-27T12:00:00+00:00"
+    ],
+    "validation": [
+     "2019-05-27T16:00:00+00:00",
+     "2020-10-14T20:00:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-10-15T00:00:00+00:00",
+     "2022-03-04T16:00:00+00:00"
+    ]
+   },
+   "position_size": 108.3572713019687,
+   "families": {
+    "breakout": {
+     "primary_param": "20",
+     "development": {
+      "trades": 429,
+      "profit_factor": 0.934,
+      "win_rate": 0.324,
+      "net_pnl": -1386.03,
+      "return_pct": -13.86,
+      "max_drawdown_pct": 0.3
+     },
+     "validation": {
+      "trades": 83,
+      "profit_factor": 1.209,
+      "win_rate": 0.373,
+      "net_pnl": 557.65,
+      "return_pct": 5.58,
+      "max_drawdown_pct": 0.05
+     },
+     "out_of_sample": {
+      "trades": 98,
+      "profit_factor": 0.908,
+      "win_rate": 0.347,
+      "net_pnl": -298.83,
+      "return_pct": -2.99,
+      "max_drawdown_pct": 0.06
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.908,
+      "LOW": 0.921,
+      "HIGH": 0.877
+     },
+     "neighbourhood_oos_pf": {
+      "20": 0.908,
+      "30": 0.671,
+      "40": 0.534,
+      "55": 0.541
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 6,
+      "HIGH_VOLATILITY": 580,
+      "RANGING": 15,
+      "TRENDING_DOWN": 2,
+      "TRENDING_UP": 7
+     }
+    },
+    "momentum": {
+     "primary_param": "20",
+     "development": {
+      "trades": 932,
+      "profit_factor": 0.96,
+      "win_rate": 0.329,
+      "net_pnl": -957.78,
+      "return_pct": -9.58,
+      "max_drawdown_pct": 0.26
+     },
+     "validation": {
+      "trades": 229,
+      "profit_factor": 1.131,
+      "win_rate": 0.288,
+      "net_pnl": 478.84,
+      "return_pct": 4.79,
+      "max_drawdown_pct": 0.07
+     },
+     "out_of_sample": {
+      "trades": 205,
+      "profit_factor": 0.721,
+      "win_rate": 0.288,
+      "net_pnl": -1058.4,
+      "return_pct": -10.58,
+      "max_drawdown_pct": 0.11
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.721,
+      "LOW": 0.753,
+      "HIGH": 0.651
+     },
+     "neighbourhood_oos_pf": {
+      "10": 1.071,
+      "20": 0.721,
+      "40": 0.718
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 15,
+      "HIGH_VOLATILITY": 1292,
+      "RANGING": 42,
+      "TRENDING_DOWN": 5,
+      "TRENDING_UP": 12
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 269,
+      "profit_factor": 0.967,
+      "win_rate": 0.338,
+      "net_pnl": -408.08,
+      "return_pct": -4.08,
+      "max_drawdown_pct": 0.16
+     },
+     "validation": {
+      "trades": 58,
+      "profit_factor": 1.169,
+      "win_rate": 0.448,
+      "net_pnl": 247.3,
+      "return_pct": 2.47,
+      "max_drawdown_pct": 0.04
+     },
+     "out_of_sample": {
+      "trades": 71,
+      "profit_factor": 0.67,
+      "win_rate": 0.268,
+      "net_pnl": -730.32,
+      "return_pct": -7.3,
+      "max_drawdown_pct": 0.08
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.67,
+      "LOW": 0.683,
+      "HIGH": 0.641
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 0.67,
+      "(5, 20)": 1.092,
+      "(20, 100)": 0.431
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "HIGH_VOLATILITY": 377,
+      "RANGING": 21
+     }
+    }
+   },
+   "seconds": 10.6,
+   "candidate_configs": []
+  },
+  {
+   "instrument": "USD/JPY",
+   "timeframe": "d1",
+   "candles": 2400,
+   "periods": {
+    "development": [
+     "2012-12-04T00:00:00+00:00",
+     "2019-05-27T00:00:00+00:00"
+    ],
+    "validation": [
+     "2019-05-28T00:00:00+00:00",
+     "2020-10-14T00:00:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-10-15T00:00:00+00:00",
+     "2022-03-03T00:00:00+00:00"
+    ]
+   },
+   "position_size": 108.30088252140547,
+   "families": {
+    "breakout": {
+     "primary_param": "55",
+     "development": {
+      "trades": 35,
+      "profit_factor": 0.95,
+      "win_rate": 0.314,
+      "net_pnl": -234.45,
+      "return_pct": -2.34,
+      "max_drawdown_pct": 0.15
+     },
+     "validation": {
+      "trades": 6,
+      "profit_factor": 0.641,
+      "win_rate": 0.167,
+      "net_pnl": -208.93,
+      "return_pct": -2.09,
+      "max_drawdown_pct": 0.05
+     },
+     "out_of_sample": {
+      "trades": 10,
+      "profit_factor": 0.901,
+      "win_rate": 0.3,
+      "net_pnl": -83.31,
+      "return_pct": -0.83,
+      "max_drawdown_pct": 0.04
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.901,
+      "LOW": 0.906,
+      "HIGH": 0.89
+     },
+     "neighbourhood_oos_pf": {
+      "20": 0.8,
+      "30": 1.126,
+      "40": 0.77,
+      "55": 0.901
+     },
+     "verdict": "INCONCLUSIVE",
+     "gate_status": "RESEARCH",
+     "gate_reason": "Verdict is INCONCLUSIVE \u2014 insufficient trade count in at least one period to judge either way. This still deserves investigation, not rejection.",
+     "scorecard_levels": {
+      "edge": "UNKNOWN",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "HIGH_VOLATILITY": 51
+     }
+    },
+    "momentum": {
+     "primary_param": "20",
+     "development": {
+      "trades": 178,
+      "profit_factor": 1.029,
+      "win_rate": 0.354,
+      "net_pnl": 278.14,
+      "return_pct": 2.78,
+      "max_drawdown_pct": 0.21
+     },
+     "validation": {
+      "trades": 56,
+      "profit_factor": 0.737,
+      "win_rate": 0.286,
+      "net_pnl": -608.06,
+      "return_pct": -6.08,
+      "max_drawdown_pct": 0.07
+     },
+     "out_of_sample": {
+      "trades": 44,
+      "profit_factor": 0.484,
+      "win_rate": 0.273,
+      "net_pnl": -826.75,
+      "return_pct": -8.27,
+      "max_drawdown_pct": 0.11
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.484,
+      "LOW": 0.498,
+      "HIGH": 0.452
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.92,
+      "20": 0.484,
+      "40": 0.652
+     },
+     "verdict": "OUT_OF_SAMPLE_FAILED",
+     "gate_status": "CLOSED",
+     "gate_reason": "Verdict is OUT_OF_SAMPLE_FAILED \u2014 the full development/validation/out-of-sample evaluation ran and out-of-sample did not confirm the development-period edge. A strong development result alone can never override this.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "MODERATE",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 15,
+      "HIGH_VOLATILITY": 263
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 47,
+      "profit_factor": 0.534,
+      "win_rate": 0.255,
+      "net_pnl": -2553.33,
+      "return_pct": -25.53,
+      "max_drawdown_pct": 0.36
+     },
+     "validation": {
+      "trades": 12,
+      "profit_factor": 0.997,
+      "win_rate": 0.333,
+      "net_pnl": -2.84,
+      "return_pct": -0.03,
+      "max_drawdown_pct": 0.06
+     },
+     "out_of_sample": {
+      "trades": 17,
+      "profit_factor": 0.805,
+      "win_rate": 0.353,
+      "net_pnl": -139.47,
+      "return_pct": -1.39,
+      "max_drawdown_pct": 0.05
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.805,
+      "LOW": 0.821,
+      "HIGH": 0.769
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 0.805,
+      "(5, 20)": 0.421,
+      "(20, 100)": 2.045
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "MODERATE",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "HIGH_VOLATILITY": 76
+     }
+    }
+   },
+   "seconds": 1.6,
+   "candidate_configs": []
+  },
+  {
+   "instrument": "XAU/USD",
+   "timeframe": "m15",
+   "candles": 230400,
+   "periods": {
+    "development": [
+     "2012-05-15T08:00:00+00:00",
+     "2019-03-29T20:00:00+00:00"
+    ],
+    "validation": [
+     "2019-03-29T20:15:00+00:00",
+     "2020-09-16T20:00:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-09-16T20:15:00+00:00",
+     "2022-03-04T23:30:00+00:00"
+    ]
+   },
+   "position_size": 8.289111857434504,
+   "families": {
+    "breakout": {
+     "primary_param": "40",
+     "development": {
+      "trades": 4481,
+      "profit_factor": 0.989,
+      "win_rate": 0.348,
+      "net_pnl": -902.14,
+      "return_pct": -9.02,
+      "max_drawdown_pct": 0.34
+     },
+     "validation": {
+      "trades": 955,
+      "profit_factor": 1.04,
+      "win_rate": 0.343,
+      "net_pnl": 942.74,
+      "return_pct": 9.43,
+      "max_drawdown_pct": 0.23
+     },
+     "out_of_sample": {
+      "trades": 1020,
+      "profit_factor": 0.88,
+      "win_rate": 0.317,
+      "net_pnl": -3329.58,
+      "return_pct": -33.3,
+      "max_drawdown_pct": 0.43
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.88,
+      "LOW": 0.912,
+      "HIGH": 0.829
+     },
+     "neighbourhood_oos_pf": {
+      "20": 0.911,
+      "30": 0.912,
+      "40": 0.88,
+      "55": 0.917
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "WEAK",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "HIGH_VOLATILITY": 1719,
+      "TRENDING_DOWN": 984,
+      "TRENDING_UP": 1060,
+      "RANGING": 2613,
+      "LOW_VOLATILITY": 79,
+      "UNKNOWN": 1
+     }
+    },
+    "momentum": {
+     "primary_param": "40",
+     "development": {
+      "trades": 12288,
+      "profit_factor": 0.633,
+      "win_rate": 0.233,
+      "net_pnl": -46332.76,
+      "return_pct": -463.33,
+      "max_drawdown_pct": 4.47
+     },
+     "validation": {
+      "trades": 2619,
+      "profit_factor": 0.651,
+      "win_rate": 0.251,
+      "net_pnl": -12881.78,
+      "return_pct": -128.82,
+      "max_drawdown_pct": 1.3
+     },
+     "out_of_sample": {
+      "trades": 2764,
+      "profit_factor": 0.641,
+      "win_rate": 0.245,
+      "net_pnl": -14347.79,
+      "return_pct": -143.48,
+      "max_drawdown_pct": 1.45
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.641,
+      "LOW": 0.72,
+      "HIGH": 0.535
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.657,
+      "20": 0.709,
+      "40": 0.641
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "WEAK",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 8,
+      "HIGH_VOLATILITY": 3219,
+      "TRENDING_UP": 622,
+      "RANGING": 12719,
+      "TRENDING_DOWN": 677,
+      "LOW_VOLATILITY": 426
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 4369,
+      "profit_factor": 0.865,
+      "win_rate": 0.315,
+      "net_pnl": -8808.14,
+      "return_pct": -88.08,
+      "max_drawdown_pct": 0.89
+     },
+     "validation": {
+      "trades": 951,
+      "profit_factor": 0.846,
+      "win_rate": 0.312,
+      "net_pnl": -3079.09,
+      "return_pct": -30.79,
+      "max_drawdown_pct": 0.35
+     },
+     "out_of_sample": {
+      "trades": 961,
+      "profit_factor": 0.844,
+      "win_rate": 0.31,
+      "net_pnl": -3236.9,
+      "return_pct": -32.37,
+      "max_drawdown_pct": 0.39
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.844,
+      "LOW": 0.891,
+      "HIGH": 0.773
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 0.844,
+      "(5, 20)": 0.861,
+      "(20, 100)": 0.818
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "MODERATE",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 2,
+      "HIGH_VOLATILITY": 1375,
+      "RANGING": 4794,
+      "LOW_VOLATILITY": 110
+     }
+    }
+   },
+   "seconds": 131.8,
+   "candidate_configs": []
+  },
+  {
+   "instrument": "XAU/USD",
+   "timeframe": "h1",
+   "candles": 57600,
+   "periods": {
+    "development": [
+     "2012-05-17T08:00:00+00:00",
+     "2019-04-01T05:00:00+00:00"
+    ],
+    "validation": [
+     "2019-04-01T06:00:00+00:00",
+     "2020-09-17T03:00:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-09-17T04:00:00+00:00",
+     "2022-03-04T22:00:00+00:00"
+    ]
+   },
+   "position_size": 8.28948249779389,
+   "families": {
+    "breakout": {
+     "primary_param": "40",
+     "development": {
+      "trades": 1081,
+      "profit_factor": 1.066,
+      "win_rate": 0.356,
+      "net_pnl": 2632.53,
+      "return_pct": 26.33,
+      "max_drawdown_pct": 0.12
+     },
+     "validation": {
+      "trades": 242,
+      "profit_factor": 1.284,
+      "win_rate": 0.397,
+      "net_pnl": 3409.38,
+      "return_pct": 34.09,
+      "max_drawdown_pct": 0.13
+     },
+     "out_of_sample": {
+      "trades": 238,
+      "profit_factor": 0.971,
+      "win_rate": 0.332,
+      "net_pnl": -382.4,
+      "return_pct": -3.82,
+      "max_drawdown_pct": 0.2
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.971,
+      "LOW": 0.987,
+      "HIGH": 0.945
+     },
+     "neighbourhood_oos_pf": {
+      "20": 1.025,
+      "30": 1.079,
+      "40": 0.971,
+      "55": 0.904
+     },
+     "verdict": "OUT_OF_SAMPLE_FAILED",
+     "gate_status": "CLOSED",
+     "gate_reason": "Verdict is OUT_OF_SAMPLE_FAILED \u2014 the full development/validation/out-of-sample evaluation ran and out-of-sample did not confirm the development-period edge. A strong development result alone can never override this.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 1,
+      "HIGH_VOLATILITY": 1470,
+      "TRENDING_UP": 44,
+      "TRENDING_DOWN": 21,
+      "RANGING": 25
+     }
+    },
+    "momentum": {
+     "primary_param": "40",
+     "development": {
+      "trades": 2732,
+      "profit_factor": 0.82,
+      "win_rate": 0.287,
+      "net_pnl": -9940.88,
+      "return_pct": -99.41,
+      "max_drawdown_pct": 1.0
+     },
+     "validation": {
+      "trades": 577,
+      "profit_factor": 0.867,
+      "win_rate": 0.3,
+      "net_pnl": -1986.59,
+      "return_pct": -19.87,
+      "max_drawdown_pct": 0.31
+     },
+     "out_of_sample": {
+      "trades": 629,
+      "profit_factor": 0.767,
+      "win_rate": 0.286,
+      "net_pnl": -4177.52,
+      "return_pct": -41.78,
+      "max_drawdown_pct": 0.5
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.767,
+      "LOW": 0.81,
+      "HIGH": 0.702
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.783,
+      "20": 0.838,
+      "40": 0.767
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "WEAK",
+      "statistical": "MODERATE",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 7,
+      "HIGH_VOLATILITY": 3555,
+      "RANGING": 307,
+      "TRENDING_UP": 31,
+      "TRENDING_DOWN": 38
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 1083,
+      "profit_factor": 0.962,
+      "win_rate": 0.326,
+      "net_pnl": -1294.88,
+      "return_pct": -12.95,
+      "max_drawdown_pct": 0.27
+     },
+     "validation": {
+      "trades": 212,
+      "profit_factor": 0.886,
+      "win_rate": 0.297,
+      "net_pnl": -1076.48,
+      "return_pct": -10.76,
+      "max_drawdown_pct": 0.14
+     },
+     "out_of_sample": {
+      "trades": 262,
+      "profit_factor": 0.995,
+      "win_rate": 0.359,
+      "net_pnl": -60.05,
+      "return_pct": -0.6,
+      "max_drawdown_pct": 0.23
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.995,
+      "LOW": 1.021,
+      "HIGH": 0.953
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 0.995,
+      "(5, 20)": 0.889,
+      "(20, 100)": 0.987
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "MODERATE",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "HIGH_VOLATILITY": 1434,
+      "RANGING": 123
+     }
+    }
+   },
+   "seconds": 34.6,
+   "candidate_configs": []
+  },
+  {
+   "instrument": "XAU/USD",
+   "timeframe": "h4",
+   "candles": 14400,
+   "periods": {
+    "development": [
+     "2012-10-26T04:00:00+00:00",
+     "2019-05-17T20:00:00+00:00"
+    ],
+    "validation": [
+     "2019-05-20T00:00:00+00:00",
+     "2020-10-09T16:00:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-10-09T20:00:00+00:00",
+     "2022-03-04T16:00:00+00:00"
+    ]
+   },
+   "position_size": 8.355070382440246,
+   "families": {
+    "breakout": {
+     "primary_param": "55",
+     "development": {
+      "trades": 252,
+      "profit_factor": 1.121,
+      "win_rate": 0.365,
+      "net_pnl": 2121.39,
+      "return_pct": 21.21,
+      "max_drawdown_pct": 0.19
+     },
+     "validation": {
+      "trades": 49,
+      "profit_factor": 1.224,
+      "win_rate": 0.429,
+      "net_pnl": 1114.39,
+      "return_pct": 11.14,
+      "max_drawdown_pct": 0.13
+     },
+     "out_of_sample": {
+      "trades": 52,
+      "profit_factor": 0.767,
+      "win_rate": 0.308,
+      "net_pnl": -1409.19,
+      "return_pct": -14.09,
+      "max_drawdown_pct": 0.2
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.767,
+      "LOW": 0.773,
+      "HIGH": 0.756
+     },
+     "neighbourhood_oos_pf": {
+      "20": 0.928,
+      "30": 1.194,
+      "40": 0.934,
+      "55": 0.767
+     },
+     "verdict": "OUT_OF_SAMPLE_FAILED",
+     "gate_status": "CLOSED",
+     "gate_reason": "Verdict is OUT_OF_SAMPLE_FAILED \u2014 the full development/validation/out-of-sample evaluation ran and out-of-sample did not confirm the development-period edge. A strong development result alone can never override this.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "MODERATE",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "HIGH_VOLATILITY": 353
+     }
+    },
+    "momentum": {
+     "primary_param": "10",
+     "development": {
+      "trades": 1400,
+      "profit_factor": 0.857,
+      "win_rate": 0.311,
+      "net_pnl": -6977.54,
+      "return_pct": -69.78,
+      "max_drawdown_pct": 0.73
+     },
+     "validation": {
+      "trades": 297,
+      "profit_factor": 1.0,
+      "win_rate": 0.333,
+      "net_pnl": -1.8,
+      "return_pct": -0.02,
+      "max_drawdown_pct": 0.19
+     },
+     "out_of_sample": {
+      "trades": 331,
+      "profit_factor": 0.969,
+      "win_rate": 0.341,
+      "net_pnl": -448.4,
+      "return_pct": -4.48,
+      "max_drawdown_pct": 0.24
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.969,
+      "LOW": 1.004,
+      "HIGH": 0.913
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.969,
+      "20": 0.963,
+      "40": 0.993
+     },
+     "verdict": "REJECTED",
+     "gate_status": "REJECT_EARLY",
+     "gate_reason": "Verdict is REJECTED \u2014 development itself showed no edge (profit_factor <= 1.0). No further research effort is justified here.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "MODERATE",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 17,
+      "HIGH_VOLATILITY": 2011
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 236,
+      "profit_factor": 1.049,
+      "win_rate": 0.347,
+      "net_pnl": 728.71,
+      "return_pct": 7.29,
+      "max_drawdown_pct": 0.17
+     },
+     "validation": {
+      "trades": 58,
+      "profit_factor": 0.627,
+      "win_rate": 0.293,
+      "net_pnl": -2393.86,
+      "return_pct": -23.94,
+      "max_drawdown_pct": 0.28
+     },
+     "out_of_sample": {
+      "trades": 54,
+      "profit_factor": 1.376,
+      "win_rate": 0.37,
+      "net_pnl": 1638.55,
+      "return_pct": 16.39,
+      "max_drawdown_pct": 0.1
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 1.376,
+      "LOW": 1.392,
+      "HIGH": 1.35
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 1.376,
+      "(5, 20)": 0.954,
+      "(20, 100)": 0.696
+     },
+     "verdict": "OVERFIT_SUSPECTED",
+     "gate_status": "ROBUSTNESS_REQUIRED",
+     "gate_reason": "Verdict is OVERFIT_SUSPECTED \u2014 an edge appears in some periods but not consistently. More robustness evidence is required before this can advance.",
+     "scorecard_levels": {
+      "edge": "MODERATE",
+      "robustness": "WEAK",
+      "risk": "STRONG",
+      "statistical": "WEAK",
+      "realism": "STRONG"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 1,
+      "HIGH_VOLATILITY": 347
+     }
+    }
+   },
+   "seconds": 11.2,
+   "candidate_configs": []
+  },
+  {
+   "instrument": "XAU/USD",
+   "timeframe": "d1",
+   "candles": 2400,
+   "periods": {
+    "development": [
+     "2012-11-14T00:00:00+00:00",
+     "2019-05-22T00:00:00+00:00"
+    ],
+    "validation": [
+     "2019-05-23T00:00:00+00:00",
+     "2020-10-12T00:00:00+00:00"
+    ],
+    "out_of_sample": [
+     "2020-10-13T00:00:00+00:00",
+     "2022-03-03T00:00:00+00:00"
+    ]
+   },
+   "position_size": 8.367866442611131,
+   "families": {
+    "breakout": {
+     "primary_param": "55",
+     "development": {
+      "trades": 41,
+      "profit_factor": 0.678,
+      "win_rate": 0.268,
+      "net_pnl": -2789.83,
+      "return_pct": -27.9,
+      "max_drawdown_pct": 0.49
+     },
+     "validation": {
+      "trades": 6,
+      "profit_factor": 1.89,
+      "win_rate": 0.5,
+      "net_pnl": 1111.85,
+      "return_pct": 11.12,
+      "max_drawdown_pct": 0.1
+     },
+     "out_of_sample": {
+      "trades": 5,
+      "profit_factor": 0.394,
+      "win_rate": 0.2,
+      "net_pnl": -1041.49,
+      "return_pct": -10.41,
+      "max_drawdown_pct": 0.21
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.394,
+      "LOW": 0.396,
+      "HIGH": 0.392
+     },
+     "neighbourhood_oos_pf": {
+      "20": 0.613,
+      "30": 0.418,
+      "40": 0.612,
+      "55": 0.394
+     },
+     "verdict": "INCONCLUSIVE",
+     "gate_status": "RESEARCH",
+     "gate_reason": "Verdict is INCONCLUSIVE \u2014 insufficient trade count in at least one period to judge either way. This still deserves investigation, not rejection.",
+     "scorecard_levels": {
+      "edge": "UNKNOWN",
+      "robustness": "WEAK",
+      "risk": "MODERATE",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "HIGH_VOLATILITY": 52
+     }
+    },
+    "momentum": {
+     "primary_param": "10",
+     "development": {
+      "trades": 223,
+      "profit_factor": 1.074,
+      "win_rate": 0.287,
+      "net_pnl": 1329.27,
+      "return_pct": 13.29,
+      "max_drawdown_pct": 0.22
+     },
+     "validation": {
+      "trades": 70,
+      "profit_factor": 0.917,
+      "win_rate": 0.371,
+      "net_pnl": -598.61,
+      "return_pct": -5.99,
+      "max_drawdown_pct": 0.28
+     },
+     "out_of_sample": {
+      "trades": 61,
+      "profit_factor": 0.792,
+      "win_rate": 0.328,
+      "net_pnl": -1417.4,
+      "return_pct": -14.17,
+      "max_drawdown_pct": 0.22
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.792,
+      "LOW": 0.805,
+      "HIGH": 0.773
+     },
+     "neighbourhood_oos_pf": {
+      "10": 0.792,
+      "20": 1.121,
+      "40": 0.527
+     },
+     "verdict": "OUT_OF_SAMPLE_FAILED",
+     "gate_status": "CLOSED",
+     "gate_reason": "Verdict is OUT_OF_SAMPLE_FAILED \u2014 the full development/validation/out-of-sample evaluation ran and out-of-sample did not confirm the development-period edge. A strong development result alone can never override this.",
+     "scorecard_levels": {
+      "edge": "WEAK",
+      "robustness": "WEAK",
+      "risk": "MODERATE",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "UNKNOWN": 26,
+      "HIGH_VOLATILITY": 328
+     }
+    },
+    "sma_crossover": {
+     "primary_param": "(10, 50)",
+     "development": {
+      "trades": 42,
+      "profit_factor": 1.066,
+      "win_rate": 0.333,
+      "net_pnl": 402.86,
+      "return_pct": 4.03,
+      "max_drawdown_pct": 0.18
+     },
+     "validation": {
+      "trades": 5,
+      "profit_factor": 1.337,
+      "win_rate": 0.4,
+      "net_pnl": 474.66,
+      "return_pct": 4.75,
+      "max_drawdown_pct": 0.08
+     },
+     "out_of_sample": {
+      "trades": 9,
+      "profit_factor": 0.698,
+      "win_rate": 0.222,
+      "net_pnl": -782.24,
+      "return_pct": -7.82,
+      "max_drawdown_pct": 0.22
+     },
+     "oos_cost_tiers_pf": {
+      "BASE": 0.698,
+      "LOW": 0.701,
+      "HIGH": 0.694
+     },
+     "neighbourhood_oos_pf": {
+      "(10, 50)": 0.698,
+      "(5, 20)": 1.769,
+      "(20, 100)": 0.0
+     },
+     "verdict": "INCONCLUSIVE",
+     "gate_status": "RESEARCH",
+     "gate_reason": "Verdict is INCONCLUSIVE \u2014 insufficient trade count in at least one period to judge either way. This still deserves investigation, not rejection.",
+     "scorecard_levels": {
+      "edge": "UNKNOWN",
+      "robustness": "WEAK",
+      "risk": "MODERATE",
+      "statistical": "WEAK",
+      "realism": "WEAK"
+     },
+     "regime_evidence": {
+      "HIGH_VOLATILITY": 56
+     }
+    }
+   },
+   "seconds": 1.9,
+   "candidate_configs": []
+  }
+ ]
+}
