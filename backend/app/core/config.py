@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     # Every other gate (live signal, macro risk, full risk hierarchy) still
     # applies, and forward tests use half the normal per-trade risk.
     demo_forward_test_configs: str = "vsc_xauusd_h1_breakout_30_d7479141"
+    # Phone alerts (Web Push): heads-up 5 minutes before an H1 candle closes
+    # when a signal is forming, then the confirmed result after the close.
+    enable_alerts: bool = True
+    alerts_vapid_subject: str = "https://tembobot.ngaatendwew.workers.dev"
     mt5_bridge_url: Optional[str] = None
     mt5_bridge_token: Optional[str] = None
     news_provider: str = "mock"

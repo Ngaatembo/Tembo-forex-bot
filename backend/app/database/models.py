@@ -227,3 +227,23 @@ class PaperRuntimeTrade(Base):
     exit_reason: Mapped[str] = mapped_column(String, nullable=False)
     realized_pnl: Mapped[float] = mapped_column(Float, nullable=False)
     candidate_config_id: Mapped[str] = mapped_column(String, nullable=False)
+
+
+class AppSetting(Base):
+    """Small key/value store for server-generated settings (e.g. the Web Push VAPID key)."""
+    __tablename__ = "app_settings"
+    key: Mapped[str] = mapped_column(String, primary_key=True)
+    value: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+
+class PushSubscription(Base):
+    """A browser that asked for Tembo alerts (Web Push). Holds no account credentials."""
+    __tablename__ = "push_subscriptions"
+    id: Mapped[uuid.UUID] = uuid_pk()
+    endpoint: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
+    p256dh: Mapped[str] = mapped_column(String, nullable=False)
+    auth: Mapped[str] = mapped_column(String, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    last_success_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    failure_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
