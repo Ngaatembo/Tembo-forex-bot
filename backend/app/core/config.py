@@ -30,7 +30,9 @@ class Settings(BaseSettings):
     # still PROMISING. Set to an empty value (or "none") to switch it off.
     # Every other gate (live signal, macro risk, full risk hierarchy) still
     # applies, and forward tests use half the normal per-trade risk.
-    demo_forward_test_configs: str = "vsc_xauusd_h1_breakout_30_d7479141"
+    # Experiment 4 (2026-09-29): USD/JPY H1 breakout passed 2012-2022 and 2026 data;
+    # the gold H1 breakout failed both under the live exits, so it was replaced.
+    demo_forward_test_configs: str = "vsc_exp4_usdjpy_h1_breakout_55"
     # Phone alerts (Web Push): heads-up 5 minutes before an H1 candle closes
     # when a signal is forming, then the confirmed result after the close.
     enable_alerts: bool = True

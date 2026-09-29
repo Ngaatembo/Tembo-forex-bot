@@ -33,7 +33,7 @@ from app.research.validated_strategy_config import ValidatedStrategyConfig
 
 logger = logging.getLogger(__name__)
 
-ALERT_INSTRUMENTS = ("EUR/USD", "GBP/USD", "XAU/USD")
+ALERT_INSTRUMENTS = ("EUR/USD", "GBP/USD", "USD/JPY", "XAU/USD")
 TIMEFRAME = "h1"
 HEADS_UP_MINUTE = 55
 CONFIRM_MINUTE = 1

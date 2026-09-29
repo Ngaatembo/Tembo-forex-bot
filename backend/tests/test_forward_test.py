@@ -128,3 +128,57 @@ def test_deriv_mode_still_refuses_anything_but_demo(monkeypatch, value):
         assert repr(value) in str(exc.value)
     finally:
         get_settings.cache_clear()
+
+
+def test_forward_test_allows_up_to_3x_leverage_but_not_more():
+    from app.research.forward_test import FORWARD_TEST_MAX_EXPOSURE
+
+    assert FORWARD_TEST_MAX_EXPOSURE == 3.0
+    assert forward_test_limits(RiskLimitsConfig()).max_exposure_pct == 3.0
+    assert RiskLimitsConfig(max_exposure_pct=3.0).max_exposure_pct == 3.0
+    with pytest.raises(ValueError):
+        RiskLimitsConfig(max_exposure_pct=11.0)
+    with pytest.raises(ValueError):
+        RiskLimitsConfig(max_exposure_pct=0.0)
+    # Everything else keeps its (0, 1] bound.
+    with pytest.raises(ValueError):
+        RiskLimitsConfig(max_risk_per_trade_pct=1.5)
+
+
+@pytest.mark.parametrize("instrument,entry,stop", [
+    ("USD/JPY", 149.50, 149.20),
+    ("EUR/USD", 1.1370, 1.1350),
+])
+def test_typical_forex_forward_test_trade_is_approved_only_with_forward_test_limits(instrument, entry, stop):
+    from app.research.instrument_adapter import InstrumentTimeframeInfo
+    from app.research.strategy_selector import SelectionResult
+    from app.risk_engine.risk_engine import evaluate_risk
+    from app.risk_engine.risk_models import AccountState
+
+    selection = SelectionResult(instrument, "h1", "PROMISING_NOT_TRADEABLE", "cfg", "r", (), None)
+    account = AccountState(
+        equity=10000.0, peak_equity=10000.0, daily_start_equity=10000.0, daily_realized_pnl=0.0,
+        daily_unrealized_pnl=0.0, open_positions_count=0, total_open_risk_pct=0.0, kill_switch_active=False,
+    )
+    info = InstrumentTimeframeInfo(instrument, "h1", mean_price=entry, price_precision_decimals=5)
+    kwargs = dict(selection_result=selection, account=account, direction="LONG", entry_price=entry, stop_price=stop, instrument_info=info)
+
+    default = evaluate_risk(limits=RiskLimitsConfig(), forward_test=True, **kwargs)
+    assert default.state == "RISK_LIMIT_EXCEEDED" and default.hierarchy_stage == "exposure"
+
+    forward = evaluate_risk(limits=forward_test_limits(RiskLimitsConfig()), forward_test=True, **kwargs)
+    assert forward.state == "APPROVED"
+    assert forward.computed_risk_pct == pytest.approx(0.005)
+
+
+def test_usdjpy_h1_breakout_is_the_default_forward_test():
+    import json
+    from pathlib import Path
+
+    from app.core.config import Settings
+
+    assert Settings().demo_forward_test_configs == "vsc_exp4_usdjpy_h1_breakout_55"
+    registry = json.loads((Path(__file__).resolve().parents[2] / "research" / "results" / "validated_strategy_configs.json").read_text())
+    cfg = next(c for c in registry if c["config_id"] == "vsc_exp4_usdjpy_h1_breakout_55")
+    assert (cfg["instrument"], cfg["timeframe"], cfg["strategy_family"], cfg["gate_status"]) == ("USD/JPY", "h1", "breakout", "PROMISING")
+    assert cfg["exit_config_summary"]["atr_stop_multiple"] == 2.0

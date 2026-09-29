@@ -14,6 +14,9 @@ RISK_DECISION_STATES = frozenset({
 })
 
 
+MAX_EXPOSURE_LEVERAGE = 10.0
+
+
 @dataclass(frozen=True)
 class RiskLimitsConfig:
     """
@@ -35,10 +38,14 @@ class RiskLimitsConfig:
             ("max_total_open_risk_pct", self.max_total_open_risk_pct),
             ("max_daily_loss_pct", self.max_daily_loss_pct),
             ("max_drawdown_pct", self.max_drawdown_pct),
-            ("max_exposure_pct", self.max_exposure_pct),
         ):
             if not isfinite(value) or not (0 < value <= 1):
                 raise ValueError(f"{name} must be in (0, 1], got {value}")
+        # Exposure is notional / equity, so values above 1.0 mean leverage.
+        # The default stays at 0.50 (no leverage); forward tests on paper /
+        # Deriv demo may use more (see app.research.forward_test). Hard cap 10x.
+        if not isfinite(self.max_exposure_pct) or not (0 < self.max_exposure_pct <= MAX_EXPOSURE_LEVERAGE):
+            raise ValueError(f"max_exposure_pct must be in (0, {MAX_EXPOSURE_LEVERAGE}], got {self.max_exposure_pct}")
         if self.max_simultaneous_positions <= 0:
             raise ValueError("max_simultaneous_positions must be positive.")
 

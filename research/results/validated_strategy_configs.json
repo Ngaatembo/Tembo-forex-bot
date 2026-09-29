@@ -230,5 +230,38 @@
       "HIGH_VOLATILITY": 133
     },
     "created_at": "2026-08-30T21:05:50.376213+00:00"
+  },
+  {
+    "config_id": "vsc_exp4_usdjpy_h1_breakout_55",
+    "candidate_id": "exp4_breakout_lookback_55",
+    "instrument": "USD/JPY",
+    "timeframe": "h1",
+    "strategy_family": "breakout",
+    "parameters": {
+      "lookback": 55
+    },
+    "exit_config_summary": {
+      "atr_stop_multiple": 2.0,
+      "atr_take_profit_multiple": 4.0,
+      "max_holding_candles": 100
+    },
+    "cost_assumptions": {
+      "tier": "BASE",
+      "spread": 0.012,
+      "slippage": 0.003
+    },
+    "evidence_period_start": "2012-11-16T12:00:00+00:00",
+    "evidence_period_end": "2022-03-04T22:00:00+00:00",
+    "gate_status": "PROMISING",
+    "verdict": "PROMISING",
+    "statistical_level": "WEAK",
+    "regime_evidence": {
+      "TRENDING_UP": 372,
+      "HIGH_VOLATILITY": 515,
+      "TRENDING_DOWN": 240,
+      "RANGING": 240,
+      "LOW_VOLATILITY": 6
+    },
+    "created_at": "2026-09-29T04:25:01.264017+00:00"
   }
 ]

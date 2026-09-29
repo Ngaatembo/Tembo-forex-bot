@@ -27,7 +27,7 @@ from app.risk_engine.risk_models import RiskLimitsConfig
 from app.news_engine.models import MacroEventRisk
 
 ACCOUNT_KEY = "default_paper"
-INSTRUMENTS = ("EUR/USD", "GBP/USD", "XAU/USD")
+INSTRUMENTS = ("EUR/USD", "GBP/USD", "USD/JPY", "XAU/USD")
 TIMEFRAMES = ("h1",)
 REGISTRY_PATH = Path(__file__).resolve().parents[3] / "research" / "results" / "validated_strategy_configs.json"
 
