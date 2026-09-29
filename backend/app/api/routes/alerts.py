@@ -98,4 +98,5 @@ async def alerts_status() -> dict:
         "timeframe": service.TIMEFRAME,
         **service.next_schedule(),
         "recent": list(service.recent_alerts)[:10],
+        "loop": dict(service.loop_status),
     }

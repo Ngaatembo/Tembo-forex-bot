@@ -183,3 +183,51 @@ def test_update_runs_only_when_a_new_candle_has_closed():
     shadow_store._next_try[setup.setup_id] = at(7, 50)  # backing off after an empty fetch
     assert not shadow_store.is_due(setup, state, at(7, 45, 30))
     shadow_store._next_try.clear()
+
+
+@pytest.mark.asyncio
+async def test_a_stuck_update_times_out_and_the_loop_keeps_going(monkeypatch):
+    import asyncio
+
+    from app.research import shadow_store
+
+    class FakeResult:
+        def scalars(self):
+            return self
+
+        def all(self):
+            return []
+
+    class FakeSession:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *exc):
+            return False
+
+        async def execute(self, *_a, **_k):
+            return FakeResult()
+
+    calls = []
+
+    async def stuck(setup, now):
+        calls.append(setup.setup_id)
+        await asyncio.Event().wait()  # never returns, like a silent socket
+
+    real_sleep = asyncio.sleep
+
+    async def stop_after_first_iteration(_seconds):
+        raise asyncio.CancelledError
+
+    shadow_store._next_try.clear()
+    monkeypatch.setattr(shadow_store, "AsyncSessionLocal", lambda: FakeSession())
+    monkeypatch.setattr(shadow_store, "run_setup", stuck)
+    monkeypatch.setattr(shadow_store, "RUN_TIMEOUT_SECONDS", 0.05)
+    monkeypatch.setattr(shadow_store.asyncio, "sleep", stop_after_first_iteration)
+    with pytest.raises(asyncio.CancelledError):
+        await shadow_store.shadow_loop()
+    await real_sleep(0)
+    assert calls == [s.setup_id for s in SETUPS]  # every setup still got its turn
+    assert shadow_store.tracker_status["last_loop_error"]["error"].startswith("TimeoutError")
+    assert shadow_store.tracker_status["running"] is None
+    shadow_store._next_try.clear()

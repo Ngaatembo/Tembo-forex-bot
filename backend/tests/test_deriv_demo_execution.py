@@ -441,3 +441,28 @@ def test_accepted_multipliers_parsing():
 
     assert accepted_multipliers("Multiplier is not in acceptable range. Accepts 100,200,300,500,800.") == [100, 200, 300, 500, 800]
     assert accepted_multipliers("some other error") == []
+
+
+@pytest.mark.asyncio
+async def test_a_silent_deriv_socket_times_out_instead_of_hanging(monkeypatch):
+    import asyncio
+
+    class SilentSocket:
+        async def send(self, raw):
+            pass
+
+        async def recv(self):
+            await asyncio.Event().wait()
+
+    from types import SimpleNamespace
+
+    calls = {"n": 0}
+
+    def fake_clock():  # the request starts at 0 s; every later reading is 19.95 s
+        calls["n"] += 1
+        return 0.0 if calls["n"] == 1 else 19.95
+
+    # Patch only this module's clock; asyncio keeps the real one.
+    monkeypatch.setattr("app.integrations.deriv.time", SimpleNamespace(monotonic=fake_clock))
+    with pytest.raises(DerivAPIError, match="Timed out"):
+        await asyncio.wait_for(DerivDemoClient._exchange_on(SilentSocket(), {"balance": 1, "req_id": 1}, "balance"), timeout=5)

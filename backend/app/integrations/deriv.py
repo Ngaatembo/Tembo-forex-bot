@@ -7,6 +7,7 @@ cannot connect to a real-money Deriv endpoint.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import time
 from contextlib import asynccontextmanager
@@ -117,7 +118,10 @@ class DerivDemoClient:
         req_id = payload.get("req_id")
         deadline = time.monotonic() + 20
         while time.monotonic() < deadline:
-            raw = await ws.recv()
+            try:
+                raw = await asyncio.wait_for(ws.recv(), timeout=max(0.1, deadline - time.monotonic()))
+            except asyncio.TimeoutError:
+                break
             message = json.loads(raw)
             # On a shared session, skip anything that answers an earlier request.
             if req_id is not None and message.get("req_id") not in (None, req_id):

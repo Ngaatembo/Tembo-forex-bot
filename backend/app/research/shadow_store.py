@@ -33,7 +33,11 @@ logger = logging.getLogger(__name__)
 
 SETTLE_SECONDS = 20  # give Deriv a moment to publish the closed candle
 RETRY_AFTER_EMPTY = timedelta(minutes=5)  # weekends / market closed
+RUN_TIMEOUT_SECONDS = 120  # one stuck request must never freeze the tracker
 _next_try: dict[str, datetime] = {}
+# In-memory health of the background loop, shown on the results endpoint.
+tracker_status: dict = {"started_at": None, "heartbeat_at": None, "iterations": 0,
+                        "running": None, "running_since": None, "last_loop_error": None}
 
 
 def _iso(value: datetime | None) -> str | None:
@@ -106,22 +110,41 @@ async def run_setup(setup: ShadowSetup, now: datetime | None = None) -> dict:
             raise
 
 
+def _note_error(where: str, exc: Exception) -> None:
+    tracker_status["last_loop_error"] = {
+        "at": datetime.now(timezone.utc).isoformat(),
+        "where": where,
+        "error": f"{type(exc).__name__}: {exc}"[:500],
+    }
+
+
 async def shadow_loop() -> None:
     logger.info("Shadow scoreboard enabled for %s (paper only).", ", ".join(s.setup_id for s in SETUPS))
+    tracker_status["started_at"] = datetime.now(timezone.utc).isoformat()
     while True:
         try:
             now = datetime.now(timezone.utc)
+            tracker_status["heartbeat_at"] = now.isoformat()
+            tracker_status["iterations"] += 1
             async with AsyncSessionLocal() as db:
                 states = {s.setup_id: s for s in (await db.execute(select(ShadowSetupState))).scalars().all()}
             for setup in SETUPS:
                 if is_due(setup, states.get(setup.setup_id), now):
+                    tracker_status["running"], tracker_status["running_since"] = setup.setup_id, datetime.now(timezone.utc).isoformat()
                     try:
-                        await run_setup(setup, now)
-                    except Exception:
+                        await asyncio.wait_for(run_setup(setup, now), timeout=RUN_TIMEOUT_SECONDS)
+                    except asyncio.CancelledError:
+                        raise
+                    except Exception as exc:  # includes timeouts
+                        _next_try[setup.setup_id] = datetime.now(timezone.utc) + timedelta(minutes=1)
+                        _note_error(setup.setup_id, exc)
                         logger.exception("Shadow scoreboard update failed for %s; will retry.", setup.setup_id)
+                    finally:
+                        tracker_status["running"], tracker_status["running_since"] = None, None
         except asyncio.CancelledError:
             raise
-        except Exception:
+        except Exception as exc:
+            _note_error("loop", exc)
             logger.exception("Shadow scoreboard loop iteration failed; will retry.")
         await asyncio.sleep(30)
 
@@ -181,6 +204,7 @@ def build_results(states: dict[str, ShadowSetupState], trades: list[ShadowTrade]
         "dollars_per_r": DOLLARS_PER_R,
         "pass_rule": PASS_RULE,
         "combined": score(all_rs),
+        "tracker": dict(tracker_status),
         "setups": setups,
         "trades": [_trade_row(t) for t in recent],
     }

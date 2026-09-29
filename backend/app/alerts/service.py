@@ -45,6 +45,9 @@ _heads_up_sent: dict[tuple[str, str], str] = {}
 _confirm_sent: set[tuple[str, str]] = set()
 _done_slots: set[str] = set()
 recent_alerts: deque = deque(maxlen=20)
+# Health of the background loop, shown on /alerts/status.
+loop_status: dict = {"started_at": None, "heartbeat_at": None, "last_job": None, "last_error": None}
+JOB_TIMEOUT_SECONDS = 240  # a stuck market-data request must never freeze alerts
 
 
 def _configs() -> list[ValidatedStrategyConfig]:
@@ -216,20 +219,22 @@ async def confirm_check(now: datetime) -> list[dict]:
 async def alert_loop() -> None:
     """Wake twice a minute; run each scheduled job once per slot."""
     logger.info("Phone alerts enabled: heads-up at :%02d, confirmation at :%02d (UTC hours).", HEADS_UP_MINUTE, CONFIRM_MINUTE)
+    loop_status["started_at"] = datetime.now(timezone.utc).isoformat()
     while True:
         try:
             now = datetime.now(timezone.utc)
+            loop_status["heartbeat_at"] = now.isoformat()
             for job, slot in due_jobs(now):
                 _done_slots.add(slot)
-                if job == "heads_up":
-                    await heads_up_check(now)
-                else:
-                    await confirm_check(now)
+                check = heads_up_check if job == "heads_up" else confirm_check
+                sent = await asyncio.wait_for(check(now), timeout=JOB_TIMEOUT_SECONDS)
+                loop_status["last_job"] = {"job": job, "slot": slot, "at": datetime.now(timezone.utc).isoformat(), "alerts_sent": len(sent)}
             if len(_done_slots) > 200:
                 _done_slots.clear()
         except asyncio.CancelledError:
             raise
-        except Exception:
+        except Exception as exc:
+            loop_status["last_error"] = {"at": datetime.now(timezone.utc).isoformat(), "error": f"{type(exc).__name__}: {exc}"[:300]}
             logger.exception("Alert loop iteration failed; it will retry.")
         await asyncio.sleep(30)
 

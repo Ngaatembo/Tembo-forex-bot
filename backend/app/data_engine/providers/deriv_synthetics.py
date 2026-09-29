@@ -7,6 +7,7 @@ performed here.
 """
 
 from datetime import datetime, timezone
+import asyncio
 import time
 
 import websockets
@@ -74,7 +75,7 @@ class DerivSyntheticProvider(MarketDataProvider):
                 await ws.send(__import__("json").dumps(payload))
                 deadline = time.monotonic() + 20
                 while time.monotonic() < deadline:
-                    raw = await ws.recv()
+                    raw = await asyncio.wait_for(ws.recv(), timeout=max(0.1, deadline - time.monotonic()))
                     response = __import__("json").loads(raw)
                     if response.get("error"):
                         error = response["error"]

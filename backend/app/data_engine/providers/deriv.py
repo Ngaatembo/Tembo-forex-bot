@@ -89,7 +89,8 @@ class DerivMarketDataProvider(MarketDataProvider):
                     await ws.send(json.dumps(payload))
                     deadline = time.monotonic() + 20
                     while time.monotonic() < deadline:
-                        raw = await ws.recv()
+                        # recv() alone waits forever if Deriv never answers.
+                        raw = await asyncio.wait_for(ws.recv(), timeout=max(0.1, deadline - time.monotonic()))
                         response = json.loads(raw)
                         if response.get("error"):
                             error = response["error"]
