@@ -23,15 +23,28 @@ from app.integrations.deriv import (
 
 router = APIRouter(prefix="/deriv", tags=["deriv"])
 
-def _sign_demo_authorization(*, proposal_id: str, price: float, instrument: str, direction: str) -> str:
+def _order_fields(*, instrument: str, direction: str, stake: float, multiplier: float, price: float) -> dict:
+    return {
+        "instrument": instrument,
+        "direction": direction,
+        "stake": round(float(stake), 2),
+        "multiplier": round(float(multiplier), 4),
+        "price": round(float(price), 2),
+    }
+
+
+def _sign_demo_authorization(*, instrument: str, direction: str, stake: float, multiplier: float, price: float) -> str:
+    """Sign the exact order the user was shown, valid for 120 seconds.
+
+    The token binds the order (market, side, stake, multiplier, price), not a
+    Deriv proposal id: a proposal id only works on the connection that created
+    it, so the buy re-prices and buys on one fresh connection instead.
+    """
     settings = get_settings()
     if not settings.deriv_api_token:
         raise DerivConfigurationError("Deriv demo credentials are not configured.")
     payload = {
-        "proposal_id": proposal_id,
-        "price": round(price, 8),
-        "instrument": instrument,
-        "direction": direction,
+        **_order_fields(instrument=instrument, direction=direction, stake=stake, multiplier=multiplier, price=price),
         "expires_at": int(time.time()) + 120,
     }
     raw = json.dumps(payload, separators=(",", ":"), sort_keys=True).encode()
@@ -40,7 +53,8 @@ def _sign_demo_authorization(*, proposal_id: str, price: float, instrument: str,
     return body + "." + signature
 
 
-def _verify_demo_authorization(token: str, *, proposal_id: str, price: float) -> None:
+def _verify_demo_authorization(token: str) -> dict:
+    """Return the signed order, or raise if the token is forged or expired."""
     settings = get_settings()
     try:
         body, signature = token.split(".", 1)
@@ -51,10 +65,33 @@ def _verify_demo_authorization(token: str, *, proposal_id: str, price: float) ->
         payload = json.loads(raw.decode())
         if int(payload["expires_at"]) < int(time.time()):
             raise ValueError("authorization expired")
-        if payload["proposal_id"] != proposal_id or abs(float(payload["price"]) - price) > 1e-8:
-            raise ValueError("proposal mismatch")
-    except (ValueError, KeyError, TypeError, json.JSONDecodeError, UnicodeDecodeError) as exc:
-        raise DerivAPIError("Demo execution authorization is invalid or expired.") from exc
+        return _order_fields(
+            instrument=str(payload["instrument"]),
+            direction=str(payload["direction"]),
+            stake=float(payload["stake"]),
+            multiplier=float(payload["multiplier"]),
+            price=float(payload["price"]),
+        )
+    except (ValueError, KeyError, TypeError, AttributeError, json.JSONDecodeError, UnicodeDecodeError) as exc:
+        raise DerivAPIError("Demo execution authorization is invalid or expired. Get a fresh quote and confirm again.") from exc
+
+
+async def _checked_decision(instrument: str, direction: str, timeframe: str = "h1") -> dict:
+    """Re-run Tembo's live decision and require it to still allow this exact trade."""
+    decision = await live_decision(instrument=instrument, timeframe=timeframe)
+    if not decision.get("paper_eligibility", {}).get("eligible"):
+        raise DerivAPIError("Tembo execution gate rejected the setup: " + str(decision.get("paper_eligibility", {}).get("reason", "not eligible")))
+    if decision.get("decision") != direction:
+        raise DerivAPIError("Requested direction does not match Tembo's current live decision.")
+    return decision
+
+
+def _plan_levels(decision: dict) -> dict:
+    plan = decision.get("trade_plan") or {}
+    return {
+        key: float(plan[key]) if plan.get(key) is not None else None
+        for key in ("entry", "stop_loss", "take_profit")
+    }
 
 
 
@@ -101,27 +138,23 @@ async def deriv_demo_proposal(payload: dict) -> dict:
         instrument = str(payload.get("instrument", "")).strip()
         direction = str(payload.get("direction", "")).strip().upper()
         stake = float(payload.get("stake", 1))
-        multiplier = float(payload.get("multiplier", 10))
-        decision = await live_decision(instrument=instrument, timeframe=str(payload.get("timeframe", "h1")))
-        if not decision.get("paper_eligibility", {}).get("eligible"):
-            raise DerivAPIError("Tembo execution gate rejected the setup: " + str(decision.get("paper_eligibility", {}).get("reason", "not eligible")))
-        if decision.get("decision") != direction:
-            raise DerivAPIError("Requested direction does not match Tembo's current live decision.")
-        trade_plan = decision.get("trade_plan") or {}
+        multiplier = float(payload.get("multiplier", 100))
+        decision = await _checked_decision(instrument, direction, str(payload.get("timeframe", "h1")))
         result = await DerivDemoClient().proposal(
             instrument=instrument,
             direction=direction,
             stake=stake,
             multiplier=multiplier,
-            entry=float(trade_plan["entry"]) if trade_plan.get("entry") is not None else None,
-            stop_loss=float(trade_plan["stop_loss"]) if trade_plan.get("stop_loss") is not None else None,
-            take_profit=float(trade_plan["take_profit"]) if trade_plan.get("take_profit") is not None else None,
+            **_plan_levels(decision),
         )
+        # Sign what the user is about to confirm (Deriv may have adjusted the
+        # multiplier to one it accepts for this market).
         result["execution_token"] = _sign_demo_authorization(
-            proposal_id=str(result["proposal_id"]),
-            price=float(result["ask_price"]),
             instrument=instrument,
             direction=direction,
+            stake=float(result["stake"]),
+            multiplier=float(result["multiplier"]),
+            price=float(result["ask_price"]),
         )
         return result
     except (DerivConfigurationError, DerivAPIError, ValueError, TypeError) as exc:
@@ -130,12 +163,18 @@ async def deriv_demo_proposal(payload: dict) -> dict:
 
 @router.post("/demo/buy")
 async def deriv_demo_buy(payload: dict) -> dict:
+    """Buy the order the user confirmed: re-check Tembo, then quote + buy on one connection."""
     try:
-        proposal_id = str(payload.get("proposal_id", "")).strip()
-        price = float(payload.get("price", 0))
-        token = str(payload.get("execution_token", "")).strip()
-        _verify_demo_authorization(token, proposal_id=proposal_id, price=price)
-        return await DerivDemoClient().buy_demo(proposal_id=proposal_id, price=price)
+        order = _verify_demo_authorization(str(payload.get("execution_token", "")).strip())
+        decision = await _checked_decision(order["instrument"], order["direction"], str(payload.get("timeframe", "h1")))
+        return await DerivDemoClient().quote_and_buy_demo(
+            instrument=order["instrument"],
+            direction=order["direction"],
+            stake=order["stake"],
+            multiplier=order["multiplier"],
+            max_price=order["price"],
+            **_plan_levels(decision),
+        )
     except (DerivConfigurationError, DerivAPIError, ValueError, TypeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -236,33 +275,43 @@ async def deriv_demo_selftest(payload: dict | None = None) -> dict:
         return {"status": "FAILED", "instrument": instrument, "steps": steps}
     step("Get live price", True, f"{instrument} {price}")
 
+    # The quote and the buy must share one Deriv connection: a proposal id is
+    # unknown on any other connection.
     proposal = None
+    bought = None
     errors = []
-    for multiplier in SELFTEST_MULTIPLIERS:
-        try:
-            proposal = await client.proposal(
-                instrument=instrument, direction="BUY", stake=SELFTEST_STAKE, multiplier=multiplier,
-                entry=price, stop_loss=price * 0.995, take_profit=price * 1.005,
-            )
-            break
-        except DerivAPIError as exc:
-            errors.append(f"x{multiplier}: {exc}")
-            if "multiplier" not in str(exc).lower():
-                break
-    if proposal is None:
-        step("Get a quote with stop loss / take profit", False, " | ".join(errors))
-        return {"status": "FAILED", "instrument": instrument, "steps": steps}
-    step(
-        "Get a quote with stop loss / take profit", True,
-        f"x{proposal['multiplier']:g}, stake {proposal['ask_price']} {proposal['currency']}, "
-        f"protection {'attached' if proposal['protection']['attached'] else 'NOT attached'} {proposal['protection']['limit_order']}",
-    )
-
     try:
-        bought = await client.buy_demo(proposal_id=str(proposal["proposal_id"]), price=float(proposal["ask_price"]))
+        async with client.session():
+            for multiplier in SELFTEST_MULTIPLIERS:
+                try:
+                    proposal = await client.proposal(
+                        instrument=instrument, direction="BUY", stake=SELFTEST_STAKE, multiplier=multiplier,
+                        entry=price, stop_loss=price * 0.995, take_profit=price * 1.005,
+                    )
+                    break
+                except DerivAPIError as exc:
+                    errors.append(f"x{multiplier}: {exc}")
+                    if "multiplier" not in str(exc).lower():
+                        break
+            if proposal is None:
+                step("Get a quote with stop loss / take profit", False, " | ".join(errors))
+                return {"status": "FAILED", "instrument": instrument, "steps": steps}
+            step(
+                "Get a quote with stop loss / take profit", True,
+                f"x{proposal['multiplier']:g}, stake {proposal['ask_price']} {proposal['currency']}, "
+                f"protection {'attached' if proposal['protection']['attached'] else 'NOT attached'} {proposal['protection']['limit_order']}",
+            )
+            try:
+                bought = await client.buy_demo(proposal_id=str(proposal["proposal_id"]), price=float(proposal["ask_price"]))
+            except DerivAPIError as exc:
+                step("Open the demo contract", False, str(exc))
+                return {"status": "FAILED", "instrument": instrument, "steps": steps}
     except DerivAPIError as exc:
-        step("Open the demo contract", False, str(exc))
-        return {"status": "FAILED", "instrument": instrument, "steps": steps}
+        # The shared connection itself failed (before or after the steps above).
+        if bought is None:
+            name = "Open the demo contract" if proposal is not None else "Get a quote with stop loss / take profit"
+            step(name, False, str(exc))
+            return {"status": "FAILED", "instrument": instrument, "steps": steps}
     contract_id = bought["contract_id"]
     step("Open the demo contract", True, f"contract {contract_id} bought for {bought['buy_price']}")
 

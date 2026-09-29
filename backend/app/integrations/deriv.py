@@ -7,8 +7,10 @@ cannot connect to a real-money Deriv endpoint.
 
 from __future__ import annotations
 
+import json
 import time
-from typing import Any
+from contextlib import asynccontextmanager
+from typing import Any, AsyncIterator
 
 import httpx
 import websockets
@@ -46,6 +48,8 @@ def _clean_setting(value: str | None) -> str | None:
 
 
 class DerivDemoClient:
+    _session_ws: Any = None
+
     def __init__(self) -> None:
         settings = get_settings()
         self.base_url = "https://api.derivws.com"
@@ -65,6 +69,10 @@ class DerivDemoClient:
                 "DERIV_API_TOKEN and DERIV_ACCOUNT_ID are required for "
                 "authenticated Deriv demo telemetry."
             )
+        # When set, every request goes over this one authenticated connection.
+        # Deriv only recognises a proposal id on the connection that created it,
+        # so a quote and the buy that uses it must share a session.
+        self._session_ws: Any = None
 
     def _headers(self) -> dict[str, str]:
         headers = {
@@ -103,25 +111,57 @@ class DerivDemoClient:
             raise DerivAPIError("Deriv OTP response did not contain a WebSocket URL.")
         return url
 
-    async def _ws_request(self, payload: dict[str, Any], expected: str) -> dict[str, Any]:
+    @staticmethod
+    async def _exchange_on(ws: Any, payload: dict[str, Any], expected: str) -> dict[str, Any]:
+        await ws.send(json.dumps(payload))
+        req_id = payload.get("req_id")
+        deadline = time.monotonic() + 20
+        while time.monotonic() < deadline:
+            raw = await ws.recv()
+            message = json.loads(raw)
+            # On a shared session, skip anything that answers an earlier request.
+            if req_id is not None and message.get("req_id") not in (None, req_id):
+                continue
+            if message.get("error"):
+                error = message["error"]
+                raise DerivAPIError(
+                    f"Deriv {error.get('code')}: {error.get('message')}"
+                )
+            if message.get("msg_type") == expected:
+                return message
+        raise DerivAPIError(f"Timed out waiting for Deriv {expected} response.")
+
+    @asynccontextmanager
+    async def session(self) -> AsyncIterator["DerivDemoClient"]:
+        """Run several requests on ONE authenticated Deriv connection (one OTP)."""
+        if self._session_ws is not None:
+            yield self
+            return
         ws_url = await self._get_ws_url()
         try:
+            connection = websockets.connect(ws_url, open_timeout=15, close_timeout=5)
+            ws = await connection.__aenter__()
+        except Exception as exc:
+            raise DerivAPIError(f"Deriv WebSocket connection failed: {exc}") from exc
+        self._session_ws = ws
+        try:
+            yield self
+        finally:
+            self._session_ws = None
+            try:
+                await connection.__aexit__(None, None, None)
+            except Exception:
+                pass
+
+    async def _ws_request(self, payload: dict[str, Any], expected: str) -> dict[str, Any]:
+        try:
+            if self._session_ws is not None:
+                return await self._exchange_on(self._session_ws, payload, expected)
+            ws_url = await self._get_ws_url()
             async with websockets.connect(
                 ws_url, open_timeout=15, close_timeout=5
             ) as ws:
-                await ws.send(__import__("json").dumps(payload))
-                deadline = time.monotonic() + 20
-                while time.monotonic() < deadline:
-                    raw = await ws.recv()
-                    message = __import__("json").loads(raw)
-                    if message.get("error"):
-                        error = message["error"]
-                        raise DerivAPIError(
-                            f"Deriv {error.get('code')}: {error.get('message')}"
-                        )
-                    if message.get("msg_type") == expected:
-                        return message
-                raise DerivAPIError(f"Timed out waiting for Deriv {expected} response.")
+                return await self._exchange_on(ws, payload, expected)
         except DerivAPIError:
             raise
         except Exception as exc:
@@ -326,6 +366,49 @@ class DerivDemoClient:
             "transaction_id": buy.get("transaction_id"),
             "buy_price": float(buy["buy_price"]) if buy.get("buy_price") is not None else price,
             "balance_after": float(buy["balance_after"]) if buy.get("balance_after") is not None else None,
+        }
+
+    async def quote_and_buy_demo(
+        self,
+        *,
+        instrument: str,
+        direction: str,
+        stake: float,
+        multiplier: float,
+        max_price: float | None = None,
+        entry: float | None = None,
+        stop_loss: float | None = None,
+        take_profit: float | None = None,
+    ) -> dict[str, Any]:
+        """Price the contract and buy it on the same Deriv connection.
+
+        Deriv rejects a proposal id used on another connection with
+        'InvalidContractProposal: Unknown contract proposal', so the quote
+        and the buy can never be split across two sessions.
+        """
+        async with self.session():
+            quote = await self.proposal(
+                instrument=instrument,
+                direction=direction,
+                stake=stake,
+                multiplier=multiplier,
+                entry=entry,
+                stop_loss=stop_loss,
+                take_profit=take_profit,
+            )
+            price = float(quote["ask_price"])
+            if max_price is not None and price > max_price + 1e-9:
+                raise DerivAPIError(
+                    f"Deriv now asks {price} USD, above the {max_price} USD you confirmed. Nothing was bought."
+                )
+            bought = await self.buy_demo(proposal_id=str(quote["proposal_id"]), price=price)
+        return {
+            **bought,
+            "instrument": quote["instrument"],
+            "direction": quote["direction"],
+            "multiplier": quote["multiplier"],
+            "stake": quote["stake"],
+            "protection": quote["protection"],
         }
 
     async def open_contract(self, contract_id: int) -> dict[str, Any]:
