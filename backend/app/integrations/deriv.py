@@ -16,6 +16,19 @@ import websockets
 from app.core.config import get_settings
 
 
+MAX_DEMO_MULTIPLIER = 1000
+
+
+def accepted_multipliers(message: str) -> list[int]:
+    """Parse Deriv's 'Multiplier is not in acceptable range. Accepts 100,200,...' error."""
+    import re
+
+    match = re.search(r"accepts\s+([\d,\s]+)", message, flags=re.IGNORECASE)
+    if not match:
+        return []
+    return sorted({int(v) for v in re.findall(r"\d+", match.group(1))})
+
+
 class DerivConfigurationError(RuntimeError):
     pass
 
@@ -211,8 +224,11 @@ class DerivDemoClient:
     ) -> dict[str, Any]:
         if not 0 < stake <= 10:
             raise DerivAPIError("Demo stake must be greater than 0 and no more than 10 USD.")
-        if not 0 < multiplier <= 50:
-            raise DerivAPIError("Demo multiplier must be greater than 0 and no more than 50.")
+        # A multiplier contract can never lose more than its stake, so the
+        # $10 stake cap is the real money limit. Deriv itself decides which
+        # multipliers a market accepts (e.g. USD/JPY: 100-800).
+        if not 0 < multiplier <= MAX_DEMO_MULTIPLIER:
+            raise DerivAPIError(f"Demo multiplier must be greater than 0 and no more than {MAX_DEMO_MULTIPLIER}.")
         side = direction.upper()
         if side not in {"BUY", "SELL"}:
             raise DerivAPIError("Direction must be BUY or SELL.")
@@ -243,9 +259,26 @@ class DerivDemoClient:
         try:
             response = await self._ws_request(request, "proposal")
         except DerivAPIError as exc:
-            if "duration" not in str(exc).lower():
+            accepted = accepted_multipliers(str(exc))
+            if accepted and multiplier not in accepted:
+                # Use the smallest multiplier Deriv accepts for this market and
+                # re-price the stop/target thresholds for it.
+                multiplier = min(accepted)
+                if multiplier > MAX_DEMO_MULTIPLIER:
+                    raise DerivAPIError(f"Deriv only accepts multipliers {accepted} here, above Tembo's demo cap of {MAX_DEMO_MULTIPLIER}.") from exc
+                limit_order = self._price_levels_to_limit_order(
+                    direction=side, entry=entry, stop_loss=stop_loss, take_profit=take_profit,
+                    stake=stake, multiplier=multiplier,
+                )
+                request = {**request, "multiplier": multiplier}
+                request.pop("limit_order", None)
+                if limit_order:
+                    request["limit_order"] = limit_order
+                response = await self._ws_request(request, "proposal")
+            elif "duration" in str(exc).lower():
+                response = await self._ws_request({**request, "duration": 3600, "duration_unit": "s"}, "proposal")
+            else:
                 raise
-            response = await self._ws_request({**request, "duration": 3600, "duration_unit": "s"}, "proposal")
         proposal = response.get("proposal") or {}
         proposal_id = proposal.get("id")
         ask_price = proposal.get("ask_price")

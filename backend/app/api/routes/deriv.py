@@ -195,7 +195,7 @@ async def deriv_demo_sell(payload: dict) -> dict:
 # demo account only (DerivDemoClient refuses anything else), rate-limited.
 
 SELFTEST_STAKE = 1.0
-SELFTEST_MULTIPLIERS = (50, 40, 30, 20, 10)
+SELFTEST_MULTIPLIERS = (100,)  # Deriv's error lists the accepted values; the client adapts
 SELFTEST_COOLDOWN_SECONDS = 120
 _last_selftest = {"at": 0.0}
 

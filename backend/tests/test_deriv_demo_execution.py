@@ -212,7 +212,7 @@ async def test_connection_test_opens_and_closes_a_one_dollar_demo_contract(monke
 
     result = await routes.deriv_demo_selftest({"instrument": "USD/JPY"})
     assert result["status"] == "PASSED", result
-    assert ("proposal", 1.0, 50) in calls and ("proposal", 1.0, 40) in calls  # falls back to an accepted multiplier
+    assert ("proposal", 1.0, 100) in calls
     assert ("buy", "p1", 1.0) in calls and ("sell", 7) in calls  # always closed again
 
     from fastapi import HTTPException
@@ -220,3 +220,36 @@ async def test_connection_test_opens_and_closes_a_one_dollar_demo_contract(monke
         await routes.deriv_demo_selftest({"instrument": "USD/JPY"})
     assert exc.value.status_code == 429
     routes._last_selftest["at"] = 0.0
+
+
+@pytest.mark.asyncio
+async def test_proposal_switches_to_the_smallest_multiplier_deriv_accepts():
+    client = client_without_init()
+    sent = []
+
+    async def fake_resolve(instrument):
+        return "frxUSDJPY"
+
+    async def fake_ws(payload, expected):
+        sent.append(payload)
+        if payload["multiplier"] not in (100, 200, 300, 500, 800):
+            raise DerivAPIError("Deriv ContractBuyValidationError: Multiplier is not in acceptable range. Accepts 100,200,300,500,800.")
+        return {"proposal": {"id": "p-3", "ask_price": 1.0}}
+
+    client._resolve_underlying_symbol = fake_resolve
+    client._ws_request = fake_ws
+    result = await client.proposal(
+        instrument="USD/JPY", direction="BUY", stake=1, multiplier=50,
+        entry=150.0, stop_loss=149.25, take_profit=150.75,
+    )
+    assert result["multiplier"] == 100
+    assert sent[-1]["multiplier"] == 100
+    # 0.5% move x100 x $1 stake = $0.50 thresholds, re-priced for the new multiplier
+    assert sent[-1]["limit_order"] == {"stop_loss": 0.5, "take_profit": 0.5}
+
+
+def test_accepted_multipliers_parsing():
+    from app.integrations.deriv import accepted_multipliers
+
+    assert accepted_multipliers("Multiplier is not in acceptable range. Accepts 100,200,300,500,800.") == [100, 200, 300, 500, 800]
+    assert accepted_multipliers("some other error") == []
