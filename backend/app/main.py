@@ -15,7 +15,7 @@ from sqlalchemy import text
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import admin_data, alerts, backtest, decisions, deriv, health, market_data, markets, news, paper_trading, research, strategy, technical_analysis, reliability, strategy_health
+from app.api.routes import admin_data, alerts, backtest, decisions, deriv, health, market_data, markets, news, paper_trading, research, shadow, strategy, technical_analysis, reliability, strategy_health
 from app.api.routes.live import router as live_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
@@ -125,9 +125,20 @@ async def lifespan(_: FastAPI):
         from app.alerts.service import alert_loop
 
         alert_task = asyncio.create_task(alert_loop())
+    shadow_task = None
+    if settings.enable_shadow_tracking:
+        from app.research.shadow_store import shadow_loop
+
+        shadow_task = asyncio.create_task(shadow_loop())
     try:
         yield
     finally:
+        if shadow_task is not None:
+            shadow_task.cancel()
+            try:
+                await shadow_task
+            except asyncio.CancelledError:
+                pass
         if alert_task is not None:
             alert_task.cancel()
             try:
@@ -170,6 +181,7 @@ app.include_router(health.router, tags=["system"])
 app.include_router(live_router)
 app.include_router(deriv.router)
 app.include_router(alerts.router)
+app.include_router(shadow.router)
 app.include_router(market_data.router)
 app.include_router(markets.router)
 app.include_router(technical_analysis.router)

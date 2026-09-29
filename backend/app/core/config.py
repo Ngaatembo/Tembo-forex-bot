@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     # Phone alerts (Web Push): heads-up 5 minutes before an H1 candle closes
     # when a signal is forming, then the confirmed result after the close.
     enable_alerts: bool = True
+    enable_shadow_tracking: bool = True
     alerts_vapid_subject: str = "https://tembobot.ngaatendwew.workers.dev"
     mt5_bridge_url: Optional[str] = None
     mt5_bridge_token: Optional[str] = None

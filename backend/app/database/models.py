@@ -247,3 +247,36 @@ class PushSubscription(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     last_success_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     failure_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+
+class ShadowTrade(Base):
+    """A closed paper-only trade from the shadow scoreboard. Never sent to any broker."""
+    __tablename__ = "shadow_trades"
+    __table_args__ = (UniqueConstraint("setup_id", "entry_at", name="uq_shadow_trade_identity"),)
+    id: Mapped[uuid.UUID] = uuid_pk()
+    setup_id: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    instrument: Mapped[str] = mapped_column(String, nullable=False)
+    timeframe: Mapped[str] = mapped_column(String, nullable=False)
+    direction: Mapped[str] = mapped_column(String, nullable=False)
+    signal_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    entry_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    entry_price: Mapped[float] = mapped_column(Float, nullable=False)
+    stop_price: Mapped[float | None] = mapped_column(Float, nullable=True)
+    target_price: Mapped[float | None] = mapped_column(Float, nullable=True)
+    exit_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    exit_price: Mapped[float] = mapped_column(Float, nullable=False)
+    exit_reason: Mapped[str] = mapped_column(String, nullable=False)
+    r_multiple: Mapped[float] = mapped_column(Float, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+
+class ShadowSetupState(Base):
+    """Where the shadow scoreboard is up to for one setup."""
+    __tablename__ = "shadow_setup_states"
+    setup_id: Mapped[str] = mapped_column(String, primary_key=True)
+    registered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    anchor_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    last_candle_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_run_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    open_trade: Mapped[str | None] = mapped_column(Text, nullable=True)
+    last_error: Mapped[str | None] = mapped_column(Text, nullable=True)
