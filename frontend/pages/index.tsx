@@ -256,16 +256,16 @@ export default function Home() {
   async function refresh() {
     setLoading(true); setError("");
     try {
-      const [m,a,d,r,rs,p] = await Promise.all([
+      const [m,a,d,r,rs,p,ds] = await Promise.all([
         getMarket(instrument,timeframe), getLiveAnalysis(instrument,timeframe), getLiveDecision(instrument,timeframe),
-        getResearchDecision(instrument,timeframe), getRuntimeStatus(), getRuntimePositions()
+        getResearchDecision(instrument,timeframe), getRuntimeStatus(), getRuntimePositions(), getDerivStatus()
       ]);
       const [shResult, relResult, relRuntimeResult] = await Promise.allSettled([
         getStrategyHealth(instrument,timeframe,a.analysis?.trend?.regime || null),
         getReliabilityStatus(),
         getReliabilityRuntime()
       ]);
-      setMarket(m); setAnalysis(a); setDecision(d); setResearch(r); setRuntime(rs); setPositions(p);
+      setMarket(m); setAnalysis(a); setDecision(d); setResearch(r); setRuntime(rs); setPositions(p); setDerivStatus(ds); setDemoAccountBalance(ds.balance ?? null);
       if (shResult.status === "fulfilled") setStrategyHealth(shResult.value);
       if (relResult.status === "fulfilled") setReliability(relResult.value);
       if (relRuntimeResult.status === "fulfilled") setReliabilityRuntime(relRuntimeResult.value);
