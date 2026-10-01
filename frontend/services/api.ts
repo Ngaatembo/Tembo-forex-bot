@@ -127,11 +127,14 @@ async function postJson(path:string, body:unknown) {
   if (!res.ok) throw new Error(await readApiError(res));
   return res.json();
 }
-export function getDemoProposal(instrument:string,direction:string,stake:number,multiplier:number):Promise<DemoProposal> {
-  return postJson("/deriv/demo/proposal",{instrument,direction,stake,multiplier});
+export function getDemoProposal(instrument:string,direction:string,timeframe:string,stake:number,multiplier:number):Promise<DemoProposal> {
+  return postJson("/deriv/demo/proposal",{instrument,direction,timeframe,stake,multiplier});
 }
-export function buyDemoContract(proposal_id:string,price:number,execution_token:string):Promise<DemoBuyResult> {
-  return postJson("/deriv/demo/buy",{proposal_id,price,execution_token});
+export function buyDemoContract(proposal_id:string,price:number,execution_token:string,timeframe:string):Promise<DemoBuyResult> {
+  return postJson("/deriv/demo/buy",{proposal_id,price,execution_token,timeframe});
+}
+export function approveAndExecuteDemo(instrument:string,direction:string,timeframe:string,stake:number,multiplier:number):Promise<DemoBuyResult> {
+  return postJson("/deriv/demo/approve-buy",{instrument,direction,timeframe,stake,multiplier});
 }
 export function getDemoContract(contract_id:number):Promise<DemoContractResult> {
   return getJson("/deriv/demo/contract?contract_id="+encodeURIComponent(String(contract_id)));
