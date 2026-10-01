@@ -1,0 +1,50 @@
+name: XAUUSD Dukascopy Replication Research
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "backend/scripts/download_xauusd_dukascopy.py.js"
+      - "backend/scripts/run_phase16_xauusd_dukascopy_replication.py"
+      - "backend/app/backtesting/config.py"
+      - "backend/app/backtesting/portfolio.py"
+      - "backend/app/backtesting/engine_research.py"
+      - "backend/tests/test_trigger_exit_costs.py"
+      - ".github/workflows/xauusd-dukascopy-replication.yml"
+  push:
+    paths:
+      - "backend/scripts/download_xauusd_dukascopy.py.js"
+      - "backend/scripts/run_phase16_xauusd_dukascopy_replication.py"
+      - "backend/app/backtesting/config.py"
+      - "backend/app/backtesting/portfolio.py"
+      - "backend/app/backtesting/engine_research.py"
+      - "backend/tests/test_trigger_exit_costs.py"
+      - ".github/workflows/xauusd-dukascopy-replication.yml"
+
+jobs:
+  replication:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      PYTHONPATH: ${{ github.workspace }}/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: pip install -r requirements.txt
+      - run: npm install --no-save dukascopy-node@1.50.0
+      - run: pytest -q tests/test_trigger_exit_costs.py
+      - run: node scripts/download_xauusd_dukascopy.py.js
+      - run: python -m py_compile scripts/run_phase16_xauusd_dukascopy_replication.py
+      - run: python scripts/run_phase16_xauusd_dukascopy_replication.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phase16-xauusd-dukascopy-replication
+          retention-days: 30
+          path: backend/research/results/phase16_xauusd_dukascopy_replication.json

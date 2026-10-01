@@ -41,6 +41,11 @@ class BacktestConfig:
     # results presented as "realistic".
     slippage: float = 0.0
 
+    # Research-only compatibility flag. When enabled, ATR stop/target
+    # trigger exits also pay the configured spread/slippage. Default False
+    # preserves the historical Phase 6 behavior exactly.
+    apply_costs_to_trigger_exits: bool = False
+
     # Only "next_open" is implemented in Phase 4: a signal generated on
     # candle T executes at candle T+1's open price. A signal can never
     # execute at its own candle's close, because that price wasn't
