@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
-import { buyDemoContract, getDemoContract, getDemoProposal, sellDemoContract, updateDemoProtection, getDemoProtectionHistory, getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getReliabilityRuntime, getReliabilityStatus, getResearchDecision, getRuntimePositions, getRuntimeStatus, getStrategyHealth, getSyntheticSymbols, type DemoBuyResult, type DemoContractResult, type DemoProposal, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ReliabilityRuntime, type ReliabilityStatus, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type StrategyHealth, type SyntheticSymbol } from "../services/api";
+import { approveAndExecuteDemo, buyDemoContract, getDemoContract, getDemoProposal, sellDemoContract, updateDemoProtection, getDemoProtectionHistory, getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getReliabilityRuntime, getReliabilityStatus, getResearchDecision, getRuntimePositions, getRuntimeStatus, getStrategyHealth, getSyntheticSymbols, type DemoBuyResult, type DemoContractResult, type DemoProposal, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ReliabilityRuntime, type ReliabilityStatus, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type StrategyHealth, type SyntheticSymbol } from "../services/api";
 
 const instruments = ["EUR/USD", "GBP/USD", "USD/JPY", "XAU/USD"];
 const timeframes = ["m5", "m15", "h1", "h4", "d1"];
@@ -93,6 +93,7 @@ export default function Home() {
   const [demoProtectionHistory,setDemoProtectionHistory]=useState<Record<string, unknown>[]>([]);
   const [demoBusy,setDemoBusy]=useState(false);
   const [demoMessage,setDemoMessage]=useState("");
+  const [demoApprovalBusy,setDemoApprovalBusy]=useState(false);
   const [error,setError]=useState("");
   const [loading,setLoading]=useState(true);
   const [lastRefresh,setLastRefresh]=useState("");
@@ -103,7 +104,7 @@ export default function Home() {
     if (!demoExecutionEligible) { setDemoMessage("Demo execution is locked until Tembo authorizes the setup."); return; }
     setDemoBusy(true); setDemoMessage(""); setDemoProposal(null);
     try {
-      const proposal = await getDemoProposal(instrument, decision!.decision, demoStake, demoMultiplier);
+      const proposal = await getDemoProposal(instrument, decision!.decision, timeframe, demoStake, demoMultiplier);
       setDemoProposal(proposal); setDemoMessage("Demo proposal received. Nothing has been purchased.");
     } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Unable to obtain a demo proposal."); }
     finally { setDemoBusy(false); }
@@ -117,7 +118,7 @@ export default function Home() {
       if (latestDecision.decision !== decision?.decision || !latestDecision.paper_eligibility.eligible) {
         setDemoProposal(null); setDemoMessage("The decision changed or the trade is no longer eligible. No demo order was sent."); return;
       }
-      const result = await buyDemoContract(demoProposal.proposal_id, demoProposal.ask_price, demoProposal.execution_token);
+      const result = await buyDemoContract(demoProposal.proposal_id, demoProposal.ask_price, demoProposal.execution_token, timeframe);
       setDemoBuy(result); setDemoContract(null); setDemoAccountBalance(result.balance_after ?? null);
       if (demoProposal.protection?.attached) {
         try {
