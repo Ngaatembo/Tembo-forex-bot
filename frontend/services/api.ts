@@ -100,16 +100,22 @@ export type DemoBuyResult = {
 };
 export type DemoContractResult = {
   status: string;
+  account_balance?: number | null;
+  currency?: string;
+  broker_confirmed?: boolean;
+  contract_id?: number | string;
   contract: {
     contract_id?: number | string;
     status?: string;
     is_sold?: number | boolean;
     profit?: number | string;
+    bid_price?: number | string;
     current_spot?: number | string;
     entry_spot?: number | string;
     buy_price?: number | string;
     payout?: number | string;
     sell_price?: number | string;
+    exit_spot?: number | string;
     [key: string]: unknown;
   };
 };
