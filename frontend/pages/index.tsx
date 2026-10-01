@@ -95,6 +95,8 @@ export default function Home() {
   const [demoMessage,setDemoMessage]=useState("");
   const [demoApprovalBusy,setDemoApprovalBusy]=useState(false);
   const [dismissedApproval,setDismissedApproval]=useState<string>("");
+  const [dismissedApprovalAt,setDismissedApprovalAt]=useState<number>(0);
+  const APPROVAL_COOLDOWN_MS = 10 * 60 * 1000;
   const [error,setError]=useState("");
   const [loading,setLoading]=useState(true);
   const [lastRefresh,setLastRefresh]=useState("");
@@ -103,15 +105,30 @@ export default function Home() {
   const [scannerBusy,setScannerBusy]=useState(false);
 
   const demoExecutionEligible = Boolean(derivStatus?.connected && decision?.decision && decision.decision !== "NO_TRADE" && decision?.paper_eligibility?.eligible && decision?.paper_eligibility?.execution_enabled === false);
-  const approvalKey = decision?.decision && decision?.trade_plan?.entry != null ? `${instrument}|${timeframe}|${decision.decision}|${decision.trade_plan.entry}` : "";
-  const approvalDismissed = approvalKey !== "" && dismissedApproval === approvalKey;
+  const approvalKey = decision?.decision && decision?.trade_plan?.entry != null
+    ? `${instrument}|${timeframe}|${decision.decision}|${decision.trade_plan.entry}|${decision.trade_plan.stop_loss ?? ""}|${decision.trade_plan.take_profit ?? ""}`
+    : "";
+  const approvalDismissed = approvalKey !== "" && dismissedApproval === approvalKey && Date.now() - dismissedApprovalAt < APPROVAL_COOLDOWN_MS;
+
+  useEffect(() => {
+    if (!dismissedApproval || !dismissedApprovalAt) return;
+    const remaining = Math.max(0, APPROVAL_COOLDOWN_MS - (Date.now() - dismissedApprovalAt));
+    const timer = window.setTimeout(() => {
+      setDismissedApproval("");
+      setDismissedApprovalAt(0);
+      setDemoMessage("Tembo is ready to present a fresh setup if the market qualifies again.");
+    }, remaining);
+    return () => window.clearTimeout(timer);
+  }, [dismissedApproval, dismissedApprovalAt]);
 
   function rejectDemoOpportunity() {
-    if (approvalKey) setDismissedApproval(approvalKey);
+    if (approvalKey) {
+      setDismissedApproval(approvalKey);
+      setDismissedApprovalAt(Date.now());
+    }
     setDemoProposal(null);
-    setDemoMessage("Opportunity dismissed for this signal. Tembo will continue watching for a new setup.");
+    setDemoMessage("Opportunity dismissed. Tembo will keep watching and only re-present this setup after the cooldown or when a materially new setup appears.");
   }
-
   async function requestDemoProposal() {
     if (!demoExecutionEligible) { setDemoMessage("Demo execution is locked until Tembo authorizes the setup."); return; }
     setDemoBusy(true); setDemoMessage(""); setDemoProposal(null);
@@ -154,6 +171,8 @@ export default function Home() {
     setDemoApprovalBusy(true); setDemoMessage(""); setDemoProposal(null);
     try {
       const result = await approveAndExecuteDemo(instrument, decision!.decision, timeframe, demoStake, demoMultiplier);
+      setDismissedApproval(approvalKey);
+      setDismissedApprovalAt(Date.now());
       setDemoBuy(result); setDemoContract(null); setDemoAccountBalance(result.balance_after ?? null);
       try {
         const status = await getDerivStatus();
