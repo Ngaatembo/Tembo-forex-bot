@@ -94,11 +94,20 @@ export default function Home() {
   const [demoBusy,setDemoBusy]=useState(false);
   const [demoMessage,setDemoMessage]=useState("");
   const [demoApprovalBusy,setDemoApprovalBusy]=useState(false);
+  const [dismissedApproval,setDismissedApproval]=useState<string>("");
   const [error,setError]=useState("");
   const [loading,setLoading]=useState(true);
   const [lastRefresh,setLastRefresh]=useState("");
 
   const demoExecutionEligible = Boolean(derivStatus?.connected && decision?.decision && decision.decision !== "NO_TRADE" && decision?.paper_eligibility?.eligible && decision?.paper_eligibility?.execution_enabled === false);
+  const approvalKey = decision?.decision && decision?.trade_plan?.entry != null ? `${instrument}|${timeframe}|${decision.decision}|${decision.trade_plan.entry}` : "";
+  const approvalDismissed = approvalKey !== "" && dismissedApproval === approvalKey;
+
+  function rejectDemoOpportunity() {
+    if (approvalKey) setDismissedApproval(approvalKey);
+    setDemoProposal(null);
+    setDemoMessage("Opportunity dismissed for this signal. Tembo will continue watching for a new setup.");
+  }
 
   async function requestDemoProposal() {
     if (!demoExecutionEligible) { setDemoMessage("Demo execution is locked until Tembo authorizes the setup."); return; }
@@ -230,10 +239,25 @@ export default function Home() {
         const result = await getDemoContract(contractId);
         if (!active) return;
         setDemoContract(result);
+        setDemoAccountBalance(result.account_balance ?? null);
         try {
           const history = await getDemoProtectionHistory(contractId);
           if (active) setDemoProtectionHistory(history.history);
         } catch {}
+        // The broker balance is authoritative. Refresh it alongside contract
+        // telemetry so realized/unrealized movement is not hidden behind the
+        // 15-second cockpit refresh.
+        try {
+          const status = await getDerivStatus();
+          if (active) {
+            setDerivStatus(status);
+            setDemoAccountBalance(status.balance ?? result.account_balance ?? null);
+          }
+        } catch {}
+        const status = String(result.contract?.status || "").toLowerCase();
+        if (["sold","closed","expired"].includes(status) && active) {
+          setDemoMessage("Demo contract " + contractId + " is " + status + ". Broker balance has been refreshed.");
+        }
       } catch {
         if (active) setDemoMessage("Live demo contract monitor temporarily unavailable.");
       }
@@ -387,6 +411,19 @@ export default function Home() {
 
             <section className="section demo-execution-section">
         <div className="section-title"><span>03</span> Demo execution desk</div>
+        {demoExecutionEligible && !approvalDismissed && !demoBuy && (
+          <div className="demo-approval-banner">
+            <div>
+              <div className="guidance-card-title">TEMBO OPPORTUNITY · YOUR PERMISSION REQUIRED</div>
+              <strong>Tembo has detected a {signal} setup on {instrument} · {timeframe.toUpperCase()}.</strong>
+              <p>Review the entry, stop loss, take profit and risk gates above. Nothing is sent to Deriv until you explicitly approve it.</p>
+            </div>
+            <div className="demo-actions">
+              <button className="primary-button" onClick={()=>void approveAndExecuteTrade()} disabled={demoApprovalBusy}>{demoApprovalBusy ? "Executing…" : "APPROVE DEMO TRADE"}</button>
+              <button className="secondary-button" onClick={rejectDemoOpportunity} disabled={demoApprovalBusy}>REJECT / WAIT</button>
+            </div>
+          </div>
+        )}
         <div className="demo-execution-grid">
           <div className="demo-execution-card">
             <div className="guidance-card-title">CONTROLLED DERIV DEMO</div>
@@ -584,6 +621,7 @@ export default function Home() {
       .chart-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;color:#6f7b8d;font-size:11px}.chart-foot span:nth-child(2){color:#70d99a;font-weight:700}.chart-empty{padding:80px 20px;text-align:center;color:#778295}
       footer{border-top:1px solid #202632;margin-top:10px;padding:20px 0 30px;color:#697486;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
       @media(max-width:850px){.demo-execution-grid{grid-template-columns:1fr}.strategy-health-grid,.strategy-candidates,.reliability-grid{grid-template-columns:1fr}.strategy-health-summary,.reliability-summary{flex-direction:column}.cockpit-shell{display:block}.sidebar{position:relative;height:auto;border-right:0;border-bottom:1px solid #1e2530}.side-nav{display:flex;overflow-x:auto}.side-nav button{white-space:nowrap}.side-bottom{display:none}.cockpit-main{padding:16px}.market-list{grid-template-columns:repeat(2,1fr)}.guidance-news-grid{grid-template-columns:1fr}.chart-head{align-items:flex-start;flex-direction:column}.hero-grid,.gates,.analysis-grid,.analysis-grid-wide,.guidance-grid{grid-template-columns:1fr}.metrics,.plan,.guidance-metrics{grid-template-columns:repeat(2,1fr)}.controls{flex-wrap:wrap}.refresh-note{width:100%;margin:0}.guidance-header,.guidance-plan{align-items:flex-start;flex-direction:column}.decision-badge{width:100%}}
-    `}</style>
+    `}.demo-approval-banner{display:flex;justify-content:space-between;gap:20px;align-items:center;margin:0 0 18px;padding:18px 20px;border:1px solid #245d46;border-radius:16px;background:rgba(8,44,31,.55)}.demo-approval-banner strong{display:block;font-size:18px;margin-top:6px}.demo-approval-banner p{margin:8px 0 0;color:#9aa7b8}.demo-approval-banner .demo-actions{justify-content:flex-end}@media(max-width:760px){.demo-approval-banner{flex-direction:column;align-items:stretch}.demo-approval-banner .demo-actions{justify-content:stretch}}
+</style>
   </>;
 }
