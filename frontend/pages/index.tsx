@@ -413,9 +413,9 @@ export default function Home() {
             </div>}
             {demoBuy && <div className="demo-open">DEMO CONTRACT #{demoBuy.contract_id} · BUY ${demoBuy.buy_price.toFixed(2)} · BROKER CONFIRMED</div>}
             {demoBuy && <div className="demo-proposal">
-              <span>Demo balance {demoAccountBalance == null ? "—" : "$" + demoAccountBalance.toFixed(2)}</span>
+              <span>Broker balance {derivStatus?.balance == null ? "—" : "$" + Number(derivStatus.balance).toFixed(2)}</span>
               <span>Stake ${demoStake.toFixed(2)}</span>
-              <span>Open position {demoContract?.contract?.status || "OPEN"}</span>
+              <span>Open positions {String(derivStatus?.open_positions ?? (demoBuy ? 1 : 0))}</span>
               <span>Monitoring every 3s</span>
             </div>}
             {demoProposal?.protection?.attached && <div className="demo-message">Broker-side demo protection attached from Tembo's price plan: SL loss ${demoProposal.protection.limit_order.stop_loss ?? "—"} · TP profit ${demoProposal.protection.limit_order.take_profit ?? "—"}.</div>}
@@ -439,6 +439,8 @@ export default function Home() {
             <div className="gate-line"><span>Tembo signal</span><Pill value={signal} tone={signal === "NO_TRADE" ? "bad" : "good"}/></div>
             <div className="gate-line"><span>Paper eligibility</span><Pill value={decision?.paper_eligibility?.status || "WAITING"} tone={toneFor(decision?.paper_eligibility?.status)}/></div>
             <div className="gate-line"><span>Broker mode</span><Pill value="DEMO ONLY" tone="warn"/></div>
+            <div className="gate-line"><span>Demo balance</span><strong>{derivStatus?.balance == null ? "—" : "$" + Number(derivStatus.balance).toFixed(2)}</strong></div>
+            <div className="gate-line"><span>Open demo positions</span><strong>{String(derivStatus?.open_positions ?? 0)}</strong></div>
             <div className="gate-line"><span>Real-money execution</span><Pill value="DISABLED" tone="good"/></div>
             <p className="guidance-muted">No browser credentials are used. The server holds the Deriv credentials and enforces demo-only mode.</p>
           </div>
