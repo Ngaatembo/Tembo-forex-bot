@@ -89,6 +89,7 @@ export default function Home() {
   const [demoProposal,setDemoProposal]=useState<DemoProposal|null>(null);
   const [demoBuy,setDemoBuy]=useState<DemoBuyResult|null>(null);
   const [demoContract,setDemoContract]=useState<DemoContractResult|null>(null);
+  const [demoAccountBalance,setDemoAccountBalance]=useState<number|null>(null);
   const [demoProtectionHistory,setDemoProtectionHistory]=useState<Record<string, unknown>[]>([]);
   const [demoBusy,setDemoBusy]=useState(false);
   const [demoMessage,setDemoMessage]=useState("");
@@ -117,7 +118,7 @@ export default function Home() {
         setDemoProposal(null); setDemoMessage("The decision changed or the trade is no longer eligible. No demo order was sent."); return;
       }
       const result = await buyDemoContract(demoProposal.proposal_id, demoProposal.ask_price, demoProposal.execution_token);
-      setDemoBuy(result); setDemoContract(null);
+      setDemoBuy(result); setDemoContract(null); setDemoAccountBalance(result.balance_after ?? null);
       if (demoProposal.protection?.attached) {
         try {
           await updateDemoProtection(result.contract_id, demoProposal.protection.limit_order.stop_loss ?? null, demoProposal.protection.limit_order.take_profit ?? null);
@@ -161,8 +162,21 @@ export default function Home() {
     setDemoBusy(true);
     try {
       const result = await sellDemoContract(demoBuy.contract_id);
-      setDemoContract(null);
-      setDemoMessage("Demo contract " + result.contract_id + " closed. Sold for " + String(result.sold_for ?? "—") + " USD.");
+      const soldFor = result.sold_for;
+      const buyPrice = demoBuy.buy_price;
+      const realized = soldFor != null ? soldFor - buyPrice : null;
+      try {
+        const finalContract = await getDemoContract(demoBuy.contract_id);
+        setDemoContract(finalContract);
+        setDemoAccountBalance(finalContract.account_balance ?? null);
+      } catch {}
+      try {
+        const status = await getDerivStatus();
+        setDerivStatus(status);
+        setDemoAccountBalance(status.balance ?? null);
+      } catch {}
+      setDemoBuy(null);
+      setDemoMessage("Demo contract " + result.contract_id + " closed. Sold for " + String(soldFor ?? "—") + " USD" + (realized != null ? " · realized P/L " + (realized >= 0 ? "+" : "") + realized.toFixed(2) + " USD" : "") + ".");
     } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Unable to close demo contract."); }
     finally { setDemoBusy(false); }
   }
@@ -173,6 +187,7 @@ export default function Home() {
       const result = await getDemoContract(demoBuy.contract_id);
       const contract = result.contract || {};
       setDemoContract(result);
+      setDemoAccountBalance(result.account_balance ?? null);
       try {
         const history = await getDemoProtectionHistory(demoBuy.contract_id);
         setDemoProtectionHistory(history.history);
@@ -235,17 +250,6 @@ export default function Home() {
   }
   useEffect(()=>{ void refresh(); },[instrument,timeframe]);
   useEffect(()=>{ void getSyntheticSymbols().then(r=>setSynthetics(r.symbols)).catch(()=>setSynthetics([])); void getDerivStatus().then(setDerivStatus).catch(()=>setDerivStatus(null)); void refreshMarkets(); },[]);
-  useEffect(()=>{
-    if (!demoBuy?.contract_id) return;
-    const poll = window.setInterval(async ()=>{
-      try {
-        const result = await getDemoContract(demoBuy.contract_id);
-        setDemoContract(result);
-      } catch {}
-    },15000);
-    return ()=>window.clearInterval(poll);
-  },[demoBuy?.contract_id]);
-
   useEffect(()=>{ const timer = window.setInterval(()=>{ void refresh(); void refreshMarkets(); }, 15000); return ()=>window.clearInterval(timer); },[instrument,timeframe]);
 
   const latest = useMemo(()=>market?.candles?.[market.candles.length-1], [market]);
@@ -381,14 +385,23 @@ export default function Home() {
               <span>{demoProposal.contract_type} ×{demoProposal.multiplier}</span>
               <span>Protection {demoProposal.protection?.attached ? "ATTACHED" : "NOT ATTACHED"}</span>
             </div>}
-            {demoBuy && <div className="demo-open">DEMO CONTRACT #{demoBuy.contract_id} · BUY ${demoBuy.buy_price.toFixed(2)}</div>}
+            {demoBuy && <div className="demo-open">DEMO CONTRACT #{demoBuy.contract_id} · BUY ${demoBuy.buy_price.toFixed(2)} · BROKER CONFIRMED</div>}
+            {demoBuy && <div className="demo-proposal">
+              <span>Demo balance {demoAccountBalance == null ? "—" : "$" + demoAccountBalance.toFixed(2)}</span>
+              <span>Stake ${demoStake.toFixed(2)}</span>
+              <span>Open position {demoContract?.contract?.status || "OPEN"}</span>
+              <span>Monitoring every 3s</span>
+            </div>}
             {demoProposal?.protection?.attached && <div className="demo-message">Broker-side demo protection attached from Tembo's price plan: SL loss ${demoProposal.protection.limit_order.stop_loss ?? "—"} · TP profit ${demoProposal.protection.limit_order.take_profit ?? "—"}.</div>}
             {demoProtectionHistory.length > 0 && <div className="demo-message">Deriv confirmation: {demoProtectionHistory.slice(-2).map((x:any)=>String(x.order_type || x.display_name || "protection").replaceAll("_"," ")).join(" · ")}.</div>}
             {demoContract?.contract && <div className="demo-proposal">
               <span>Status {String(demoContract.contract.status || "—")}</span>
-              <span>P&amp;L ${String(demoContract.contract.profit ?? "—")}</span>
+              <span>P&amp;L {demoContract.contract.profit != null ? "$" + String(demoContract.contract.profit) : "—"}</span>
+              <span>Bid {String(demoContract.contract.bid_price ?? "—")}</span>
               <span>Spot {String(demoContract.contract.current_spot ?? "—")}</span>
               <span>Entry {String(demoContract.contract.entry_spot ?? "—")}</span>
+              <span>Broker {demoContract.broker_confirmed ? "CONFIRMED" : "—"}</span>
+              <span>Balance {demoContract.account_balance == null ? "—" : "$" + demoContract.account_balance.toFixed(2)}</span>
               <span>SL {String((demoContract.contract as Record<string, unknown>).stop_loss ?? demoProposal?.protection?.limit_order.stop_loss ?? "—")}</span>
               <span>TP {String((demoContract.contract as Record<string, unknown>).take_profit ?? demoProposal?.protection?.limit_order.take_profit ?? "—")}</span>
             </div>}

@@ -182,7 +182,17 @@ async def deriv_demo_buy(payload: dict) -> dict:
 @router.get("/demo/contract")
 async def deriv_demo_contract(contract_id: int) -> dict:
     try:
-        return await DerivDemoClient().open_contract(contract_id)
+        client = DerivDemoClient()
+        current = await client.open_contract(contract_id)
+        balance = await client.account_balance()
+        contract = current.get("contract") or {}
+        return {
+            **current,
+            "account_balance": balance.get("balance"),
+            "currency": balance.get("currency") or contract.get("currency") or "USD",
+            "broker_confirmed": True,
+            "contract_id": contract.get("contract_id", contract_id),
+        }
     except (DerivConfigurationError, DerivAPIError, ValueError, TypeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
