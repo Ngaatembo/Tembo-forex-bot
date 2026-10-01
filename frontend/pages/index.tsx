@@ -397,12 +397,13 @@ export default function Home() {
               <label>Multiplier<input type="number" min="1" max="50" step="1" value={demoMultiplier} onChange={e=>setDemoMultiplier(Math.min(50,Math.max(1,Number(e.target.value)||1)))} /></label>
             </div>
             <div className="demo-actions">
-              <button className="secondary-button" onClick={()=>void requestDemoProposal()} disabled={demoBusy || !demoExecutionEligible}>{demoBusy?"Working…":"Get demo proposal"}</button>
-              <button className="primary-button" onClick={()=>void executeDemoTrade()} disabled={demoBusy || !demoProposal || !demoExecutionEligible}>Execute demo trade</button>
-              {demoBuy && demoProposal?.protection?.attached && <button className="secondary-button" onClick={()=>void syncDemoProtection()} disabled={demoBusy}>Sync protection</button>}
-              {demoBuy && <button className="secondary-button" onClick={()=>void refreshDemoContract()} disabled={demoBusy}>Refresh contract</button>}
-              {demoBuy && <button className="secondary-button" onClick={()=>void closeDemoTrade()} disabled={demoBusy}>Close demo</button>}
+              <button className="secondary-button" onClick={()=>void requestDemoProposal()} disabled={demoBusy || demoApprovalBusy || !demoExecutionEligible}>{demoBusy?"Preparing…":"Preview broker quote"}</button>
+              <button className="primary-button" onClick={()=>void approveAndExecuteTrade()} disabled={demoBusy || demoApprovalBusy || !demoExecutionEligible}>{demoApprovalBusy?"Executing…":"APPROVE & EXECUTE DEMO"}</button>
+              {demoBuy && demoProposal?.protection?.attached && <button className="secondary-button" onClick={()=>void syncDemoProtection()} disabled={demoBusy || demoApprovalBusy}>Sync protection</button>}
+              {demoBuy && <button className="secondary-button" onClick={()=>void refreshDemoContract()} disabled={demoBusy || demoApprovalBusy}>Refresh contract</button>}
+              {demoBuy && <button className="secondary-button" onClick={()=>void closeDemoTrade()} disabled={demoBusy || demoApprovalBusy}>Close demo</button>}
             </div>
+            <div className="demo-message">The primary button is the approval event: Tembo re-checks the selected <strong>{instrument} · {timeframe.toUpperCase()}</strong> signal on the server, obtains a fresh Deriv quote, and only then buys the demo contract.</div>
             {demoProposal && <div className="demo-proposal">
               <span>Proposal {demoProposal.proposal_id}</span>
               <span>Ask ${demoProposal.ask_price.toFixed(2)}</span>
