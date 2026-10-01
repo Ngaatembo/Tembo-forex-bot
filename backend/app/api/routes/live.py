@@ -11,9 +11,10 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert
 
 from app.database.session import AsyncSessionLocal
-from app.database.models import PaperRuntimePosition, PaperRuntimeState
+from app.database.models import PaperRuntimePosition, PaperRuntimeState, MarketCandle
 
 from app.api.routes.health import health_check
 from app.research.forward_test import forward_test_config_ids, forward_test_limits, is_forward_test
@@ -42,6 +43,31 @@ def _completed_candles(candles, timeframe: str):
     now = datetime.now(timezone.utc)
     delta = _TIMEFRAME_DELTAS[timeframe]
     return [c for c in candles if c.timestamp + delta <= now]
+
+
+async def _persist_verified_candles(candles) -> int:
+    """Persist verified completed provider candles without affecting execution."""
+    if not candles:
+        return 0
+    rows = [
+        {
+            "symbol": c.symbol,
+            "timeframe": c.timeframe,
+            "timestamp": c.timestamp,
+            "open": c.open,
+            "high": c.high,
+            "low": c.low,
+            "close": c.close,
+            "volume": c.volume,
+        }
+        for c in candles
+    ]
+    async with AsyncSessionLocal() as session:
+        stmt = insert(MarketCandle).values(rows)
+        stmt = stmt.on_conflict_do_nothing(constraint="uq_market_candle_identity")
+        result = await session.execute(stmt)
+        await session.commit()
+        return int(result.rowcount or 0)
 
 
 def _candle_payload(candle) -> dict:
@@ -248,6 +274,14 @@ async def live_market(
             status_code=503,
             detail="Live provider returned invalid candle data; Tembo refused to display it.",
         )
+
+    # Seed/refresh the persistent market-candle history from the same verified
+    # provider data used by the cockpit. Storage never opens or modifies trades.
+    try:
+        await _persist_verified_candles(candles)
+    except Exception:
+        # Display remains available if persistence is temporarily unavailable.
+        pass
 
     return {
         "instrument": instrument,
