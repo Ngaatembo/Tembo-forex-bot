@@ -334,8 +334,6 @@ export default function Home() {
   }
   useEffect(()=>{ void refresh(); },[instrument,timeframe]);
   useEffect(()=>{ void getSyntheticSymbols().then(r=>setSynthetics(r.symbols)).catch(()=>setSynthetics([])); void getDerivStatus().then(setDerivStatus).catch(()=>setDerivStatus(null)); void refreshMarkets(); },[]);
-  useEffect(()=>{ if (filteredMarkets.length) void scanLiveMarkets(); },[filteredMarkets.length,timeframe]);
-  useEffect(()=>{ const timer=window.setInterval(()=>void scanLiveMarkets(),30000); return ()=>window.clearInterval(timer); },[timeframe,marketFilter,filteredMarkets.length]);
   async function scanLiveMarkets() {
     const candidates = filteredMarkets.slice(0, 8);
     if (!candidates.length) return;
@@ -365,6 +363,9 @@ export default function Home() {
     if (marketFilter === "metals") return type.includes("metal") || type.includes("commod") || market.includes("metal") || market.includes("commod");
     return type.includes("synthetic") || type.includes("index") || market.includes("synthetic") || market.includes("derived");
   }).slice(0,32), [derivMarkets, marketFilter]);
+  useEffect(()=>{ if (filteredMarkets.length) void scanLiveMarkets(); },[filteredMarkets.length,timeframe]);
+  useEffect(()=>{ const timer=window.setInterval(()=>void scanLiveMarkets(),30000); return ()=>window.clearInterval(timer); },[timeframe,marketFilter,filteredMarkets.length]);
+
 
   return <>
     <Head><title>Tembo Forex Bot — Multi-Market Cockpit</title><meta name="description" content="Tembo live-data paper trading cockpit"/></Head>
