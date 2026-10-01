@@ -28,10 +28,13 @@ async def get_candles(
     limit: int = Query(default=500, le=5000),
 ) -> list[dict]:
     async with AsyncSessionLocal() as session:
+        # Return the most recent stored bars by default. The previous
+        # implementation selected the oldest rows, which made the cockpit
+        # appear stuck on historical data after a larger dataset was ingested.
         stmt = (
             select(MarketCandle)
             .where(MarketCandle.symbol == symbol, MarketCandle.timeframe == timeframe)
-            .order_by(MarketCandle.timestamp.asc())
+            .order_by(MarketCandle.timestamp.desc())
             .limit(limit)
         )
         if start is not None:
@@ -41,6 +44,8 @@ async def get_candles(
 
         result = await session.execute(stmt)
         candles = result.scalars().all()
+
+    candles = list(reversed(candles))
 
     return [
         {
