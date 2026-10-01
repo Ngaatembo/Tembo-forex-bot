@@ -153,7 +153,7 @@ export function sellDemoContract(contract_id:number):Promise<{status:string;cont
 
 export function getSyntheticSymbols():Promise<SyntheticSymbolsResponse> { return getJson("/live/synthetic-symbols"); }
 export function getMarket(instrument:string,timeframe:string):Promise<MarketResponse> {
-  return getJson("/live/market?" + new URLSearchParams({instrument,timeframe,limit:"120"}));
+  return getJson("/live/market?" + new URLSearchParams({instrument,timeframe,limit:"500"}));
 }
 export function getLiveDecision(instrument:string,timeframe:string):Promise<LiveDecision> {
   return getJson("/live/decision?" + new URLSearchParams({instrument,timeframe}));
