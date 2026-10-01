@@ -134,6 +134,30 @@ export default function Home() {
     finally { setDemoBusy(false); }
   }
 
+  async function approveAndExecuteTrade() {
+    if (!demoExecutionEligible) {
+      setDemoMessage("Approval is unavailable: Tembo has not authorized this setup.");
+      return;
+    }
+    setDemoApprovalBusy(true); setDemoMessage(""); setDemoProposal(null);
+    try {
+      const result = await approveAndExecuteDemo(instrument, decision!.decision, timeframe, demoStake, demoMultiplier);
+      setDemoBuy(result); setDemoContract(null); setDemoAccountBalance(result.balance_after ?? null);
+      try {
+        const status = await getDerivStatus();
+        setDerivStatus(status);
+        setDemoAccountBalance(status.balance ?? result.balance_after ?? null);
+      } catch {}
+      setDemoMessage("APPROVED -> BROKER CONFIRMED. Demo contract #" + result.contract_id + " opened. Tembo re-checked the signal immediately before execution.");
+      try {
+        const current = await getDemoContract(result.contract_id);
+        setDemoContract(current);
+      } catch {}
+    } catch (e) {
+      setDemoMessage(e instanceof Error ? e.message : "Approved demo execution failed safely. No order confirmation was received.");
+    } finally { setDemoApprovalBusy(false); }
+  }
+
   async function syncDemoProtection() {
     if (!demoBuy?.contract_id || !demoProposal?.protection?.attached) {
       setDemoMessage("No broker-side protection plan is available to sync.");
