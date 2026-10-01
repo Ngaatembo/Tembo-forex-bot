@@ -483,6 +483,14 @@ async def live_decision(
             detail=f"Decision data is unavailable: {exc}",
         ) from exc
 
+    if validation.is_clean and candles:
+        try:
+            await _persist_verified_candles(candles)
+        except Exception:
+            # Persistence is auxiliary; a temporary DB write failure must not
+            # turn verified live market data into a false broker failure.
+            pass
+
     if len(candles) < 50 or not validation.is_clean:
         return {
             "instrument": instrument,
