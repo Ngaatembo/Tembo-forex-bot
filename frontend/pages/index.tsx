@@ -292,8 +292,8 @@ export default function Home() {
       ]);
       setMarket(m); setAnalysis(a); setDecision(d); setResearch(r); setRuntime(rs); setPositions(p); setDerivStatus(ds); setDemoAccountBalance(ds.balance ?? null);
       const trendState = a.analysis?.trend?.state || "WAITING";
-      const momentumState = a.momentum?.state || "—";
-      const volatilityState = a.volatility?.state || "—";
+      const momentumState = a.analysis?.momentum?.state || "—";
+      const volatilityState = a.analysis?.volatility?.state || "—";
       const currentSignal = d.decision || "NO_TRADE";
       const currentPrice = m.current_price ?? m.candles?.[m.candles.length - 1]?.close ?? null;
       const candle = m.candles?.[m.candles.length - 1];
