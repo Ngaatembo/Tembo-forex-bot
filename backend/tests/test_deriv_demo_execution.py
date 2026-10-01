@@ -118,7 +118,7 @@ def test_demo_execution_authorization_round_trip(monkeypatch):
     monkeypatch.setattr(settings, "deriv_api_token", "test-secret")
     token = _sign_demo_authorization(instrument="USD/JPY", direction="BUY", stake=10, multiplier=100, price=10.0)
     order = _verify_demo_authorization(token)
-    assert order == {"instrument": "USD/JPY", "direction": "BUY", "stake": 10.0, "multiplier": 100.0, "price": 10.0}
+    assert order == {"instrument": "USD/JPY", "direction": "BUY", "stake": 10.0, "multiplier": 100.0, "price": 10.0, "timeframe": "h1"}
 
 
 def test_demo_execution_authorization_rejects_tampering(monkeypatch):
@@ -305,6 +305,51 @@ async def test_buy_route_rechecks_tembo_and_buys_the_signed_order(monkeypatch):
     with pytest.raises(HTTPException):
         await routes.deriv_demo_buy({"execution_token": token})
     assert bought == {}
+
+
+@pytest.mark.asyncio
+async def test_approved_demo_buy_uses_selected_timeframe_and_rechecks_signal(monkeypatch):
+    from app.api.routes import deriv as routes
+
+    decisions = {
+        "decision": "BUY",
+        "paper_eligibility": {"eligible": True},
+        "trade_plan": {"entry": 158.0, "stop_loss": 157.5, "take_profit": 159.0},
+    }
+    bought = {}
+
+    async def fake_decision(instrument, timeframe):
+        assert instrument == "USD/JPY"
+        assert timeframe == "h1"
+        return decisions
+
+    class FakeClient:
+        async def quote_and_buy_demo(self, **kw):
+            bought.update(kw)
+            return {"status": "EXECUTED_DEMO", "contract_id": 77, "balance_after": 99.0}
+
+    monkeypatch.setattr(routes, "live_decision", fake_decision)
+    monkeypatch.setattr(routes, "DerivDemoClient", FakeClient)
+
+    result = await routes.deriv_demo_approve_buy({
+        "instrument": "USD/JPY",
+        "direction": "BUY",
+        "timeframe": "h1",
+        "stake": 1,
+        "multiplier": 100,
+    })
+
+    assert result["contract_id"] == 77
+    assert result["approval"] == "USER_CONFIRMED"
+    assert bought == {
+        "instrument": "USD/JPY",
+        "direction": "BUY",
+        "stake": 1.0,
+        "multiplier": 100.0,
+        "entry": 158.0,
+        "stop_loss": 157.5,
+        "take_profit": 159.0,
+    }
 
 
 @pytest.mark.asyncio
