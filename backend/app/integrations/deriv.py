@@ -417,10 +417,19 @@ class DerivDemoClient:
 
     async def open_contract(self, contract_id: int) -> dict[str, Any]:
         response = await self._ws_request(
-            {"proposal_open_contract": 1, "contract_id": int(contract_id), "req_id": 303},
+            {"proposal_open_contract": 1, "contract_id": int(contract_id), "subscribe": 1, "req_id": 303},
             "proposal_open_contract",
         )
         return {"status": "AVAILABLE", "contract": response.get("proposal_open_contract") or {}}
+
+    async def account_balance(self) -> dict[str, Any]:
+        """Return the broker-confirmed demo balance for the configured account."""
+        response = await self._ws_request({"balance": 1, "req_id": 103}, "balance")
+        data = response.get("balance") or {}
+        return {
+            "balance": float(data["balance"]) if data.get("balance") is not None else None,
+            "currency": data.get("currency") or "USD",
+        }
 
     async def contract_update_history(self, contract_id: int) -> dict[str, Any]:
         """Return broker-confirmed SL/TP update history for a demo contract."""
