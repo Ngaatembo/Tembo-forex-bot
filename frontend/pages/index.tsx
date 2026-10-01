@@ -166,10 +166,16 @@ export default function Home() {
       const buyPrice = demoBuy.buy_price;
       const realized = soldFor != null ? soldFor - buyPrice : null;
       try {
+        const finalContract = await getDemoContract(demoBuy.contract_id);
+        setDemoContract(finalContract);
+        setDemoAccountBalance(finalContract.account_balance ?? null);
+      } catch {}
+      try {
         const status = await getDerivStatus();
         setDerivStatus(status);
         setDemoAccountBalance(status.balance ?? null);
       } catch {}
+      setDemoBuy(null);
       setDemoMessage("Demo contract " + result.contract_id + " closed. Sold for " + String(soldFor ?? "—") + " USD" + (realized != null ? " · realized P/L " + (realized >= 0 ? "+" : "") + realized.toFixed(2) + " USD" : "") + ".");
     } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Unable to close demo contract."); }
     finally { setDemoBusy(false); }
