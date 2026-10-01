@@ -23,17 +23,18 @@ from app.integrations.deriv import (
 
 router = APIRouter(prefix="/deriv", tags=["deriv"])
 
-def _order_fields(*, instrument: str, direction: str, stake: float, multiplier: float, price: float) -> dict:
+def _order_fields(*, instrument: str, direction: str, stake: float, multiplier: float, price: float, timeframe: str = "h1") -> dict:
     return {
         "instrument": instrument,
         "direction": direction,
         "stake": round(float(stake), 2),
         "multiplier": round(float(multiplier), 4),
         "price": round(float(price), 2),
+        "timeframe": str(timeframe).strip().lower(),
     }
 
 
-def _sign_demo_authorization(*, instrument: str, direction: str, stake: float, multiplier: float, price: float) -> str:
+def _sign_demo_authorization(*, instrument: str, direction: str, stake: float, multiplier: float, price: float, timeframe: str = "h1") -> str:
     """Sign the exact order the user was shown, valid for 120 seconds.
 
     The token binds the order (market, side, stake, multiplier, price), not a
@@ -44,7 +45,7 @@ def _sign_demo_authorization(*, instrument: str, direction: str, stake: float, m
     if not settings.deriv_api_token:
         raise DerivConfigurationError("Deriv demo credentials are not configured.")
     payload = {
-        **_order_fields(instrument=instrument, direction=direction, stake=stake, multiplier=multiplier, price=price),
+        **_order_fields(instrument=instrument, direction=direction, stake=stake, multiplier=multiplier, price=price, timeframe=timeframe),
         "expires_at": int(time.time()) + 120,
     }
     raw = json.dumps(payload, separators=(",", ":"), sort_keys=True).encode()
@@ -71,6 +72,7 @@ def _verify_demo_authorization(token: str) -> dict:
             stake=float(payload["stake"]),
             multiplier=float(payload["multiplier"]),
             price=float(payload["price"]),
+            timeframe=str(payload.get("timeframe", "h1")),
         )
     except (ValueError, KeyError, TypeError, AttributeError, json.JSONDecodeError, UnicodeDecodeError) as exc:
         raise DerivAPIError("Demo execution authorization is invalid or expired. Get a fresh quote and confirm again.") from exc
@@ -139,7 +141,8 @@ async def deriv_demo_proposal(payload: dict) -> dict:
         direction = str(payload.get("direction", "")).strip().upper()
         stake = float(payload.get("stake", 1))
         multiplier = float(payload.get("multiplier", 100))
-        decision = await _checked_decision(instrument, direction, str(payload.get("timeframe", "h1")))
+        timeframe = str(payload.get("timeframe", "h1")).strip().lower()
+        decision = await _checked_decision(instrument, direction, timeframe)
         result = await DerivDemoClient().proposal(
             instrument=instrument,
             direction=direction,
@@ -155,6 +158,7 @@ async def deriv_demo_proposal(payload: dict) -> dict:
             stake=float(result["stake"]),
             multiplier=float(result["multiplier"]),
             price=float(result["ask_price"]),
+            timeframe=timeframe,
         )
         return result
     except (DerivConfigurationError, DerivAPIError, ValueError, TypeError) as exc:
@@ -166,7 +170,7 @@ async def deriv_demo_buy(payload: dict) -> dict:
     """Buy the order the user confirmed: re-check Tembo, then quote + buy on one connection."""
     try:
         order = _verify_demo_authorization(str(payload.get("execution_token", "")).strip())
-        decision = await _checked_decision(order["instrument"], order["direction"], str(payload.get("timeframe", "h1")))
+        decision = await _checked_decision(order["instrument"], order["direction"], order["timeframe"])
         return await DerivDemoClient().quote_and_buy_demo(
             instrument=order["instrument"],
             direction=order["direction"],
@@ -175,6 +179,33 @@ async def deriv_demo_buy(payload: dict) -> dict:
             max_price=order["price"],
             **_plan_levels(decision),
         )
+    except (DerivConfigurationError, DerivAPIError, ValueError, TypeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/demo/approve-buy")
+async def deriv_demo_approve_buy(payload: dict) -> dict:
+    """Execute an explicitly approved demo trade in one fresh quote+buy session.
+
+    The approval is represented by this explicit endpoint call from the cockpit.
+    It is still hard-locked to the configured Deriv demo account and re-runs the
+    current Tembo decision immediately before purchase.
+    """
+    try:
+        instrument = str(payload.get("instrument", "")).strip()
+        direction = str(payload.get("direction", "")).strip().upper()
+        timeframe = str(payload.get("timeframe", "h1")).strip().lower()
+        stake = float(payload.get("stake", 1))
+        multiplier = float(payload.get("multiplier", 100))
+        decision = await _checked_decision(instrument, direction, timeframe)
+        result = await DerivDemoClient().quote_and_buy_demo(
+            instrument=instrument,
+            direction=direction,
+            stake=stake,
+            multiplier=multiplier,
+            **_plan_levels(decision),
+        )
+        return {**result, "timeframe": timeframe, "approval": "USER_CONFIRMED"}
     except (DerivConfigurationError, DerivAPIError, ValueError, TypeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 

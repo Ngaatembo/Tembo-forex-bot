@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
-import { buyDemoContract, getDemoContract, getDemoProposal, sellDemoContract, updateDemoProtection, getDemoProtectionHistory, getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getReliabilityRuntime, getReliabilityStatus, getResearchDecision, getRuntimePositions, getRuntimeStatus, getStrategyHealth, getSyntheticSymbols, type DemoBuyResult, type DemoContractResult, type DemoProposal, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ReliabilityRuntime, type ReliabilityStatus, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type StrategyHealth, type SyntheticSymbol } from "../services/api";
+import { approveAndExecuteDemo, buyDemoContract, getDemoContract, getDemoProposal, sellDemoContract, updateDemoProtection, getDemoProtectionHistory, getDerivMarkets, getDerivStatus, getLiveAnalysis, getLiveDecision, getMarket, getReliabilityRuntime, getReliabilityStatus, getResearchDecision, getRuntimePositions, getRuntimeStatus, getStrategyHealth, getSyntheticSymbols, type DemoBuyResult, type DemoContractResult, type DemoProposal, type DerivMarket, type DerivStatus, type LiveAnalysis, type LiveDecision, type MarketResponse, type ReliabilityRuntime, type ReliabilityStatus, type ResearchDecision, type RuntimePosition, type RuntimeStatus, type StrategyHealth, type SyntheticSymbol } from "../services/api";
 
 const instruments = ["EUR/USD", "GBP/USD", "USD/JPY", "XAU/USD"];
 const timeframes = ["m5", "m15", "h1", "h4", "d1"];
@@ -93,6 +93,7 @@ export default function Home() {
   const [demoProtectionHistory,setDemoProtectionHistory]=useState<Record<string, unknown>[]>([]);
   const [demoBusy,setDemoBusy]=useState(false);
   const [demoMessage,setDemoMessage]=useState("");
+  const [demoApprovalBusy,setDemoApprovalBusy]=useState(false);
   const [error,setError]=useState("");
   const [loading,setLoading]=useState(true);
   const [lastRefresh,setLastRefresh]=useState("");
@@ -103,7 +104,7 @@ export default function Home() {
     if (!demoExecutionEligible) { setDemoMessage("Demo execution is locked until Tembo authorizes the setup."); return; }
     setDemoBusy(true); setDemoMessage(""); setDemoProposal(null);
     try {
-      const proposal = await getDemoProposal(instrument, decision!.decision, demoStake, demoMultiplier);
+      const proposal = await getDemoProposal(instrument, decision!.decision, timeframe, demoStake, demoMultiplier);
       setDemoProposal(proposal); setDemoMessage("Demo proposal received. Nothing has been purchased.");
     } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Unable to obtain a demo proposal."); }
     finally { setDemoBusy(false); }
@@ -117,7 +118,7 @@ export default function Home() {
       if (latestDecision.decision !== decision?.decision || !latestDecision.paper_eligibility.eligible) {
         setDemoProposal(null); setDemoMessage("The decision changed or the trade is no longer eligible. No demo order was sent."); return;
       }
-      const result = await buyDemoContract(demoProposal.proposal_id, demoProposal.ask_price, demoProposal.execution_token);
+      const result = await buyDemoContract(demoProposal.proposal_id, demoProposal.ask_price, demoProposal.execution_token, timeframe);
       setDemoBuy(result); setDemoContract(null); setDemoAccountBalance(result.balance_after ?? null);
       if (demoProposal.protection?.attached) {
         try {
@@ -131,6 +132,30 @@ export default function Home() {
       }
     } catch (e) { setDemoMessage(e instanceof Error ? e.message : "Demo execution failed safely."); }
     finally { setDemoBusy(false); }
+  }
+
+  async function approveAndExecuteTrade() {
+    if (!demoExecutionEligible) {
+      setDemoMessage("Approval is unavailable: Tembo has not authorized this setup.");
+      return;
+    }
+    setDemoApprovalBusy(true); setDemoMessage(""); setDemoProposal(null);
+    try {
+      const result = await approveAndExecuteDemo(instrument, decision!.decision, timeframe, demoStake, demoMultiplier);
+      setDemoBuy(result); setDemoContract(null); setDemoAccountBalance(result.balance_after ?? null);
+      try {
+        const status = await getDerivStatus();
+        setDerivStatus(status);
+        setDemoAccountBalance(status.balance ?? result.balance_after ?? null);
+      } catch {}
+      setDemoMessage("APPROVED -> BROKER CONFIRMED. Demo contract #" + result.contract_id + " opened. Tembo re-checked the signal immediately before execution.");
+      try {
+        const current = await getDemoContract(result.contract_id);
+        setDemoContract(current);
+      } catch {}
+    } catch (e) {
+      setDemoMessage(e instanceof Error ? e.message : "Approved demo execution failed safely. No order confirmation was received.");
+    } finally { setDemoApprovalBusy(false); }
   }
 
   async function syncDemoProtection() {
@@ -231,16 +256,16 @@ export default function Home() {
   async function refresh() {
     setLoading(true); setError("");
     try {
-      const [m,a,d,r,rs,p] = await Promise.all([
+      const [m,a,d,r,rs,p,ds] = await Promise.all([
         getMarket(instrument,timeframe), getLiveAnalysis(instrument,timeframe), getLiveDecision(instrument,timeframe),
-        getResearchDecision(instrument,timeframe), getRuntimeStatus(), getRuntimePositions()
+        getResearchDecision(instrument,timeframe), getRuntimeStatus(), getRuntimePositions(), getDerivStatus()
       ]);
       const [shResult, relResult, relRuntimeResult] = await Promise.allSettled([
         getStrategyHealth(instrument,timeframe,a.analysis?.trend?.regime || null),
         getReliabilityStatus(),
         getReliabilityRuntime()
       ]);
-      setMarket(m); setAnalysis(a); setDecision(d); setResearch(r); setRuntime(rs); setPositions(p);
+      setMarket(m); setAnalysis(a); setDecision(d); setResearch(r); setRuntime(rs); setPositions(p); setDerivStatus(ds); setDemoAccountBalance(ds.balance ?? null);
       if (shResult.status === "fulfilled") setStrategyHealth(shResult.value);
       if (relResult.status === "fulfilled") setReliability(relResult.value);
       if (relRuntimeResult.status === "fulfilled") setReliabilityRuntime(relRuntimeResult.value);
@@ -372,12 +397,13 @@ export default function Home() {
               <label>Multiplier<input type="number" min="1" max="50" step="1" value={demoMultiplier} onChange={e=>setDemoMultiplier(Math.min(50,Math.max(1,Number(e.target.value)||1)))} /></label>
             </div>
             <div className="demo-actions">
-              <button className="secondary-button" onClick={()=>void requestDemoProposal()} disabled={demoBusy || !demoExecutionEligible}>{demoBusy?"Working…":"Get demo proposal"}</button>
-              <button className="primary-button" onClick={()=>void executeDemoTrade()} disabled={demoBusy || !demoProposal || !demoExecutionEligible}>Execute demo trade</button>
-              {demoBuy && demoProposal?.protection?.attached && <button className="secondary-button" onClick={()=>void syncDemoProtection()} disabled={demoBusy}>Sync protection</button>}
-              {demoBuy && <button className="secondary-button" onClick={()=>void refreshDemoContract()} disabled={demoBusy}>Refresh contract</button>}
-              {demoBuy && <button className="secondary-button" onClick={()=>void closeDemoTrade()} disabled={demoBusy}>Close demo</button>}
+              <button className="secondary-button" onClick={()=>void requestDemoProposal()} disabled={demoBusy || demoApprovalBusy || !demoExecutionEligible}>{demoBusy?"Preparing…":"Preview broker quote"}</button>
+              <button className="primary-button" onClick={()=>void approveAndExecuteTrade()} disabled={demoBusy || demoApprovalBusy || !demoExecutionEligible}>{demoApprovalBusy?"Executing…":"APPROVE & EXECUTE DEMO"}</button>
+              {demoBuy && demoProposal?.protection?.attached && <button className="secondary-button" onClick={()=>void syncDemoProtection()} disabled={demoBusy || demoApprovalBusy}>Sync protection</button>}
+              {demoBuy && <button className="secondary-button" onClick={()=>void refreshDemoContract()} disabled={demoBusy || demoApprovalBusy}>Refresh contract</button>}
+              {demoBuy && <button className="secondary-button" onClick={()=>void closeDemoTrade()} disabled={demoBusy || demoApprovalBusy}>Close demo</button>}
             </div>
+            <div className="demo-message">The primary button is the approval event: Tembo re-checks the selected <strong>{instrument} · {timeframe.toUpperCase()}</strong> signal on the server, obtains a fresh Deriv quote, and only then buys the demo contract.</div>
             {demoProposal && <div className="demo-proposal">
               <span>Proposal {demoProposal.proposal_id}</span>
               <span>Ask ${demoProposal.ask_price.toFixed(2)}</span>
@@ -387,9 +413,9 @@ export default function Home() {
             </div>}
             {demoBuy && <div className="demo-open">DEMO CONTRACT #{demoBuy.contract_id} · BUY ${demoBuy.buy_price.toFixed(2)} · BROKER CONFIRMED</div>}
             {demoBuy && <div className="demo-proposal">
-              <span>Demo balance {demoAccountBalance == null ? "—" : "$" + demoAccountBalance.toFixed(2)}</span>
+              <span>Broker balance {derivStatus?.balance == null ? "—" : "$" + Number(derivStatus.balance).toFixed(2)}</span>
               <span>Stake ${demoStake.toFixed(2)}</span>
-              <span>Open position {demoContract?.contract?.status || "OPEN"}</span>
+              <span>Open positions {String(derivStatus?.open_positions ?? (demoBuy ? 1 : 0))}</span>
               <span>Monitoring every 3s</span>
             </div>}
             {demoProposal?.protection?.attached && <div className="demo-message">Broker-side demo protection attached from Tembo's price plan: SL loss ${demoProposal.protection.limit_order.stop_loss ?? "—"} · TP profit ${demoProposal.protection.limit_order.take_profit ?? "—"}.</div>}
@@ -413,6 +439,8 @@ export default function Home() {
             <div className="gate-line"><span>Tembo signal</span><Pill value={signal} tone={signal === "NO_TRADE" ? "bad" : "good"}/></div>
             <div className="gate-line"><span>Paper eligibility</span><Pill value={decision?.paper_eligibility?.status || "WAITING"} tone={toneFor(decision?.paper_eligibility?.status)}/></div>
             <div className="gate-line"><span>Broker mode</span><Pill value="DEMO ONLY" tone="warn"/></div>
+            <div className="gate-line"><span>Demo balance</span><strong>{derivStatus?.balance == null ? "—" : "$" + Number(derivStatus.balance).toFixed(2)}</strong></div>
+            <div className="gate-line"><span>Open demo positions</span><strong>{String(derivStatus?.open_positions ?? 0)}</strong></div>
             <div className="gate-line"><span>Real-money execution</span><Pill value="DISABLED" tone="good"/></div>
             <p className="guidance-muted">No browser credentials are used. The server holds the Deriv credentials and enforces demo-only mode.</p>
           </div>
