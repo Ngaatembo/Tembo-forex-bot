@@ -71,15 +71,11 @@ async def get_decision(
             research_gate_status = match.gate_status
             regime_evidence = match.regime_evidence
 
-    if selection.status == "TRADEABLE":
-        final_decision = "NO_TRADE"
-        reason = (
-            f"{selection.reason} However, no live market data feed is connected yet, so the "
-            "Risk Engine cannot evaluate a real entry/stop and no paper trade can be approved."
-        )
-    else:
-        final_decision = "NO_TRADE"
-        reason = selection.reason
+    # This endpoint is the research/strategy-selection view. Live price,
+    # technical analysis, macro gating and risk evaluation are handled by
+    # /live/decision, which consumes the verified Deriv market feed.
+    final_decision = "NO_TRADE"
+    reason = selection.reason
 
     # News/Macro context — threaded as SEPARATE informational fields,
     # never blended into final_decision's own logic above. This
