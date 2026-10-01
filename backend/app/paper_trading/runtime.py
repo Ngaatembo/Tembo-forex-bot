@@ -216,7 +216,7 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
             # Exit monitoring remains frequent, but max-holding periods advance
             # only when a new completed candle for the position timeframe exists.
             candles = normalize_candles(
-                await provider.get_candles(instrument, timeframe, limit=3)
+                await provider.get_candles(instrument, timeframe, limit=200)
             )
             candles = _completed_candles(candles, timeframe, now)
             validation = validate_candles(candles, timeframe=timeframe)
@@ -263,7 +263,7 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
                 continue
             try:
                 candles = normalize_candles(
-                    await provider.get_candles(instrument, timeframe, limit=3)
+                    await provider.get_candles(instrument, timeframe, limit=200)
                 )
                 # The provider's newest bar can still be forming. Entry gating
                 # must use the same completed-candle definition as live_decision,
