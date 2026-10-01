@@ -207,7 +207,7 @@ async def synthetic_symbols() -> dict:
 async def live_market(
     instrument: str = Query("EUR/USD"),
     timeframe: str = Query("h1"),
-    limit: int = Query(120, ge=20, le=500),
+    limit: int = Query(500, ge=20, le=1000),
 ) -> dict:
     """Return chart-ready quote/candle data without fabricating mock prices."""
 
