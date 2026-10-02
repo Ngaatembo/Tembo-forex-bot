@@ -512,6 +512,7 @@ async def live_decision(
     from app.live_engine.candlesticks import detect_candlestick_patterns
     from app.news_engine.context import get_news_context, get_upcoming_macro_events
     from app.news_engine.macro_risk import compute_macro_event_risk
+    from app.news_engine.policy import macro_blocks_trade
     from app.signal_engine.decision_engine import evaluate_trade_decision
     from app.technical_engine.features import calculate_feature_snapshots
 
@@ -581,7 +582,7 @@ async def live_decision(
 
     strategy_signal = strategy_result.direction if strategy_result is not None else "WAIT"
     strategy_triggered = bool(strategy_result and strategy_result.triggered)
-    macro_blocked = macro_risk.level in {"HIGH", "MEDIUM", "UNKNOWN"}
+    macro_blocked = macro_blocks_trade(macro_risk.level)
 
     if strategy_triggered and not macro_blocked and strategy_result.stop_loss is not None:
         effective_decision = strategy_signal
