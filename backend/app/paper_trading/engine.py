@@ -28,7 +28,8 @@ from datetime import datetime
 from math import isfinite
 from typing import Optional
 
-from app.news_engine.models import MACRO_RISK_HIGH, MacroEventRisk
+from app.news_engine.models import MacroEventRisk
+from app.news_engine.policy import macro_blocks_trade
 from app.paper_trading.account import PaperAccountState
 from app.paper_trading.models import PaperPosition, PaperTrade
 from app.research.instrument_adapter import InstrumentTimeframeInfo
@@ -135,7 +136,7 @@ class PaperTradingEngine:
         # Engine. Can only RESTRICT (block on HIGH risk); a None value
         # or non-HIGH level simply passes through to Risk Engine as
         # before. News/macro data can never independently approve a trade.
-        if macro_event_risk is not None and macro_event_risk.level == MACRO_RISK_HIGH:
+        if macro_event_risk is not None and macro_blocks_trade(macro_event_risk.level):
             return PaperTradeDecision("MACRO_EVENT_RISK_BLOCKED", macro_event_risk.reason)
 
         key = f"{instrument}:{timeframe_norm}"
