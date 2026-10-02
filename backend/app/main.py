@@ -29,6 +29,21 @@ settings = get_settings()
 configure_logging("DEBUG" if settings.debug else "INFO")
 logger = logging.getLogger(__name__)
 
+# Non-secret startup observability: records the effective runtime mode in host logs.
+# Never log provider URLs, tokens, account IDs, API keys, or other credentials.
+logger.info(
+    "Tembo runtime config: market_data_provider=%s paper_runtime=%s "
+    "live_execution=%s news_provider=%s economic_calendar_provider=%s "
+    "mt5_bridge_configured=%s deriv_demo_mode=%s",
+    settings.market_data_provider,
+    settings.enable_paper_runtime,
+    settings.enable_live_execution,
+    settings.news_provider,
+    settings.economic_calendar_provider,
+    bool(settings.mt5_bridge_url and settings.mt5_bridge_token),
+    settings.deriv_trading_mode == "demo",
+)
+
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
