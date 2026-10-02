@@ -9,6 +9,7 @@ quietly trained on corrupted data.
 
 from dataclasses import dataclass, field
 from datetime import timedelta
+from math import isfinite
 
 from app.data_engine.market_data import Candle
 
@@ -78,12 +79,17 @@ def validate_candles(
     seen: set = set()
 
     for i, c in enumerate(candles):
-        if c.high < max(c.open, c.close, c.low) or c.low > min(c.open, c.close, c.high):
+        prices = (c.open, c.high, c.low, c.close)
+        if not all(isfinite(price) for price in prices):
+            report.negative_or_zero_price.append(
+                f"index {i} ({c.timestamp.isoformat()}): non-finite OHLC value"
+            )
+        elif c.high < max(c.open, c.close, c.low) or c.low > min(c.open, c.close, c.high):
             report.ohlc_violations.append(
                 f"index {i} ({c.timestamp.isoformat()}): O={c.open} H={c.high} L={c.low} C={c.close}"
             )
 
-        if c.open <= 0 or c.high <= 0 or c.low <= 0 or c.close <= 0:
+        if any(price <= 0 for price in prices):
             report.negative_or_zero_price.append(f"index {i} ({c.timestamp.isoformat()})")
 
         if c.timestamp in seen:
