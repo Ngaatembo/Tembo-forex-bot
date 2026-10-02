@@ -305,6 +305,13 @@ async def run_paper_cycle(db: AsyncSession) -> dict:
                         "timeframe": timeframe,
                         "status": "NO_SIGNAL",
                         "reason": response.get("message") or "Live decision did not authorize a directional paper candidate.",
+                        "decision": response.get("decision"),
+                        "selector_status": response.get("selector_status"),
+                        "selected_config": response.get("selected_research_config") or response.get("strategy_config"),
+                        "research_gate": (response.get("selected_research_config") or response.get("strategy_config") or {}).get("gate_status"),
+                        "research_verdict": (response.get("selected_research_config") or response.get("strategy_config") or {}).get("verdict"),
+                        "macro_risk": (response.get("macro_risk") or response.get("macro_event_risk") or {}).get("level"),
+                        "data_quality": response.get("data_quality"),
                     })
                     continue
                 direction = "LONG" if plan.get("direction") == "BUY" else "SHORT" if plan.get("direction") == "SELL" else None
