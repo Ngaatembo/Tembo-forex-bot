@@ -13,6 +13,18 @@ class FakeWebSocket:
         self.responses = [json.dumps(item) for item in responses]
         self.sent = []
 
+    @property
+    def closed(self):
+        return False
+
+    def __await__(self):
+        async def _ready():
+            return self
+        return _ready().__await__()
+
+    async def close(self):
+        return None
+
     async def __aenter__(self):
         return self
 
@@ -45,6 +57,7 @@ async def test_active_symbol_resolution_and_price(monkeypatch):
     provider = DerivMarketDataProvider()
     DerivMarketDataProvider._symbols_cache = None
     DerivMarketDataProvider._price_cache.clear()
+    DerivMarketDataProvider._public_ws = None
     fake = FakeConnect(
         [
             [
@@ -85,6 +98,7 @@ async def test_active_symbol_resolution_and_price(monkeypatch):
 @pytest.mark.asyncio
 async def test_candles_are_converted_and_sorted(monkeypatch):
     provider = DerivMarketDataProvider()
+    DerivMarketDataProvider._public_ws = None
     DerivMarketDataProvider._symbols_cache = (
         9999999999.0,
         [

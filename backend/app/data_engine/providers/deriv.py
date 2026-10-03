@@ -70,55 +70,96 @@ class DerivMarketDataProvider(MarketDataProvider):
     _candles_cache: dict[tuple[str, str, int], tuple[float, list[Candle]]] = {}
     _candles_ttl = 20.0
 
+    # Keep one public WebSocket per process instead of opening a new socket for
+    # every tick/history request. Deriv's public endpoint is connection-rate
+    # limited; the old fresh-connection-per-call strategy was causing HTTP 429s
+    # under the paper/shadow runtime.
+    _public_ws = None
+    _public_lock: asyncio.Lock | None = None
+    _public_last_request_at = 0.0
+    _public_min_request_gap = 0.25
+
     def __init__(self):
         settings = get_settings()
         self._ws_url = settings.deriv_public_ws_url or DERIV_PUBLIC_WS
 
+    @classmethod
+    async def _get_public_lock(cls) -> asyncio.Lock:
+        if cls._public_lock is None:
+            cls._public_lock = asyncio.Lock()
+        return cls._public_lock
+
+    @classmethod
+    async def _close_public_ws(cls) -> None:
+        ws = cls._public_ws
+        cls._public_ws = None
+        if ws is not None:
+            try:
+                await ws.close()
+            except Exception:
+                pass
+
     async def _request(self, payload: dict, expected_type: str) -> dict:
-        # Deriv recommends pacing and backing off after rejected requests.
-        # Public market-data calls are otherwise stateless, so a fresh
-        # connection is safe for a small number of transient retries.
         retryable_codes = {"WrongResponse", "RateLimit", "InternalServerError"}
         last_error: Exception | None = None
 
-        for attempt in range(3):
-            try:
-                async with websockets.connect(
-                    self._ws_url, open_timeout=15, close_timeout=5
-                ) as ws:
+        for attempt in range(4):
+            lock = await self._get_public_lock()
+            async with lock:
+                try:
+                    now = time.monotonic()
+                    wait = self._public_min_request_gap - (now - self._public_last_request_at)
+                    if wait > 0:
+                        await asyncio.sleep(wait)
+
+                    ws = self._public_ws
+                    if ws is None or ws.closed:
+                        ws = await websockets.connect(
+                            self._ws_url, open_timeout=15, close_timeout=5
+                        )
+                        self._public_ws = ws
+
                     await ws.send(json.dumps(payload))
+                    self._public_last_request_at = time.monotonic()
+
                     deadline = time.monotonic() + 20
                     while time.monotonic() < deadline:
-                        # recv() alone waits forever if Deriv never answers.
-                        raw = await asyncio.wait_for(ws.recv(), timeout=max(0.1, deadline - time.monotonic()))
+                        raw = await asyncio.wait_for(
+                            ws.recv(),
+                            timeout=max(0.1, deadline - time.monotonic()),
+                        )
                         response = json.loads(raw)
                         if response.get("error"):
                             error = response["error"]
                             code = str(error.get("code") or "")
                             message = str(error.get("message") or "Unknown Deriv error")
-                            if code in retryable_codes and attempt < 2:
-                                await asyncio.sleep(1.5 * (attempt + 1))
+                            if code in retryable_codes:
+                                last_error = DerivMarketDataError(
+                                    f"Deriv API error {code}: {message}"
+                                )
+                                await self._close_public_ws()
                                 break
-                            raise DerivMarketDataError(
+                            raise last_error or DerivMarketDataError(
                                 f"Deriv API error {code}: {message}"
                             )
                         if response.get("msg_type") == expected_type:
                             return response
+
                     else:
-                        raise DerivMarketDataError(
+                        last_error = DerivMarketDataError(
                             f"Timed out waiting for Deriv {expected_type} response."
                         )
-            except DerivMarketDataError as exc:
-                last_error = exc
-                if attempt >= 2:
-                    raise
-            except Exception as exc:
-                last_error = exc
-                if attempt >= 2:
-                    raise DerivMarketDataError(
-                        f"Deriv public market-data connection failed: {exc}"
-                    ) from exc
-            await asyncio.sleep(1.5 * (attempt + 1))
+                        await self._close_public_ws()
+                except DerivMarketDataError as exc:
+                    last_error = exc
+                    await self._close_public_ws()
+                except Exception as exc:
+                    last_error = exc
+                    await self._close_public_ws()
+
+            # A rejected handshake/connection needs a real backoff. Retrying
+            # every 1–3 seconds only compounds Deriv's connection throttle.
+            await asyncio.sleep(2.0 * (2 ** attempt))
 
         raise DerivMarketDataError(
             f"Deriv public market-data request failed after retries: {last_error}"
